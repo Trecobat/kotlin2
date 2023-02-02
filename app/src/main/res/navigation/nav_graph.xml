@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/pointagesFragment">
+
+    <fragment
+        android:id="@+id/pointagesFragment"
+        android:name="com.trecobat.pointagetrecopro.ui.pointages.PointagesFragment"
+        android:label="Pointages"
+        tools:layout="@layout/pointages_fragment" >
+        <action
+            android:id="@+id/action_pointagesFragment_to_pointageDetailFragment"
+            app:destination="@id/pointageDetailFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/pointageDetailFragment"
+        android:name="com.trecobat.pointagetrecopro.ui.pointagedetail.PointageDetailFragment"
+        android:label="Pointage Detail"
+        tools:layout="@layout/pointage_detail_fragment" />
+</navigation>
