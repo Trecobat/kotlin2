@@ -8,7 +8,5 @@ class PointageDataSource @Inject constructor(
 ): BaseDataSource() {
 
     suspend fun getPointages() = getResult { pointageService.getAllPointages() }
-
     suspend fun getPointage(id: Int) = getResult { pointageService.getPointage(id) }
-
 }

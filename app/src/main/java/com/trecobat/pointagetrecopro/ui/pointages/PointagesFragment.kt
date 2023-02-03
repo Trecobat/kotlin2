@@ -1,11 +1,5 @@
 package com.trecobat.pointagetrecopro.ui.pointages
 
-import com.trecobat.pointagetrecopro.R
-import com.trecobat.pointagetrecopro.databinding.PointagesFragmentBinding
-import com.trecobat.pointagetrecopro.utils.Resource
-import com.trecobat.pointagetrecopro.utils.autoCleared
-
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +11,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.trecobat.pointagetrecopro.R
+import com.trecobat.pointagetrecopro.databinding.PointagesFragmentBinding
+import com.trecobat.pointagetrecopro.utils.Resource
+import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
-class PointagesFragment : Fragment(R.layout.pointages_fragment), PointagesAdapter.PointageItemListener {
+class PointagesFragment : Fragment(), PointagesAdapter.PointageItemListener {
 
     private var binding: PointagesFragmentBinding by autoCleared()
     private val viewModel: PointagesViewModel by viewModels()
@@ -29,7 +28,7 @@ class PointagesFragment : Fragment(R.layout.pointages_fragment), PointagesAdapte
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = PointagesFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -48,14 +47,19 @@ class PointagesFragment : Fragment(R.layout.pointages_fragment), PointagesAdapte
 
     private fun setupObservers() {
         viewModel.pointages.observe(viewLifecycleOwner, Observer {
+            Timber.d("Je suis dans mon observer")
+            Timber.d(it.toString())
             when (it.status) {
                 Resource.Status.SUCCESS -> {
+                    Timber.d(it.toString())
                     binding.progressBar.visibility = View.GONE
                     if (!it.data.isNullOrEmpty()) adapter.setItems(ArrayList(it.data))
                 }
-                Resource.Status.ERROR ->
+                Resource.Status.ERROR -> {
+                    Timber.d("Error")
+                    Timber.d(it.message)
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-
+                }
                 Resource.Status.LOADING ->
                     binding.progressBar.visibility = View.VISIBLE
             }

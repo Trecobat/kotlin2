@@ -9,15 +9,16 @@ class PointageRepository @Inject constructor(
     private val remoteDataSource: PointageDataSource,
     private val localDataSource: PointageDao
 ) {
-    fun getPointages() = performGetOperation(
-        databaseQuery = { localDataSource.getAllPointages() },
-        networkCall = { remoteDataSource.getPointages() },
-        saveCallResult = { localDataSource.insertAll(it) }
-    )
 
     fun getPointage(id: Int) = performGetOperation(
         databaseQuery = { localDataSource.getPointage(id) },
         networkCall = { remoteDataSource.getPointage(id) },
         saveCallResult = { localDataSource.insert(it) }
+    )
+
+    fun getPointages() = performGetOperation(
+        databaseQuery = { localDataSource.getAllPointages() },
+        networkCall = { remoteDataSource.getPointages() },
+        saveCallResult = { localDataSource.insertAll(it) }
     )
 }

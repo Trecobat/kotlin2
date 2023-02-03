@@ -15,7 +15,7 @@ import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PointageDetailFragment: Fragment() {
+class PointageDetailFragment : Fragment() {
 
     private var binding: PointageDetailFragmentBinding by autoCleared()
     private val viewModel: PointageDetailViewModel by viewModels()
@@ -54,7 +54,10 @@ class PointageDetailFragment: Fragment() {
         })
     }
 
-    private fun bindPointage(pointageCl: Pointage) {
-        binding.pointageId.text = pointageCl.poi_id.toString()
+    private fun bindPointage(pointage: Pointage) {
+        binding.name.text = pointage.poi_id.toString()
+        binding.species.text = pointage.poi_id.toString()
+        binding.status.text = pointage.poi_id.toString()
+        binding.gender.text = pointage.poi_id.toString()
     }
 }

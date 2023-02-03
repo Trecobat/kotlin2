@@ -1,6 +1,5 @@
 package com.trecobat.pointagetrecopro.ui.pointages
 
-
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.databinding.ItemPointageBinding
 
-class PointagesAdapter(private val listener: PointageItemListener) :
-    RecyclerView.Adapter<PointageViewHolder>() {
+class PointagesAdapter(private val listener: PointageItemListener) : RecyclerView.Adapter<PointageViewHolder>() {
 
     interface PointageItemListener {
         fun onClickedPointage(pointageId: Int)
@@ -46,8 +44,8 @@ class PointageViewHolder(private val itemBinding: ItemPointageBinding, private v
     @SuppressLint("SetTextI18n")
     fun bind(item: Pointage) {
         this.pointage = item
-        itemBinding.itemId.text = item.poi_id.toString()
-
+        itemBinding.name.text = item.poi_id.toString()
+        itemBinding.speciesAndStatus.text = item.poi_id.toString()
     }
 
     override fun onClick(v: View?) {

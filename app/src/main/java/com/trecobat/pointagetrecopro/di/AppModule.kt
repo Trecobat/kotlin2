@@ -11,19 +11,19 @@ import com.trecobat.pointagetrecopro.data.repository.PointageRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-@InstallIn(SingletonComponent::class)
 @Module
+@InstallIn(ApplicationComponent::class)
 object AppModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(gson: Gson): Retrofit = Retrofit.Builder()
+    fun provideRetrofit(gson: Gson) : Retrofit = Retrofit.Builder()
         .baseUrl("https://api-partenaires.trecobat.fr/")
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
@@ -31,32 +31,25 @@ object AppModule {
     @Provides
     fun provideGson(): Gson = GsonBuilder().create()
 
-    @Singleton
     @Provides
-    fun providePointageService(retrofit: Retrofit): PointageService =
-        retrofit.create(PointageService::class.java)
+    fun providePointageService(retrofit: Retrofit): PointageService = retrofit.create(PointageService::class.java)
 
     @Singleton
     @Provides
-    fun providePointageDataSource(pointageService: PointageService) =
-        PointageDataSource(pointageService)
+    fun providePointageDataSource(pointageService: PointageService) = PointageDataSource(pointageService)
 
     @Singleton
     @Provides
-    fun provideDatabase(@ApplicationContext appContext: Context) =
-        AppDatabase.getDatabase(appContext)
+    fun provideDatabase(@ApplicationContext appContext: Context) = AppDatabase.getDatabase(appContext)
 
     @Singleton
     @Provides
-    fun providePointageDao(db: AppDatabase): PointageDao {
-        return db.pointageDao()
-    }
+    fun providePointageDao(db: AppDatabase) = db.pointageDao()
 
     @Singleton
     @Provides
-    fun provideRepository(
-        remoteDataSource: PointageDataSource,
-        localDataSource: PointageDao
+    fun provideRepository(remoteDataSource: PointageDataSource,
+                          localDataSource: PointageDao
     ) =
         PointageRepository(remoteDataSource, localDataSource)
 }

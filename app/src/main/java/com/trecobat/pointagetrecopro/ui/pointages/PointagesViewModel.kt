@@ -1,12 +1,10 @@
 package com.trecobat.pointagetrecopro.ui.pointages
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import com.trecobat.pointagetrecopro.data.repository.PointageRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class PointagesViewModel @Inject constructor(
+class PointagesViewModel @ViewModelInject constructor(
     private val repository: PointageRepository
 ) : ViewModel() {
 

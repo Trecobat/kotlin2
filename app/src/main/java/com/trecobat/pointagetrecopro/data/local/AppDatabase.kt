@@ -6,8 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 
-@Database(entities = [Pointage::class], version = 2, exportSchema = false)
-abstract class AppDatabase: RoomDatabase() {
+@Database(entities = [Pointage::class], version = 1, exportSchema = false)
+abstract class AppDatabase : RoomDatabase() {
 
     abstract fun pointageDao(): PointageDao
 
@@ -18,7 +18,7 @@ abstract class AppDatabase: RoomDatabase() {
             instance ?: synchronized(this) { instance ?: buildDatabase(context).also { instance = it } }
 
         private fun buildDatabase(appContext: Context) =
-            Room.databaseBuilder(appContext, AppDatabase::class.java, "pointages")
+            Room.databaseBuilder(appContext, AppDatabase::class.java, "characters")
                 .fallbackToDestructiveMigration()
                 .build()
     }

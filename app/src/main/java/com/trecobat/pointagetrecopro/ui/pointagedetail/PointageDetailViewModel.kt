@@ -1,5 +1,6 @@
 package com.trecobat.pointagetrecopro.ui.pointagedetail
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,11 +8,8 @@ import androidx.lifecycle.switchMap
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.repository.PointageRepository
 import com.trecobat.pointagetrecopro.utils.Resource
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class PointageDetailViewModel @Inject constructor(
+class PointageDetailViewModel @ViewModelInject constructor(
     private val repository: PointageRepository
 ) : ViewModel() {
 

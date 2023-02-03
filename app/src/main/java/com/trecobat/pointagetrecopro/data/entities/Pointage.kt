@@ -11,5 +11,5 @@ data class Pointage(
     val poi_fin: String,
     val poi_eq_id: Int,
     val poi_poi_lat: Float,
-    val poi_lng: Float,
+    val poi_lng: Float
 )
