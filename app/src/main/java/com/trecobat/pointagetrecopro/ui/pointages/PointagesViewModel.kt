@@ -7,9 +7,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PointagesViewModel @Inject constructor(
-    repository: PointageRepository
+    private val repository: PointageRepository
 ) : ViewModel() {
 
     val pointages = repository.getPointages()
-
 }

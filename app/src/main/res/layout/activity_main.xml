@@ -27,5 +27,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
         app:navGraph="@navigation/nav_graph" />
 </LinearLayout>
