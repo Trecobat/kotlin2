@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/pointagesFragment">
+    app:startDestination="@id/tachesFragment">
 
     <fragment
         android:id="@+id/pointagesFragment"
@@ -20,4 +20,21 @@
         android:name="com.trecobat.pointagetrecopro.ui.pointagedetail.PointageDetailFragment"
         android:label="Pointage Detail"
         tools:layout="@layout/pointage_detail_fragment" />
+
+
+    <fragment
+        android:id="@+id/tachesFragment"
+        android:name="com.trecobat.pointagetrecopro.ui.taches.TachesFragment"
+        android:label="Taches"
+        tools:layout="@layout/taches_fragment" >
+        <action
+            android:id="@+id/action_tachesFragment_to_tacheDetailFragment"
+            app:destination="@id/tacheDetailFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/tacheDetailFragment"
+        android:name="com.trecobat.pointagetrecopro.ui.tachedetail.TacheDetailFragment"
+        android:label="Tache Detail"
+        tools:layout="@layout/tache_detail_fragment" />
 </navigation>

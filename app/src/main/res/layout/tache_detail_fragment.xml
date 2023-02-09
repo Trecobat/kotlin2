@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.tachedetail.TacheDetailFragment">
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        tools:visibility="gone" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/tache_cl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/divider7"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/divider8"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/divider7"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/divider10"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/divider7"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/cli_nom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/TextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/divider7" />
+
+        <TextView
+            android:id="@+id/aff_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/TextView"
+            app:layout_constraintStart_toEndOf="@+id/cli_nom"
+            app:layout_constraintTop_toTopOf="@+id/divider7" />
+
+        <TextView
+            android:id="@+id/bdct_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/TextView"
+            app:layout_constraintStart_toEndOf="@+id/aff_id"
+            app:layout_constraintTop_toTopOf="@+id/divider7" />
+
+        <View
+            android:id="@+id/divider11"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintTop_toBottomOf="@+id/cli_nom"
+            app:layout_constraintStart_toEndOf="@+id/divider8" />
+
+        <TextView
+            android:id="@+id/du"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/Du"
+            app:layout_constraintStart_toEndOf="@+id/divider8"
+            app:layout_constraintTop_toBottomOf="@+id/divider11" />
+
+        <TextView
+            android:id="@+id/start_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/TextView"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@+id/du"
+            app:layout_constraintTop_toBottomOf="@+id/divider11" />
+
+        <TextView
+            android:id="@+id/au"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/au"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@+id/start_date"
+            app:layout_constraintTop_toBottomOf="@+id/divider11" />
+
+        <TextView
+            android:id="@+id/end_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/TextView"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@+id/au"
+            app:layout_constraintTop_toBottomOf="@+id/divider11" />
+
+        <TextView
+            android:id="@+id/cli_adresse1_chantier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/TextView"
+            app:layout_constraintStart_toEndOf="@+id/divider8"
+            app:layout_constraintTop_toBottomOf="@+id/du" />
+
+        <TextView
+            android:id="@+id/cli_adresse2_chantier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/TextView"
+            app:layout_constraintStart_toEndOf="@+id/cli_adresse1_chantier"
+            app:layout_constraintTop_toBottomOf="@+id/start_date" />
+
+        <TextView
+            android:id="@+id/cli_cp_chantier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:text="@string/TextView"
+            app:layout_constraintStart_toEndOf="@+id/divider8"
+            app:layout_constraintTop_toBottomOf="@+id/cli_adresse1_chantier" />
+
+        <TextView
+            android:id="@+id/cli_ville_chantier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:text="@string/TextView"
+            app:layout_constraintStart_toEndOf="@+id/cli_cp_chantier"
+            app:layout_constraintTop_toBottomOf="@+id/cli_adresse1_chantier" />
+
+        <View
+            android:id="@+id/divider12"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintTop_toBottomOf="@+id/cli_cp_chantier"
+            app:layout_constraintStart_toEndOf="@+id/divider8" />
+
+        <TextView
+            android:id="@+id/download_plans"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/download_plans"
+            app:layout_constraintStart_toEndOf="@+id/divider8"
+            app:layout_constraintTop_toBottomOf="@+id/divider12" />
+
+        <View
+            android:id="@+id/divider13"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintTop_toBottomOf="@+id/download_plans"
+            app:layout_constraintStart_toEndOf="@+id/divider8" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/plans_rv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@+id/divider8"
+            app:layout_constraintTop_toBottomOf="@+id/divider13" />
+
+<!--        <com.google.android.gms.maps.MapView-->
+<!--            android:id="@+id/mapView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="200dp"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:layout_marginEnd="8dp"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/divider10"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/divider8"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/divider13" />-->
+
+        <View
+            android:id="@+id/divider9"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/divider10"
+            app:layout_constraintStart_toEndOf="@+id/divider8"
+            app:layout_constraintTop_toBottomOf="@+id/divider8" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

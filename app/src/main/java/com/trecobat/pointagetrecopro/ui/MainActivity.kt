@@ -9,6 +9,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.trecobat.pointagetrecopro.R
 import com.trecobat.pointagetrecopro.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -24,6 +26,5 @@ class MainActivity : AppCompatActivity() {
 
         val appBarConfiguration: AppBarConfiguration = AppBarConfiguration(navController.graph)
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
-
     }
 }

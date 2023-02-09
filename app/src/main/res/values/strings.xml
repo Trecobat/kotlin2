@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Pointage</string>
     <string name="TextView">TextView</string>
+    <string name="Du">Du</string>
+    <string name="au">au</string>
+    <string name="Masquer">Masquer</string>
+    <string name="download_plans">TÉLÉCHARGER LES PLANS</string>
 </resources>
