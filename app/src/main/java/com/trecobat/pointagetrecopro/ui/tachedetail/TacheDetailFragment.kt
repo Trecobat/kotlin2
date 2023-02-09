@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.trecobat.pointagetrecopro.R
 import com.trecobat.pointagetrecopro.data.entities.Tache
 import com.trecobat.pointagetrecopro.databinding.TacheDetailFragmentBinding
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.formatDate
@@ -27,7 +29,8 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
     private lateinit var adapter: PlansAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = TacheDetailFragmentBinding.inflate(inflater, container, false)
