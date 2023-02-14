@@ -30,11 +30,18 @@
         <action
             android:id="@+id/action_tachesFragment_to_tacheDetailFragment"
             app:destination="@id/tacheDetailFragment" />
+        <action
+            android:id="@+id/action_tachesFragment_refresh"
+            app:destination="@id/tachesFragment" />
 
     </fragment>
     <fragment
         android:id="@+id/tacheDetailFragment"
         android:name="com.trecobat.pointagetrecopro.ui.tachedetail.TacheDetailFragment"
         android:label="Tache Detail"
-        tools:layout="@layout/tache_detail_fragment" />
+        tools:layout="@layout/tache_detail_fragment" >
+        <action
+            android:id="@+id/action_tacheDetailFragment_refresh"
+            app:destination="@id/tacheDetailFragment" />
+    </fragment>
 </navigation>

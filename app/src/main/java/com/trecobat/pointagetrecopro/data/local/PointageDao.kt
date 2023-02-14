@@ -11,7 +11,7 @@ import com.trecobat.pointagetrecopro.data.entities.Pointage
 interface PointageDao {
 
     @Query("SELECT * FROM pointages")
-    fun getAllPointages() : LiveData<List<Pointage>>
+    fun getAllPointages(): LiveData<List<Pointage>>
 
     @Query("SELECT * FROM pointages WHERE poi_id = :id")
     fun getPointage(id: Int): LiveData<Pointage>
@@ -21,6 +21,4 @@ interface PointageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(pointage: Pointage)
-
-
 }

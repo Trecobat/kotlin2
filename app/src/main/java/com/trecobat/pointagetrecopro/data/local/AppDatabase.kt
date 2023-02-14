@@ -21,7 +21,7 @@ import com.trecobat.pointagetrecopro.data.entities.*
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun pointageDao(): PointageDao
-    abstract fun chantierDao(): TacheDao
+    abstract fun tacheDao(): TacheDao
     companion object {
         @Volatile private var instance: AppDatabase? = null
 

@@ -9,5 +9,6 @@ data class GedFiles(
     val gdf_obj_id: Int,
     val gdf_type: String,
     val gdf_cat_label: String,
-    val gdf_tache_id: Int
+    val gdf_tache_id: Int,
+    val local_storage: String?
 )

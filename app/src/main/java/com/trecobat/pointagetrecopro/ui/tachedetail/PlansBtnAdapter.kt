@@ -4,21 +4,18 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.trecobat.pointagetrecopro.R
 import com.trecobat.pointagetrecopro.data.entities.GedFiles
-import com.trecobat.pointagetrecopro.databinding.ItemPlanBinding
-import kotlinx.android.synthetic.main.item_plan.view.*
-import timber.log.Timber
+import com.trecobat.pointagetrecopro.data.entities.Pointage
+import com.trecobat.pointagetrecopro.databinding.ItemPlanBtnBinding
+import kotlinx.android.synthetic.main.item_plan_btn.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
 class PlansAdapter(private val listener: PlanItemListener) : RecyclerView.Adapter<PlanViewHolder>() {
 
     interface PlanItemListener {
-        fun onClickedPlan(gdf_fo_id: String)
+        fun onClickedPlan(ged_file: GedFiles)
     }
 
     private val items = ArrayList<GedFiles>()
@@ -30,7 +27,7 @@ class PlansAdapter(private val listener: PlanItemListener) : RecyclerView.Adapte
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlanViewHolder {
-        val binding: ItemPlanBinding = ItemPlanBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding: ItemPlanBtnBinding = ItemPlanBtnBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PlanViewHolder(binding, listener)
     }
 
@@ -39,7 +36,7 @@ class PlansAdapter(private val listener: PlanItemListener) : RecyclerView.Adapte
     override fun onBindViewHolder(holder: PlanViewHolder, position: Int) = holder.bind(items[position])
 }
 
-class PlanViewHolder(private val itemBinding: ItemPlanBinding, private val listener: PlansAdapter.PlanItemListener) : RecyclerView.ViewHolder(itemBinding.root),
+class PlanViewHolder(private val itemBinding: ItemPlanBtnBinding, private val listener: PlansAdapter.PlanItemListener) : RecyclerView.ViewHolder(itemBinding.root),
     View.OnClickListener {
 
     private lateinit var plan: GedFiles
@@ -56,7 +53,7 @@ class PlanViewHolder(private val itemBinding: ItemPlanBinding, private val liste
     }
 
     override fun onClick(v: View?) {
-        listener.onClickedPlan(plan.gdf_fo_id)
+        listener.onClickedPlan(plan)
     }
 }
 

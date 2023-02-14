@@ -11,11 +11,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.trecobat.pointagetrecopro.R
 import com.trecobat.pointagetrecopro.databinding.TachesFragmentBinding
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.tache_detail_fragment.*
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -26,7 +28,8 @@ class TachesFragment : Fragment(), TachesAdapter.TacheItemListener {
     private lateinit var adapter: TachesAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = TachesFragmentBinding.inflate(inflater, container, false)
@@ -37,6 +40,12 @@ class TachesFragment : Fragment(), TachesAdapter.TacheItemListener {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupObservers()
+        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            findNavController().navigate(
+                R.id.action_tachesFragment_refresh
+            )
+        }
     }
 
     private fun setupRecyclerView() {
@@ -63,6 +72,8 @@ class TachesFragment : Fragment(), TachesAdapter.TacheItemListener {
     }
 
     override fun onClickedTache(tacheId: Int) {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.tachesRv.visibility = View.GONE
         findNavController().navigate(
             R.id.action_tachesFragment_to_tacheDetailFragment,
             bundleOf("id" to tacheId)

@@ -2,7 +2,9 @@ package com.trecobat.pointagetrecopro.data.remote.pointage
 
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface PointageService {
@@ -11,4 +13,7 @@ interface PointageService {
 
     @GET("pointageTrecopro/pointages/{id}")
     suspend fun getPointage(@Path("id") id: Int): Response<Pointage>
+
+    @POST("pointageTrecopro/pointages")
+    suspend fun postPointage(@Body data: Pointage): Response<Pointage>
 }

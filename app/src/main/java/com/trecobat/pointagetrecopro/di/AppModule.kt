@@ -64,7 +64,7 @@ object AppModule {
     fun provideChantierataSource(chantierService: TacheService) = TacheDataSource(chantierService)
     @Singleton
     @Provides
-    fun provideChantierDao(db: AppDatabase) = db.chantierDao()
+    fun provideTacheDao(db: AppDatabase) = db.tacheDao()
     @Singleton
     @Provides
     fun provideChantierRepository(remoteDataSource: TacheDataSource,

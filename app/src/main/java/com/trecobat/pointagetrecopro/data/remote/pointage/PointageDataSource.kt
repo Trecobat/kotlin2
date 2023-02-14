@@ -1,5 +1,6 @@
 package com.trecobat.pointagetrecopro.data.remote.pointage
 
+import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.remote.BaseDataSource
 import javax.inject.Inject
 
@@ -9,4 +10,5 @@ class PointageDataSource @Inject constructor(
 
     suspend fun getPointages() = getResult { pointageService.getAllPointages() }
     suspend fun getPointage(id: Int) = getResult { pointageService.getPointage(id) }
+    suspend fun postPointage(data: Pointage) = getResult { pointageService.postPointage(data) }
 }
