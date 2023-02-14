@@ -6,11 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import com.trecobat.pointagetrecopro.data.entities.Pointage
-import com.trecobat.pointagetrecopro.data.repository.PointageRepository
+import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import com.trecobat.pointagetrecopro.utils.Resource
 
 class PointageDetailViewModel @ViewModelInject constructor(
-    private val repository: PointageRepository
+    private val repository: MyRepository
 ) : ViewModel() {
 
     private val _id = MutableLiveData<Int>()

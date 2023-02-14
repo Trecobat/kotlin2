@@ -1,12 +1,16 @@
 package com.trecobat.pointagetrecopro.data.remote
 
+import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.utils.Resource
 import retrofit2.Response
 import timber.log.Timber
+import javax.inject.Inject
 
-abstract class BaseDataSource {
+class BaseDataSource @Inject constructor(
+    private val myService: MyService
+) {
 
-    protected suspend fun <T> getResult(call: suspend () -> Response<T>): Resource<T> {
+    private suspend fun <T> getResult(call: suspend () -> Response<T>): Resource<T> {
         try {
             val response = call()
             if (response.isSuccessful) {
@@ -24,4 +28,13 @@ abstract class BaseDataSource {
         return Resource.error("Network call has failed for a following reason: $message")
     }
 
+    /***** POINTAGE *****/
+    suspend fun getPointages() = getResult { myService.getAllPointages() }
+    suspend fun getPointage(id: Int) = getResult { myService.getPointage(id) }
+    suspend fun postPointage(data: Pointage) = getResult { myService.postPointage(data) }
+
+    /***** TACHE *****/
+    suspend fun getTaches() = getResult { myService.getAllTaches() }
+    suspend fun getTache(id: Int) = getResult { myService.getTache(id) }
+    suspend fun getFilesOfTache(id: Int) = getResult { myService.getFilesOfTache(id) }
 }

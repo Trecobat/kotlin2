@@ -3,7 +3,8 @@ package com.trecobat.pointagetrecopro.utils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
-import com.trecobat.pointagetrecopro.utils.Resource.Status.*
+import com.trecobat.pointagetrecopro.utils.Resource.Status.ERROR
+import com.trecobat.pointagetrecopro.utils.Resource.Status.SUCCESS
 import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 
@@ -40,7 +41,6 @@ fun <A> performPostOperation(
             Timber.i("performPostOperation SUCCESS")
             saveCallResult(responseStatus.data!!)
             emit(Resource.success(null))
-
         } else if (responseStatus.status == ERROR) {
             Timber.i("performPostOperation ERROR")
             emit(Resource.error(responseStatus.message!!))

@@ -16,12 +16,12 @@ import com.trecobat.pointagetrecopro.data.entities.*
     Site::class,
     Tache::class,
     UsersTreco::class,
-    GedFiles::class
-], version = 1, exportSchema = false)
+    GedFiles::class,
+    PendingRequest::class
+], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun pointageDao(): PointageDao
-    abstract fun tacheDao(): TacheDao
+    abstract fun myDao(): MyDao
     companion object {
         @Volatile private var instance: AppDatabase? = null
 

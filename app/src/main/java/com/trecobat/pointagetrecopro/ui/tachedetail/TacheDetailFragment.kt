@@ -18,14 +18,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.trecobat.pointagetrecopro.R
 import com.trecobat.pointagetrecopro.data.entities.GedFiles
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.entities.Tache
 import com.trecobat.pointagetrecopro.data.local.AppDatabase
-import com.trecobat.pointagetrecopro.data.remote.pointage.PointageService
-import com.trecobat.pointagetrecopro.data.repository.PointageRepository
 import com.trecobat.pointagetrecopro.databinding.TacheDetailFragmentBinding
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.formatDate
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getTime
@@ -42,7 +39,6 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.net.URL
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
@@ -221,7 +217,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
                     }
 
                     if (ged_file.local_storage == null) {
-                        AppDatabase.getDatabase(requireContext()).tacheDao()
+                        AppDatabase.getDatabase(requireContext()).myDao()
                             .updateLocalStorage(ged_file.gdf_fo_id, file.absolutePath)
                     }
 

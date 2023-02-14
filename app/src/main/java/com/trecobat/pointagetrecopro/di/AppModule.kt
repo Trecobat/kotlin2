@@ -4,14 +4,10 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.trecobat.pointagetrecopro.data.local.AppDatabase
-import com.trecobat.pointagetrecopro.data.local.TacheDao
-import com.trecobat.pointagetrecopro.data.local.PointageDao
-import com.trecobat.pointagetrecopro.data.remote.chantier.TacheDataSource
-import com.trecobat.pointagetrecopro.data.remote.chantier.TacheService
-import com.trecobat.pointagetrecopro.data.remote.pointage.PointageDataSource
-import com.trecobat.pointagetrecopro.data.remote.pointage.PointageService
-import com.trecobat.pointagetrecopro.data.repository.TacheRepository
-import com.trecobat.pointagetrecopro.data.repository.PointageRepository
+import com.trecobat.pointagetrecopro.data.local.MyDao
+import com.trecobat.pointagetrecopro.data.remote.BaseDataSource
+import com.trecobat.pointagetrecopro.data.remote.MyService
+import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,37 +35,18 @@ object AppModule {
     @Provides
     fun provideGson(): Gson = GsonBuilder().create()
 
-    /*********************************************POINTAGE*********************************************************/
     @Provides
-    fun providePointageService(retrofit: Retrofit): PointageService = retrofit.create(PointageService::class.java)
+    fun provideService(retrofit: Retrofit): MyService = retrofit.create(MyService::class.java)
     @Singleton
     @Provides
-    fun providePointageDataSource(pointageService: PointageService) = PointageDataSource(pointageService)
+    fun provideDataSource(myService: MyService) = BaseDataSource(myService)
     @Singleton
     @Provides
-    fun providePointageDao(db: AppDatabase) = db.pointageDao()
+    fun provideDao(db: AppDatabase) = db.myDao()
     @Singleton
     @Provides
-    fun providePointageRepository(remoteDataSource: PointageDataSource,
-                          localDataSource: PointageDao
+    fun provideRepository(remoteDataSource: BaseDataSource,
+                          localDataSource: MyDao
     ) =
-        PointageRepository(remoteDataSource, localDataSource)
-    /*******************************************FIN POINTAGE********************************************************/
-
-    /*********************************************CHANTIER**********************************************************/
-    @Provides
-    fun provideChantierService(retrofit: Retrofit): TacheService = retrofit.create(TacheService::class.java)
-    @Singleton
-    @Provides
-    fun provideChantierataSource(chantierService: TacheService) = TacheDataSource(chantierService)
-    @Singleton
-    @Provides
-    fun provideTacheDao(db: AppDatabase) = db.tacheDao()
-    @Singleton
-    @Provides
-    fun provideChantierRepository(remoteDataSource: TacheDataSource,
-                                  localDataSource: TacheDao
-    ) =
-        TacheRepository(remoteDataSource, localDataSource)
-    /*******************************************FIN CHANTIER********************************************************/
+        MyRepository(remoteDataSource, localDataSource)
 }
