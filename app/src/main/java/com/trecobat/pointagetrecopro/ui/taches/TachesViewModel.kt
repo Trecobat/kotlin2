@@ -12,4 +12,8 @@ class TachesViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     val taches = refreshData()
+
+    private fun refreshData(): LiveData<Resource<List<Tache>>> {
+        return repository.getTaches()
+    }
 }

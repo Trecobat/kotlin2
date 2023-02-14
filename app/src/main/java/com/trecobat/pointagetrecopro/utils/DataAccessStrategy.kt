@@ -44,5 +44,7 @@ fun <A> performPostOperation(
         } else if (responseStatus.status == ERROR) {
             Timber.i("performPostOperation ERROR")
             emit(Resource.error(responseStatus.message!!))
+        } else {
+            Timber.i("performPostOperation ni SUCCESS ni ERROR")
         }
     }

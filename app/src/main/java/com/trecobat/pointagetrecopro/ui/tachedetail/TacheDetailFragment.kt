@@ -64,12 +64,12 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
         arguments?.getInt("id")?.let { viewModel.start(it) }
         setupRecyclerView()
         setupObservers()
-        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
-        swipeRefreshLayout.setOnRefreshListener {
-            findNavController().navigate(
-                R.id.action_tacheDetailFragment_refresh
-            )
-        }
+//        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayoutTacheDetailFragment)
+//        swipeRefreshLayout.setOnRefreshListener {
+//            findNavController().navigate(
+//                R.id.action_tachesFragment_refresh
+//            )
+//        }
     }
 
     private fun setupRecyclerView() {
