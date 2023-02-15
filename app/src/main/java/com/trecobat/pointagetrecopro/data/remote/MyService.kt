@@ -1,8 +1,6 @@
 package com.trecobat.pointagetrecopro.data.remote
 
-import com.trecobat.pointagetrecopro.data.entities.GedFiles
-import com.trecobat.pointagetrecopro.data.entities.Pointage
-import com.trecobat.pointagetrecopro.data.entities.Tache
+import com.trecobat.pointagetrecopro.data.entities.*
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -24,9 +22,16 @@ interface MyService {
     @GET("pointageTrecopro/pointages")
     suspend fun getAllPointages() : Response<List<Pointage>>
 
+    @GET("pointageTrecopro/bdct")
+    suspend fun getAllBdct() : Response<List<BdcType>>
+
     @GET("pointageTrecopro/pointages/{id}")
     suspend fun getPointage(@Path("id") id: Int): Response<Pointage>
 
     @POST("pointageTrecopro/pointages")
     suspend fun postPointage(@Body data: Pointage): Response<Pointage>
+
+    /***** Equipiers *****/
+    @GET("pointageTrecopro/equipiers")
+    suspend fun getAllEquipiers(): Response<List<Equipier>>
 }

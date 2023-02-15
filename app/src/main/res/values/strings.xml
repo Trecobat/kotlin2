@@ -6,4 +6,15 @@
     <string name="Masquer">Masquer</string>
     <string name="download_plans">TÉLÉCHARGER LES PLANS</string>
     <string name="pointer">Pointer</string>
+    <string name="Hdeb">Hdeb</string>
+    <string name="Hfin">Hfin</string>
+    <string name="Type">Type</string>
+    <string name="Commentaire">Commentaire</string>
+    <string name="coffret_elec">Coffret</string>
+    <string name="remblais">Remblais</string>
+    <string name="Date">Date</string>
+    <string name="slash">/</string>
+    <string name="double_points">:</string>
+    <string name="Valider">Valider</string>
+    <string name="equipe_complete">Equipe Complete</string>
 </resources>

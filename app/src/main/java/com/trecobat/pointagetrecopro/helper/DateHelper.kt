@@ -14,34 +14,52 @@ class DateHelper {
             return textToDate?.let { outputFormat.format(it) }
         }
 
+        fun getDateTime(twoDigits: Boolean = false): String {
+            return "${getDate(twoDigits)} ${getHour()}"
+        }
+
+        fun getDate(twoDigits: Boolean = false): String {
+            return "${getYear(twoDigits)}-${getMonth()}-${getDay()}"
+        }
+
+        fun getDay(): String {
+            val calendar = Calendar.getInstance()
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            return if ( day < 10 ) "0$day" else "$day"
+        }
+
+        fun getMonth(): String {
+            val calendar = Calendar.getInstance()
+            val month = calendar.get(Calendar.MONTH)
+
+            return if ( month < 10 ) "0$month" else "$month"
+        }
+
+        fun getYear(twoDigits: Boolean = false): String {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+
+            return if ( twoDigits ) year.toString().substring(2) else "$year"
+        }
+
         fun getTime(): String {
-            val calendar = Calendar.getInstance()
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
-            val month = calendar.get(Calendar.MONTH)
-            val year = calendar.get(Calendar.YEAR)
-            val hour = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
-            val second = calendar.get(Calendar.SECOND)
-
-            return "$year-$month-$day $hour:$minute:$second"
+            return "${getHour()}:${getMinute()}:${getSecond()}"
         }
 
-        fun getDate(): String {
+        fun getHour(): Int {
             val calendar = Calendar.getInstance()
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
-            val month = calendar.get(Calendar.MONTH)
-            val year = calendar.get(Calendar.YEAR)
-
-            return "$year-$month-$day"
+            return calendar.get(Calendar.HOUR_OF_DAY)
         }
 
-        fun getHour(): String {
+        fun getMinute(): Int {
             val calendar = Calendar.getInstance()
-            val hour = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
-            val second = calendar.get(Calendar.SECOND)
+            return calendar.get(Calendar.MINUTE)
+        }
 
-            return "$hour:$minute:$second"
+        fun getSecond(): Int {
+            val calendar = Calendar.getInstance()
+            return calendar.get(Calendar.SECOND)
         }
     }
 }

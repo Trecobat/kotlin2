@@ -11,7 +11,7 @@ import com.trecobat.pointagetrecopro.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 
-class MyRepository (
+class MyRepository(
     private val remoteDataSource: BaseDataSource,
     private val localDataSource: MyDao
 ) {
@@ -39,6 +39,15 @@ class MyRepository (
         saveCallResult = { localDataSource.insertPointage(it) }
     )
 
+    suspend fun insertPointage(data: Pointage) = localDataSource.insertPointage(data)
+
+    fun getEquipiers(equipe: Int = 0) = performGetOperation(
+//        databaseQuery = { localDataSource.getAllEquipiers(equipe) },
+        databaseQuery = { localDataSource.getAllEquipiers() },
+        networkCall = { remoteDataSource.getEquipiers() },
+        saveCallResult = { localDataSource.insertAllEquipiers(it) }
+    )
+
     /***** TACHE *****/
     fun getTache(id: Int) = performGetOperation(
         databaseQuery = { localDataSource.getTache(id) },
@@ -52,12 +61,17 @@ class MyRepository (
         saveCallResult = { localDataSource.insertAllTaches(it) }
     )
 
+    fun getBdcts() = performGetOperation(
+        databaseQuery = { localDataSource.getAllBdcts() },
+        networkCall = { remoteDataSource.getBdcts() },
+        saveCallResult = { localDataSource.insertAllBdcts(it) }
+    )
+
     fun getFilesOfTache(id: Int) = performGetOperation(
         databaseQuery = { localDataSource.getFilesOfTache(id) },
         networkCall = { remoteDataSource.getFilesOfTache(id) },
         saveCallResult = { localDataSource.insertAllFiles(it) }
     )
-
 
 
     private fun <T, A> performGetOperation(

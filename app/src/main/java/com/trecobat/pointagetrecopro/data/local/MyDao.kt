@@ -2,10 +2,7 @@ package com.trecobat.pointagetrecopro.data.local
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.trecobat.pointagetrecopro.data.entities.GedFiles
-import com.trecobat.pointagetrecopro.data.entities.PendingRequest
-import com.trecobat.pointagetrecopro.data.entities.Pointage
-import com.trecobat.pointagetrecopro.data.entities.Tache
+import com.trecobat.pointagetrecopro.data.entities.*
 
 @Dao
 interface MyDao {
@@ -24,6 +21,9 @@ interface MyDao {
     @Query("SELECT * FROM pointages")
     fun getAllPointages(): LiveData<List<Pointage>>
 
+    @Query("SELECT * FROM bdc_type")
+    fun getAllBdcts(): LiveData<List<BdcType>>
+
     @Query("SELECT * FROM pointages WHERE poi_id = :id")
     fun getPointage(id: Int): LiveData<Pointage>
 
@@ -31,7 +31,19 @@ interface MyDao {
     suspend fun insertAllPointages(pointages: List<Pointage>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllBdcts(bdc_types: List<BdcType>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPointage(pointage: Pointage)
+
+//    @Query("SELECT *, IF(equipiers.eevp_eqvp_id = :equipe, 1, 0) AS equipe FROM equipiers ORDER BY equipe")
+//    fun getAllEquipiers(equipe: Int = 0): LiveData<List<Equipier>>
+
+    @Query("SELECT * FROM equipiers ORDER BY eevp_prenom")
+    fun getAllEquipiers(): LiveData<List<Equipier>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllEquipiers(equipiers: List<Equipier>)
 
     /***** TACHE *****/
     @Query("SELECT * FROM taches")

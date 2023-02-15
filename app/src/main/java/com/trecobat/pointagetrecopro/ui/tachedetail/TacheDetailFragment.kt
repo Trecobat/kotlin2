@@ -9,7 +9,7 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
@@ -24,13 +24,21 @@ import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.entities.Tache
 import com.trecobat.pointagetrecopro.data.local.AppDatabase
 import com.trecobat.pointagetrecopro.databinding.TacheDetailFragmentBinding
+import com.trecobat.pointagetrecopro.helper.DateHelper
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.formatDate
+import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getDay
+import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getHour
+import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getMinute
+import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getMonth
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getTime
+import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getYear
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.item_pointage.*
 import kotlinx.android.synthetic.main.item_tache.*
 import kotlinx.android.synthetic.main.tache_detail_fragment.*
+import kotlinx.android.synthetic.main.tache_detail_fragment.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -39,6 +47,8 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.net.URL
+import java.util.*
+
 
 @AndroidEntryPoint
 class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
@@ -80,6 +90,12 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
                 Resource.Status.SUCCESS -> {
                     bindTache(it.data!!)
                     binding.progressBar.visibility = View.GONE
+                    binding.jour.visibility = View.GONE
+                    binding.validerJour.visibility = View.GONE
+                    binding.heureDeb.visibility = View.GONE
+                    binding.validerHeureDeb.visibility = View.GONE
+                    binding.heureFin.visibility = View.GONE
+                    binding.validerHeureFin.visibility = View.GONE
                     binding.tacheCl.visibility = View.VISIBLE
                 }
 
@@ -94,14 +110,11 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
         })
 
         viewModel.gedFiles.observe(viewLifecycleOwner, Observer {
-            Timber.i("ged_files observer")
-            Timber.d(it.toString())
             when (it.status) {
                 Resource.Status.SUCCESS -> {
-                    if (!it.data.isNullOrEmpty()) Timber.d(it.toString()) else Timber.e("Y'a pas de data")
                     if (!it.data.isNullOrEmpty()) adapter.setItems(ArrayList(it.data))
                     binding.progressBar.visibility = View.GONE
-                    binding.tacheCl.visibility = View.VISIBLE
+//                    binding.plansRv.visibility = View.VISIBLE
                 }
 
                 Resource.Status.ERROR -> {
@@ -111,7 +124,29 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
 
                 Resource.Status.LOADING -> {
                     binding.progressBar.visibility = View.VISIBLE
-                    binding.tacheCl.visibility = View.GONE
+                    binding.plansRv.visibility = View.GONE
+                }
+            }
+        })
+
+        viewModel.corpsEtat.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Resource.Status.SUCCESS -> {
+                    if (!it.data.isNullOrEmpty()) {
+                        val bdct = it.data.map { it.bdct_label }
+                        val adapterBdct = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, bdct)
+                        adapterBdct.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        binding.corpsEtat.adapter = adapterBdct
+                    }
+                }
+
+                Resource.Status.ERROR -> {
+                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    Timber.e(it.message)
+                }
+
+                Resource.Status.LOADING -> {
+
                 }
             }
         })
@@ -130,9 +165,172 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
             if (tache.affaire.client.cli_adresse2_chantier != null) " - ${tache.affaire.client.cli_adresse2_chantier}" else ""
         binding.cliCpChantier.text = tache.affaire.client.cli_cp_chantier
         binding.cliVilleChantier.text = tache.affaire.client.cli_ville_chantier
-        binding.pointage.text = "Pointer ${if ( tache.nb_pointage.rem(2) == 0 ) "arrivé" else " départ"}"
+        binding.buttonJour.text = "${getDay()}/${getMonth()}/${getYear(true)}"
+        val heure = "${getHour()}:${getMinute()}"
+        binding.buttonHeureDeb.text = heure
+        binding.buttonHeureFin.text = heure
+        binding.equipiers.visibility = View.GONE
 
-        binding.pointage.setOnClickListener { pointer(tache) }
+        setupSpinners()
+        setupDatePicker()
+        setupTimesPicker()
+        setupCheckboxEquipe()
+
+        binding.pointageBtn.setOnClickListener { pointer(tache) }
+    }
+
+    private fun setupCheckboxEquipe()
+    {
+        binding.equipe.setOnCheckedChangeListener { _, isChecked ->
+            if ( isChecked ) {
+                Timber.d("Je passe par là avant une action humaine")
+                binding.equipiers.visibility = View.GONE
+            } else {
+                viewModel.getEquipiers(5).observe(viewLifecycleOwner, Observer {
+                    Timber.e(it.toString())
+                    when (it.status) {
+                        Resource.Status.SUCCESS -> {
+                            if (!it.data.isNullOrEmpty()) {
+                                val equipier = it.data.map { "${it.eevp_prenom ?: ""} ${it.eevp_nom ?: ""}" }
+                                val adapterEquipiers = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, equipier)
+                                adapterEquipiers.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                                binding.equipiers.adapter = adapterEquipiers
+                            }
+                        }
+
+                        Resource.Status.ERROR -> {
+                            Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                            Timber.e("Erreur lors de la récupération des equipiers : ${it.message}")
+                        }
+
+                        Resource.Status.LOADING -> {
+
+                        }
+                    }
+                })
+                binding.equipiers.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setupDatePicker()
+    {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        binding.buttonJour.setOnClickListener {
+            binding.jour.visibility = View.VISIBLE
+            binding.validerJour.visibility = View.VISIBLE
+            binding.pointageBtn.visibility = View.GONE
+        }
+
+        binding.jour.init(year, month, day, null)
+        binding.jour.setOnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
+            var text = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
+            text +="/"
+            text += if (monthOfYear < 10) "0${monthOfYear + 1}" else "${monthOfYear + 1}"
+            text +="/${year.toString().substring(2)}"
+            binding.buttonJour.text =  text
+        }
+        binding.jour.bringToFront()
+
+
+        binding.validerJour.setOnClickListener {
+            binding.jour.visibility = View.GONE
+            binding.validerJour.visibility = View.GONE
+            binding.pointageBtn.visibility = View.VISIBLE
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setupTimesPicker()
+    {
+        // HEURE DEBUT
+        binding.buttonHeureDeb.setOnClickListener {
+            binding.heureDeb.visibility = View.VISIBLE
+            binding.validerHeureDeb.visibility = View.VISIBLE
+            binding.pointageBtn.visibility = View.GONE
+        }
+
+        binding.validerHeureDeb.setOnClickListener {
+            binding.heureDeb.visibility = View.GONE
+            binding.validerHeureDeb.visibility = View.GONE
+            binding.pointageBtn.visibility = View.VISIBLE
+        }
+
+        binding.heureDeb.hour = DateHelper.getHour()
+        binding.heureDeb.minute = DateHelper.getMinute()
+        binding.heureDeb.setIs24HourView(true)
+        binding.heureDeb.setOnTimeChangedListener { _, hourOfDay, minute ->
+            var text = if (hourOfDay < 10) "0$hourOfDay" else "$hourOfDay"
+            text += ":"
+            text += if (minute < 10) "0$minute" else "$minute"
+            binding.buttonHeureDeb.text = text
+        }
+        binding.heureDeb.bringToFront()
+
+        // HEURE FIN
+        binding.buttonHeureFin.setOnClickListener {
+            binding.heureFin.visibility = View.VISIBLE
+            binding.validerHeureFin.visibility = View.VISIBLE
+            binding.pointageBtn.visibility = View.GONE
+        }
+
+        binding.validerHeureFin.setOnClickListener {
+            binding.heureFin.visibility = View.GONE
+            binding.validerHeureFin.visibility = View.GONE
+            binding.pointageBtn.visibility = View.VISIBLE
+        }
+
+        binding.heureFin.hour = DateHelper.getHour()
+        binding.heureFin.minute = DateHelper.getMinute()
+        binding.heureFin.setIs24HourView(true)
+        binding.heureFin.setOnTimeChangedListener { _, hourOfDay, minute ->
+            var text = if (hourOfDay < 10) "0$hourOfDay" else "$hourOfDay"
+            text += ":"
+            text += if (minute < 10) "0$minute" else "$minute"
+            binding.buttonHeureFin.text = text
+        }
+        binding.heureFin.bringToFront()
+    }
+
+    private fun setupSpinners()
+    {
+        // Type de pointage
+        val valuesTypePointage = listOf("Marché", "TS", "SAV")
+        val adapterTypePointage = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, valuesTypePointage)
+        adapterTypePointage.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.typePointage.adapter = adapterTypePointage
+
+        binding.typePointage.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedValue = valuesTypePointage[position]
+                if ( selectedValue == "Marché" ) {
+                    binding.coffretElec.visibility = View.VISIBLE
+                    binding.remblais.visibility = View.VISIBLE
+                    binding.corpsEtat.visibility = View.GONE
+                    binding.natureErreur.visibility = View.GONE
+                } else {
+                    binding.coffretElec.visibility = View.GONE
+                    binding.remblais.visibility = View.GONE
+                    binding.corpsEtat.visibility = View.VISIBLE
+                    binding.natureErreur.visibility = View.VISIBLE
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
+        }
+
+        // Nature de l'erreur
+        val valuesNatureErreur = listOf("Erreur artisan", "Erreur Métreur", "Erreur Dessinateur", "Erreur Conducteur", "Erreur Fournisseur")
+        val adapterNatureErreur = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, valuesNatureErreur)
+        adapterNatureErreur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.natureErreur.adapter = adapterNatureErreur
     }
 
     private fun pointer(tache: Tache) {

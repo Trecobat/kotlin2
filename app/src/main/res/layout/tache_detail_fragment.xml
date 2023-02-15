@@ -16,242 +16,472 @@
         android:indeterminate="true"
         tools:visibility="gone" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/tache_cl"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <View
-            android:id="@+id/divider7"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/tache_cl"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content">
 
-        <View
-            android:id="@+id/divider8"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/divider7"
-            app:layout_constraintTop_toTopOf="parent" />
+            <DatePicker
+                android:id="@+id/jour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="#FFFFFF"
+                android:padding="10dp"
+                app:layout_constraintEnd_toStartOf="@+id/divider10"
+                app:layout_constraintStart_toStartOf="@+id/divider8"
+                app:layout_constraintTop_toTopOf="@+id/divider7"
+                tools:visibility="gone" />
 
-        <View
-            android:id="@+id/divider10"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/divider7"
-            app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/validerJour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/Valider"
+                app:layout_constraintEnd_toEndOf="@+id/jour"
+                app:layout_constraintTop_toBottomOf="@+id/jour"
+                tools:visibility="gone" />
 
-        <TextView
-            android:id="@+id/cli_nom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/TextView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/divider7" />
+            <TimePicker
+                android:id="@+id/heureDeb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="#FFFFFF"
+                android:padding="10dp"
+                app:layout_constraintEnd_toStartOf="@+id/divider10"
+                app:layout_constraintStart_toStartOf="@+id/divider8"
+                app:layout_constraintTop_toTopOf="@+id/divider7"
+                tools:visibility="gone" />
 
-        <TextView
-            android:id="@+id/aff_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/TextView"
-            app:layout_constraintStart_toEndOf="@+id/cli_nom"
-            app:layout_constraintTop_toTopOf="@+id/divider7" />
+            <Button
+                android:id="@+id/validerHeureDeb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/Valider"
+                app:layout_constraintEnd_toEndOf="@+id/heureDeb"
+                app:layout_constraintTop_toBottomOf="@+id/heureDeb"
+                tools:visibility="gone" />
 
-        <TextView
-            android:id="@+id/bdct_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/TextView"
-            app:layout_constraintStart_toEndOf="@+id/aff_id"
-            app:layout_constraintTop_toTopOf="@+id/divider7" />
+            <TimePicker
+                android:id="@+id/heureFin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="#FFFFFF"
+                android:padding="10dp"
+                app:layout_constraintEnd_toStartOf="@+id/divider10"
+                app:layout_constraintStart_toStartOf="@+id/divider8"
+                app:layout_constraintTop_toTopOf="@+id/divider7"
+                tools:visibility="gone" />
 
-        <View
-            android:id="@+id/divider11"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintTop_toBottomOf="@+id/cli_nom"
-            app:layout_constraintStart_toEndOf="@+id/divider8" />
+            <Button
+                android:id="@+id/validerHeureFin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/Valider"
+                app:layout_constraintEnd_toEndOf="@+id/heureFin"
+                app:layout_constraintTop_toBottomOf="@+id/heureFin"
+                tools:visibility="gone" />
 
-        <TextView
-            android:id="@+id/du"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/Du"
-            app:layout_constraintStart_toEndOf="@+id/divider8"
-            app:layout_constraintTop_toBottomOf="@+id/divider11" />
+            <View
+                android:id="@+id/divider7"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/start_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/TextView"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toEndOf="@+id/du"
-            app:layout_constraintTop_toBottomOf="@+id/divider11" />
+            <View
+                android:id="@+id/divider8"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/divider7"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/au"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/au"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toEndOf="@+id/start_date"
-            app:layout_constraintTop_toBottomOf="@+id/divider11" />
+            <View
+                android:id="@+id/divider10"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/divider7"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/end_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/TextView"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toEndOf="@+id/au"
-            app:layout_constraintTop_toBottomOf="@+id/divider11" />
+            <TextView
+                android:id="@+id/cli_nom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/TextView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/divider7" />
 
-        <TextView
-            android:id="@+id/cli_adresse1_chantier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/TextView"
-            app:layout_constraintStart_toEndOf="@+id/divider8"
-            app:layout_constraintTop_toBottomOf="@+id/du" />
+            <TextView
+                android:id="@+id/aff_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/TextView"
+                app:layout_constraintStart_toEndOf="@+id/cli_nom"
+                app:layout_constraintTop_toTopOf="@+id/divider7" />
 
-        <TextView
-            android:id="@+id/cli_adresse2_chantier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/TextView"
-            app:layout_constraintStart_toEndOf="@+id/cli_adresse1_chantier"
-            app:layout_constraintTop_toBottomOf="@+id/start_date" />
+            <TextView
+                android:id="@+id/bdct_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/TextView"
+                app:layout_constraintEnd_toEndOf="@+id/divider10"
+                app:layout_constraintTop_toTopOf="@+id/divider7" />
 
-        <TextView
-            android:id="@+id/cli_cp_chantier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
-            android:text="@string/TextView"
-            app:layout_constraintStart_toEndOf="@+id/divider8"
-            app:layout_constraintTop_toBottomOf="@+id/cli_adresse1_chantier" />
+            <View
+                android:id="@+id/divider11"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/cli_nom" />
 
-        <TextView
-            android:id="@+id/cli_ville_chantier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="2dp"
-            android:text="@string/TextView"
-            app:layout_constraintStart_toEndOf="@+id/cli_cp_chantier"
-            app:layout_constraintTop_toBottomOf="@+id/cli_adresse1_chantier" />
+            <TextView
+                android:id="@+id/du"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/Du"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/divider11" />
 
-        <View
-            android:id="@+id/divider12"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintTop_toBottomOf="@+id/cli_cp_chantier"
-            app:layout_constraintStart_toEndOf="@+id/divider8" />
+            <TextView
+                android:id="@+id/start_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/TextView"
+                app:layout_constraintStart_toEndOf="@+id/du"
+                app:layout_constraintTop_toBottomOf="@+id/divider11" />
 
-        <TextView
-            android:id="@+id/download_plans"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/download_plans"
-            app:layout_constraintStart_toEndOf="@+id/divider8"
-            app:layout_constraintTop_toBottomOf="@+id/divider12" />
+            <TextView
+                android:id="@+id/au"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/au"
+                app:layout_constraintStart_toEndOf="@+id/start_date"
+                app:layout_constraintTop_toBottomOf="@+id/divider11" />
 
-        <View
-            android:id="@+id/divider13"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintTop_toBottomOf="@+id/download_plans"
-            app:layout_constraintStart_toEndOf="@+id/divider8" />
+            <TextView
+                android:id="@+id/end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/TextView"
+                app:layout_constraintStart_toEndOf="@+id/au"
+                app:layout_constraintTop_toBottomOf="@+id/divider11" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/plans_rv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toEndOf="@+id/divider8"
-            app:layout_constraintTop_toBottomOf="@+id/divider13" />
+            <TextView
+                android:id="@+id/cli_adresse1_chantier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/TextView"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/du" />
 
-<!--        <com.google.android.gms.maps.MapView-->
-<!--            android:id="@+id/mapView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="200dp"-->
-<!--            android:layout_marginStart="8dp"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:layout_marginEnd="8dp"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/divider10"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/divider8"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/divider13" />-->
+            <TextView
+                android:id="@+id/cli_adresse2_chantier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/TextView"
+                app:layout_constraintStart_toEndOf="@+id/cli_adresse1_chantier"
+                app:layout_constraintTop_toBottomOf="@+id/start_date" />
 
-        <View
-            android:id="@+id/divider9"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/divider10"
-            app:layout_constraintStart_toEndOf="@+id/divider8"
-            app:layout_constraintTop_toBottomOf="@+id/divider8" />
+            <TextView
+                android:id="@+id/cli_cp_chantier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:text="@string/TextView"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/cli_adresse1_chantier" />
 
-        <Button
-            android:id="@+id/pointage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/pointer"
-            app:layout_constraintBottom_toTopOf="@+id/divider9"
-            app:layout_constraintEnd_toStartOf="@+id/divider10" />
+            <TextView
+                android:id="@+id/cli_ville_chantier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:text="@string/TextView"
+                app:layout_constraintStart_toEndOf="@+id/cli_cp_chantier"
+                app:layout_constraintTop_toBottomOf="@+id/cli_adresse1_chantier" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <View
+                android:id="@+id/divider12"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/cli_cp_chantier" />
 
+            <TextView
+                android:id="@+id/download_plans"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/download_plans"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/divider12" />
+
+            <View
+                android:id="@+id/divider13"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/download_plans" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/plans_rv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/divider13" />
+
+            <View
+                android:id="@+id/divider14"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toStartOf="@+id/divider10"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/plans_rv" />
+
+
+            <!--        <androidx.recyclerview.widget.RecyclerView-->
+            <!--            android:id="@+id/pointage_rv"-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:layout_marginStart="16dp"-->
+            <!--            android:layout_marginEnd="16dp"-->
+            <!--            app:layout_constraintEnd_toStartOf="@+id/divider10"-->
+            <!--            app:layout_constraintStart_toEndOf="@+id/divider8"-->
+            <!--            app:layout_constraintTop_toBottomOf="@+id/divider14" />-->
+
+            <TableLayout
+                android:id="@+id/table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toStartOf="@+id/divider10"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/divider14">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/buttonJour"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:text="" />
+
+                    <Button
+                        android:id="@+id/buttonHeureDeb"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:text="" />
+
+
+                    <Button
+                        android:id="@+id/buttonHeureFin"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:text="" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/rowMarche"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/type_pointage"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:text="@string/TextView"
+                        android:contentDescription="@string/TextView"
+                        />
+
+                    <CheckBox
+                        android:id="@+id/coffret_elec"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:text="@string/coffret_elec"
+                        android:contentDescription="@string/TextView" />
+
+                    <CheckBox
+                        android:id="@+id/remblais"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:text="@string/remblais"
+                        android:contentDescription="@string/TextView" />
+
+                    <Spinner
+                        android:id="@+id/corps_etat"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:visibility="gone"
+                        android:contentDescription="@string/TextView" />
+
+                    <Spinner
+                        android:id="@+id/nature_erreur"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:visibility="gone"
+                        android:contentDescription="@string/TextView" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <CheckBox
+                        android:id="@+id/equipe"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:checked="true"
+                        android:text="@string/equipe_complete" />
+
+                    <Spinner
+                        android:id="@+id/equipiers"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        tools:visibility="gone" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:padding="10dp"
+                        android:text="@string/Commentaire" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/commentaire"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text=""
+                    />
+                </TableRow>
+            </TableLayout>
+
+            <Button
+                android:id="@+id/pointage_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/pointer"
+                app:layout_constraintEnd_toEndOf="@+id/table"
+                app:layout_constraintTop_toBottomOf="@+id/table" />
+
+            <!--        <com.google.android.gms.maps.MapView-->
+            <!--            android:id="@+id/mapView"-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="200dp"-->
+            <!--            android:layout_marginStart="8dp"-->
+            <!--            android:layout_marginTop="8dp"-->
+            <!--            android:layout_marginEnd="8dp"-->
+            <!--            app:layout_constraintEnd_toStartOf="@+id/divider10"-->
+            <!--            app:layout_constraintStart_toEndOf="@+id/divider8"-->
+            <!--            app:layout_constraintTop_toBottomOf="@+id/divider13" />-->
+
+            <View
+                android:id="@+id/divider9"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/divider10"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/divider8" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </FrameLayout>

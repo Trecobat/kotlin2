@@ -1,11 +1,17 @@
 package com.trecobat.pointagetrecopro.ui.tachedetail
 
+import android.content.Context
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.trecobat.pointagetrecopro.data.entities.Equipier
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.entities.Tache
+import com.trecobat.pointagetrecopro.data.local.AppDatabase
 import com.trecobat.pointagetrecopro.data.repository.MyRepository
+import com.trecobat.pointagetrecopro.helper.NetworkHelper
 import com.trecobat.pointagetrecopro.utils.Resource
+import dagger.hilt.android.qualifiers.ActivityContext
 
 class TacheDetailViewModel @ViewModelInject constructor(
     private val repository: MyRepository
@@ -25,6 +31,10 @@ class TacheDetailViewModel @ViewModelInject constructor(
         repository.getFilesOfTache(id)
     }
 
+    var corpsEtat = _id.switchMap {
+        repository.getBdcts()
+    }
+
     fun start(id: Int) {
         _id.value = id
     }
@@ -35,5 +45,9 @@ class TacheDetailViewModel @ViewModelInject constructor(
 
     fun getTache(id: Int): LiveData<Resource<Tache>> {
         return repository.getTache(id)
+    }
+
+    fun getEquipiers(equipe: Int = 0): LiveData<Resource<List<Equipier>>> {
+        return repository.getEquipiers(equipe)
     }
 }

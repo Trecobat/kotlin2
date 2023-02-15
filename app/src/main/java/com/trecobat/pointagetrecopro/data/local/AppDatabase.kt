@@ -12,24 +12,26 @@ import com.trecobat.pointagetrecopro.data.entities.*
     Client::class,
     Departement::class,
     Equipe::class,
+    Equipier::class,
     Pointage::class,
     Site::class,
     Tache::class,
     UsersTreco::class,
     GedFiles::class,
     PendingRequest::class
-], version = 2, exportSchema = false)
+], version = 5, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
-
     abstract fun myDao(): MyDao
     companion object {
+        private const val DATABASE_NAME = "pointages"
+
         @Volatile private var instance: AppDatabase? = null
 
         fun getDatabase(context: Context): AppDatabase =
             instance ?: synchronized(this) { instance ?: buildDatabase(context).also { instance = it } }
 
         private fun buildDatabase(appContext: Context) =
-            Room.databaseBuilder(appContext, AppDatabase::class.java, "pointages")
+            Room.databaseBuilder(appContext, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
                 .build()
     }

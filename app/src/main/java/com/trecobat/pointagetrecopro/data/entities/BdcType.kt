@@ -29,5 +29,5 @@ data class BdcType(
     val bdct_metier: String,
     val bdct_materiaux_associe: String,
     val bdct_factures_cat_id: Int?,
-    val bdct_nb_jours_theorique_chantier: String
+    val bdct_nb_jours_theorique_chantier: String?
 )
