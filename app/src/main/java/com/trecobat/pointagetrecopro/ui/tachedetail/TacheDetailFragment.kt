@@ -4,34 +4,32 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContentProviderCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.trecobat.pointagetrecopro.R
 import com.trecobat.pointagetrecopro.data.entities.GedFiles
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.entities.Tache
 import com.trecobat.pointagetrecopro.data.local.AppDatabase
 import com.trecobat.pointagetrecopro.databinding.TacheDetailFragmentBinding
-import com.trecobat.pointagetrecopro.helper.DateHelper
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.formatDate
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getDay
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getHour
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getMinute
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getMonth
-import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getTime
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getYear
+import com.trecobat.pointagetrecopro.helper.ViewHelper
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,13 +46,16 @@ import java.io.File
 import java.io.IOException
 import java.net.URL
 import java.util.*
+import kotlin.collections.set
 
 
 @AndroidEntryPoint
-class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
+class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, PointagesAdapter.PointageItemListener {
     private var binding: TacheDetailFragmentBinding by autoCleared()
     private val viewModel: TacheDetailViewModel by viewModels()
-    private lateinit var adapter: PlansAdapter
+    private lateinit var planAdapter: PlansAdapter
+    private lateinit var pointagesAdapter: PointagesAdapter
+    private lateinit var equipiersKeys: List<Int>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,29 +70,26 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
         super.onViewCreated(view, savedInstanceState)
         arguments?.getInt("id")?.let { viewModel.start(it) }
         setupRecyclerView()
-        setupObservers()
-//        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayoutTacheDetailFragment)
-//        swipeRefreshLayout.setOnRefreshListener {
-//            findNavController().navigate(
-//                R.id.action_tachesFragment_refresh
-//            )
-//        }
+        setupObservers(view)
     }
 
     private fun setupRecyclerView() {
-        adapter = PlansAdapter(this)
+        planAdapter = PlansAdapter(this)
         binding.plansRv.layoutManager = LinearLayoutManager(requireContext())
-        binding.plansRv.adapter = adapter
+        binding.plansRv.adapter = planAdapter
+
+        pointagesAdapter = PointagesAdapter(this)
+        binding.pointagesRv.layoutManager = LinearLayoutManager(requireContext())
+        binding.pointagesRv.adapter = pointagesAdapter
     }
 
-    private fun setupObservers() {
+    private fun setupObservers(view: View) {
         viewModel.tache.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Resource.Status.SUCCESS -> {
-                    bindTache(it.data!!)
+                    bindTache(it.data!!, view)
                     binding.progressBar.visibility = View.GONE
                     binding.jour.visibility = View.GONE
-                    binding.validerJour.visibility = View.GONE
                     binding.heureDeb.visibility = View.GONE
                     binding.validerHeureDeb.visibility = View.GONE
                     binding.heureFin.visibility = View.GONE
@@ -112,14 +110,13 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
         viewModel.gedFiles.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Resource.Status.SUCCESS -> {
-                    if (!it.data.isNullOrEmpty()) adapter.setItems(ArrayList(it.data))
+                    if (!it.data.isNullOrEmpty()) planAdapter.setItems(ArrayList(it.data))
                     binding.progressBar.visibility = View.GONE
 //                    binding.plansRv.visibility = View.VISIBLE
                 }
 
                 Resource.Status.ERROR -> {
                     Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
-                    Timber.e(it.message)
                 }
 
                 Resource.Status.LOADING -> {
@@ -129,12 +126,35 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
             }
         })
 
-        viewModel.corpsEtat.observe(viewLifecycleOwner, Observer {
+        viewModel.pointages.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Resource.Status.SUCCESS -> {
+                    if (!it.data.isNullOrEmpty()) pointagesAdapter.setItems(ArrayList(it.data))
+                    binding.progressBar.visibility = View.GONE
+                    binding.pointagesRv.visibility = View.VISIBLE
+                }
+
+                Resource.Status.ERROR -> {
+                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                }
+
+                Resource.Status.LOADING -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.plansRv.visibility = View.GONE
+                }
+            }
+        })
+
+        viewModel.corpsEtat.observe(viewLifecycleOwner, Observer { it ->
             when (it.status) {
                 Resource.Status.SUCCESS -> {
                     if (!it.data.isNullOrEmpty()) {
                         val bdct = it.data.map { it.bdct_label }
-                        val adapterBdct = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, bdct)
+                        val adapterBdct = ArrayAdapter(
+                            requireContext(),
+                            android.R.layout.simple_spinner_item,
+                            bdct
+                        )
                         adapterBdct.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                         binding.corpsEtat.adapter = adapterBdct
                     }
@@ -142,7 +162,6 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
 
                 Resource.Status.ERROR -> {
                     Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
-                    Timber.e(it.message)
                 }
 
                 Resource.Status.LOADING -> {
@@ -153,8 +172,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun bindTache(tache: Tache) {
-        Timber.i("Ma tache : $tache")
+    private fun bindTache(tache: Tache, view: View) {
         binding.cliNom.text = tache.affaire.client.cli_nom
         binding.affId.text = " - ${tache.affaire.aff_id}"
         binding.bdctLabel.text = tache.bdc_type.bdct_label
@@ -172,27 +190,35 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
         binding.equipiers.visibility = View.GONE
 
         setupSpinners()
-        setupDatePicker()
+        ViewHelper.setupDatePicker(view)
         setupTimesPicker()
         setupCheckboxEquipe()
 
         binding.pointageBtn.setOnClickListener { pointer(tache) }
     }
 
-    private fun setupCheckboxEquipe()
-    {
+    private fun setupCheckboxEquipe() {
         binding.equipe.setOnCheckedChangeListener { _, isChecked ->
-            if ( isChecked ) {
-                Timber.d("Je passe par là avant une action humaine")
+            if (isChecked) {
                 binding.equipiers.visibility = View.GONE
             } else {
                 viewModel.getEquipiers(5).observe(viewLifecycleOwner, Observer {
-                    Timber.e(it.toString())
                     when (it.status) {
                         Resource.Status.SUCCESS -> {
                             if (!it.data.isNullOrEmpty()) {
-                                val equipier = it.data.map { "${it.eevp_prenom ?: ""} ${it.eevp_nom ?: ""}" }
-                                val adapterEquipiers = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, equipier)
+                                val equipiers = mutableMapOf<Int, String>()
+                                for (row in it.data) {
+                                    val key = row.eevp_id
+                                    val value = "${row.eevp_prenom} ${row.eevp_nom}"
+                                    equipiers[key] = value
+                                }
+
+                                equipiersKeys = equipiers.keys.toList()
+                                val adapterEquipiers = ArrayAdapter(
+                                    requireContext(),
+                                    android.R.layout.simple_spinner_item,
+                                    equipiers.values.toList()
+                                )
                                 adapterEquipiers.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                                 binding.equipiers.adapter = adapterEquipiers
                             }
@@ -200,7 +226,6 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
 
                         Resource.Status.ERROR -> {
                             Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
-                            Timber.e("Erreur lors de la récupération des equipiers : ${it.message}")
                         }
 
                         Resource.Status.LOADING -> {
@@ -213,41 +238,8 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun setupDatePicker()
-    {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        binding.buttonJour.setOnClickListener {
-            binding.jour.visibility = View.VISIBLE
-            binding.validerJour.visibility = View.VISIBLE
-            binding.pointageBtn.visibility = View.GONE
-        }
-
-        binding.jour.init(year, month, day, null)
-        binding.jour.setOnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
-            var text = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
-            text +="/"
-            text += if (monthOfYear < 10) "0${monthOfYear + 1}" else "${monthOfYear + 1}"
-            text +="/${year.toString().substring(2)}"
-            binding.buttonJour.text =  text
-        }
-        binding.jour.bringToFront()
-
-
-        binding.validerJour.setOnClickListener {
-            binding.jour.visibility = View.GONE
-            binding.validerJour.visibility = View.GONE
-            binding.pointageBtn.visibility = View.VISIBLE
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun setupTimesPicker()
-    {
+    @SuppressLint("SetTextI18n", "DiscouragedApi")
+    private fun setupTimesPicker() {
         // HEURE DEBUT
         binding.buttonHeureDeb.setOnClickListener {
             binding.heureDeb.visibility = View.VISIBLE
@@ -261,8 +253,8 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
             binding.pointageBtn.visibility = View.VISIBLE
         }
 
-        binding.heureDeb.hour = DateHelper.getHour()
-        binding.heureDeb.minute = DateHelper.getMinute()
+        binding.heureDeb.hour = getHour().toInt()
+        binding.heureDeb.minute = getMinute().toInt()
         binding.heureDeb.setIs24HourView(true)
         binding.heureDeb.setOnTimeChangedListener { _, hourOfDay, minute ->
             var text = if (hourOfDay < 10) "0$hourOfDay" else "$hourOfDay"
@@ -285,8 +277,9 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
             binding.pointageBtn.visibility = View.VISIBLE
         }
 
-        binding.heureFin.hour = DateHelper.getHour()
-        binding.heureFin.minute = DateHelper.getMinute()
+        binding.heureFin.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels - 350
+        binding.heureFin.hour = getHour().toInt()
+        binding.heureFin.minute = getMinute().toInt()
         binding.heureFin.setIs24HourView(true)
         binding.heureFin.setOnTimeChangedListener { _, hourOfDay, minute ->
             var text = if (hourOfDay < 10) "0$hourOfDay" else "$hourOfDay"
@@ -297,18 +290,23 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
         binding.heureFin.bringToFront()
     }
 
-    private fun setupSpinners()
-    {
+    private fun setupSpinners() {
         // Type de pointage
         val valuesTypePointage = listOf("Marché", "TS", "SAV")
-        val adapterTypePointage = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, valuesTypePointage)
+        val adapterTypePointage =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, valuesTypePointage)
         adapterTypePointage.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.typePointage.adapter = adapterTypePointage
 
-        binding.typePointage.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+        binding.typePointage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val selectedValue = valuesTypePointage[position]
-                if ( selectedValue == "Marché" ) {
+                if (selectedValue == "Marché") {
                     binding.coffretElec.visibility = View.VISIBLE
                     binding.remblais.visibility = View.VISIBLE
                     binding.corpsEtat.visibility = View.GONE
@@ -327,31 +325,88 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
         }
 
         // Nature de l'erreur
-        val valuesNatureErreur = listOf("Erreur artisan", "Erreur Métreur", "Erreur Dessinateur", "Erreur Conducteur", "Erreur Fournisseur")
-        val adapterNatureErreur = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, valuesNatureErreur)
+        val valuesNatureErreur = listOf(
+            "Erreur artisan",
+            "Erreur Métreur",
+            "Erreur Dessinateur",
+            "Erreur Conducteur",
+            "Erreur Fournisseur"
+        )
+        val adapterNatureErreur =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, valuesNatureErreur)
         adapterNatureErreur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.natureErreur.adapter = adapterNatureErreur
     }
 
+    private fun makePointage(tache: Tache): Pointage
+    {
+        val dateEl = binding.jour
+        val heureDebEl = binding.heureDeb
+        val heureFinEl = binding.heureFin
+        val coffretElecEl = binding.coffretElec
+        val remblaisEl = binding.remblais
+        val date = "${dateEl.year}-${dateEl.month + 1}-${dateEl.dayOfMonth}"
+
+        val pointage = Pointage()
+        pointage.poi_tache_id = tache.id
+        pointage.poi_type = binding.typePointage.selectedItem.toString()
+        pointage.poi_debut = "$date ${heureDebEl.hour}:${heureDebEl.minute}:00"
+        pointage.poi_fin = "$date ${heureFinEl.hour}:${heureFinEl.minute}:00"
+        pointage.poi_commentaire = binding.commentaire.text.toString()
+
+        if (pointage.poi_type === "Marché") {
+            pointage.poi_coffret = if (coffretElecEl.isChecked) 1 else 0
+            pointage.poi_remblais = if (remblaisEl.isChecked) 1 else 0
+        } else {
+            pointage.poi_corps_etat = binding.corpsEtat.selectedItem as String
+            pointage.poi_nature_erreur = binding.natureErreur.selectedItem as String
+        }
+
+        return pointage
+    }
+
     private fun pointer(tache: Tache) {
+        val equipe = binding.equipe
+
+        if (!equipe.isChecked) {
+            val pointage = makePointage(tache)
+            pointage.poi_eq_id = equipiersKeys[binding.equipiers.selectedItemPosition]
+            postPointage(pointage)
+        } else {
+            var isHandled = false
+            viewModel.equipiers.observe(viewLifecycleOwner, Observer { result ->
+                if (!isHandled) {
+                    isHandled = true
+                    when (result.status) {
+                        Resource.Status.SUCCESS -> {
+                            val equipiers = result.data
+                            if (!equipiers.isNullOrEmpty()) {
+                                Timber.e(equipiers.toString())
+                                for (row in equipiers) {
+                                    val pointage = makePointage(tache)
+                                    pointage.poi_eq_id = row.eevp_id
+                                    postPointage(pointage)
+                                }
+                            }
+                        }
+                        Resource.Status.ERROR -> {
+                            val error = result.message ?: "Une erreur s'est produite"
+                            Timber.e(error)
+                        }
+                        Resource.Status.LOADING -> {
+                            // Afficher une indication de chargement à l'utilisateur
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    private fun postPointage(pointage: Pointage) {
         GlobalScope.launch(Dispatchers.Main) {
-            Timber.d("GlobalScope.launch")
-
-            val pointage = Pointage(
-                poi_tache_id = tache.id,
-                poi_debut = getTime(),
-                poi_eq_id = 5 // à changer avec l'équipe du user connecté
-            )
-
-            Timber.d("Mon pointage : $pointage")
-
             viewModel.postPointage(pointage).observe(viewLifecycleOwner, Observer { resource ->
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
-                        findNavController().navigate(
-                            R.id.action_tacheDetailFragment_refresh,
-                            bundleOf("id" to pointage.poi_tache_id)
-                        )
                         Timber.d("SUCCESS : $pointage")
                     }
                     Resource.Status.ERROR -> {
@@ -362,14 +417,6 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
                     }
                 }
             })
-
-//            val location = getLastLocation(this@TacheDetailFragment)
-//            Timber.d("Location : ")
-//            if (location != null) {
-//                Timber.i(location.toString())
-//            } else {
-//                Timber.e("Pas de location")
-//            }
         }
     }
 
@@ -388,8 +435,6 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Timber.e(call.toString())
-                Timber.e(e.toString())
                 Toast.makeText(
                     activity,
                     "Erreur lors du téléchargement du plan",
@@ -402,9 +447,12 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
                     if (!response.isSuccessful) {
                         throw IOException("Unexpected code $response")
                     }
-                    val directory = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), ged_file.gdf_obj_id.toString())
+                    val directory = File(
+                        requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+                        ged_file.gdf_obj_id.toString()
+                    )
 
-                    if ( !directory.exists() ) {
+                    if (!directory.exists()) {
                         directory.mkdirs()
                     }
 
@@ -434,5 +482,9 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener {
                 }
             }
         })
+    }
+
+    override fun onClickedPointage(pointage: Pointage) {
+        TODO("Not yet implemented")
     }
 }

@@ -34,33 +34,21 @@
                 android:layout_marginEnd="8dp"
                 android:background="#FFFFFF"
                 android:padding="10dp"
-                app:layout_constraintEnd_toStartOf="@+id/divider10"
-                app:layout_constraintStart_toStartOf="@+id/divider8"
-                app:layout_constraintTop_toTopOf="@+id/divider7"
-                tools:visibility="gone" />
-
-            <Button
-                android:id="@+id/validerJour"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="@string/Valider"
-                app:layout_constraintEnd_toEndOf="@+id/jour"
-                app:layout_constraintTop_toBottomOf="@+id/jour"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="gone" />
 
             <TimePicker
                 android:id="@+id/heureDeb"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:background="#FFFFFF"
                 android:padding="10dp"
-                app:layout_constraintEnd_toStartOf="@+id/divider10"
-                app:layout_constraintStart_toStartOf="@+id/divider8"
-                app:layout_constraintTop_toTopOf="@+id/divider7"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="gone" />
 
             <Button
@@ -76,15 +64,12 @@
             <TimePicker
                 android:id="@+id/heureFin"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
                 android:background="#FFFFFF"
-                android:padding="10dp"
-                app:layout_constraintEnd_toStartOf="@+id/divider10"
-                app:layout_constraintStart_toStartOf="@+id/divider8"
-                app:layout_constraintTop_toTopOf="@+id/divider7"
+                android:timePickerMode="spinner"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="gone" />
 
             <Button
@@ -364,41 +349,40 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.33"
-                        android:text="@string/TextView"
                         android:contentDescription="@string/TextView"
-                        />
+                        android:text="@string/TextView" />
 
                     <CheckBox
                         android:id="@+id/coffret_elec"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.33"
-                        android:text="@string/coffret_elec"
-                        android:contentDescription="@string/TextView" />
+                        android:contentDescription="@string/TextView"
+                        android:text="@string/coffret_elec" />
 
                     <CheckBox
                         android:id="@+id/remblais"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.33"
-                        android:text="@string/remblais"
-                        android:contentDescription="@string/TextView" />
+                        android:contentDescription="@string/TextView"
+                        android:text="@string/remblais" />
 
                     <Spinner
                         android:id="@+id/corps_etat"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.33"
-                        android:visibility="gone"
-                        android:contentDescription="@string/TextView" />
+                        android:contentDescription="@string/TextView"
+                        android:visibility="gone" />
 
                     <Spinner
                         android:id="@+id/nature_erreur"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.33"
-                        android:visibility="gone"
-                        android:contentDescription="@string/TextView" />
+                        android:contentDescription="@string/TextView"
+                        android:visibility="gone" />
                 </TableRow>
 
                 <TableRow
@@ -444,8 +428,7 @@
                         android:layout_weight="1.0"
                         android:ems="10"
                         android:inputType="textPersonName"
-                        android:text=""
-                    />
+                        android:text="" />
                 </TableRow>
             </TableLayout>
 
@@ -468,6 +451,18 @@
             <!--            app:layout_constraintEnd_toStartOf="@+id/divider10"-->
             <!--            app:layout_constraintStart_toEndOf="@+id/divider8"-->
             <!--            app:layout_constraintTop_toBottomOf="@+id/divider13" />-->
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pointages_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/pointage_btn" />
 
             <View
                 android:id="@+id/divider9"

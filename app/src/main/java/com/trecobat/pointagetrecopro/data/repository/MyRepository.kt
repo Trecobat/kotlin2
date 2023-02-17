@@ -34,6 +34,12 @@ class MyRepository(
         saveCallResult = { localDataSource.insertAllPointages(it) }
     )
 
+    fun getPointagesOfTache(id: Int) = performGetOperation(
+        databaseQuery = { localDataSource.getPointagesOfTache(id) },
+        networkCall = { remoteDataSource.getPointagesOfTache(id) },
+        saveCallResult = { localDataSource.insertAllPointages(it) }
+    )
+
     suspend fun postPointage(data: Pointage) = performPostOperation(
         networkCall = { remoteDataSource.postPointage(data) },
         saveCallResult = { localDataSource.insertPointage(it) }
@@ -45,6 +51,12 @@ class MyRepository(
 //        databaseQuery = { localDataSource.getAllEquipiers(equipe) },
         databaseQuery = { localDataSource.getAllEquipiers() },
         networkCall = { remoteDataSource.getEquipiers() },
+        saveCallResult = { localDataSource.insertAllEquipiers(it) }
+    )
+
+    fun getEquipiersOfEquipe(equipe: Int = 0) = performGetOperation(
+        databaseQuery = { localDataSource.getEquipiersOfEquipe(equipe) },
+        networkCall = { remoteDataSource.getEquipiersOfEquipe(equipe) },
         saveCallResult = { localDataSource.insertAllEquipiers(it) }
     )
 
@@ -99,19 +111,14 @@ class MyRepository(
         saveCallResult: suspend (A) -> Unit
     ): LiveData<Resource<Nothing?>> =
         liveData(Dispatchers.IO) {
-            Timber.i("performPostOperation")
             emit(Resource.loading())
 
             val responseStatus = networkCall.invoke()
             if (responseStatus.status == Resource.Status.SUCCESS) {
-                Timber.i("performPostOperation SUCCESS")
                 saveCallResult(responseStatus.data!!)
                 emit(Resource.success(null))
             } else if (responseStatus.status == Resource.Status.ERROR) {
-                Timber.i("performPostOperation ERROR")
                 emit(Resource.error(responseStatus.message!!))
-            } else {
-                Timber.i("performPostOperation ni SUCCESS ni ERROR")
             }
         }
 }

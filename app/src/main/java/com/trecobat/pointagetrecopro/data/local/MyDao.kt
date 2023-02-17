@@ -21,6 +21,9 @@ interface MyDao {
     @Query("SELECT * FROM pointages")
     fun getAllPointages(): LiveData<List<Pointage>>
 
+    @Query("SELECT * FROM pointages WHERE pointages.poi_tache_id = :tache")
+    fun getPointagesOfTache(tache: Int): LiveData<List<Pointage>>
+
     @Query("SELECT * FROM bdc_type")
     fun getAllBdcts(): LiveData<List<BdcType>>
 
@@ -41,6 +44,9 @@ interface MyDao {
 
     @Query("SELECT * FROM equipiers ORDER BY eevp_prenom")
     fun getAllEquipiers(): LiveData<List<Equipier>>
+
+    @Query("SELECT * FROM equipiers WHERE eqvp_id = :equipe")
+    fun getEquipiersOfEquipe(equipe: Int): LiveData<List<Equipier>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllEquipiers(equipiers: List<Equipier>)

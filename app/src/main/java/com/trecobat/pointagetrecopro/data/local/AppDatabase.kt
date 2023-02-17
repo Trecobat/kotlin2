@@ -19,9 +19,10 @@ import com.trecobat.pointagetrecopro.data.entities.*
     UsersTreco::class,
     GedFiles::class,
     PendingRequest::class
-], version = 5, exportSchema = false)
+], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun myDao(): MyDao
+
     companion object {
         private const val DATABASE_NAME = "pointages"
 
@@ -34,6 +35,6 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(appContext, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
                 .build()
-    }
 
+    }
 }

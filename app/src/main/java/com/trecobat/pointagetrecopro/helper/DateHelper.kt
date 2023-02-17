@@ -1,14 +1,15 @@
 package com.trecobat.pointagetrecopro.helper
 
+import android.view.View
 import java.text.SimpleDateFormat
 import java.util.*
 
 class DateHelper {
     companion object {
         // Formate une date en en date fr
-        fun formatDate(date: String?): String? {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE)
-            val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE)
+        fun formatDate(date: String?, inputPattern: String? = "yyyy-MM-dd HH:mm:ss", outputPattern: String? = "dd/MM/yyyy"): String? {
+            val inputFormat = SimpleDateFormat(inputPattern, Locale.FRANCE)
+            val outputFormat = SimpleDateFormat(outputPattern, Locale.FRANCE)
             val textToDate = date?.let { inputFormat.parse(it) }
 
             return textToDate?.let { outputFormat.format(it) }
@@ -18,7 +19,7 @@ class DateHelper {
             return "${getDate(twoDigits)} ${getHour()}"
         }
 
-        fun getDate(twoDigits: Boolean = false): String {
+        private fun getDate(twoDigits: Boolean = false): String {
             return "${getYear(twoDigits)}-${getMonth()}-${getDay()}"
         }
 
@@ -31,7 +32,7 @@ class DateHelper {
 
         fun getMonth(): String {
             val calendar = Calendar.getInstance()
-            val month = calendar.get(Calendar.MONTH)
+            val month = calendar.get(Calendar.MONTH) + 1
 
             return if ( month < 10 ) "0$month" else "$month"
         }
@@ -47,19 +48,22 @@ class DateHelper {
             return "${getHour()}:${getMinute()}:${getSecond()}"
         }
 
-        fun getHour(): Int {
+        fun getHour(): String {
             val calendar = Calendar.getInstance()
-            return calendar.get(Calendar.HOUR_OF_DAY)
+            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+            return if ( hour < 10 ) "0$hour" else "$hour"
         }
 
-        fun getMinute(): Int {
+        fun getMinute(): String {
             val calendar = Calendar.getInstance()
-            return calendar.get(Calendar.MINUTE)
+            val minute = calendar.get(Calendar.MINUTE)
+            return if ( minute < 10 ) "0$minute" else "$minute"
         }
 
-        fun getSecond(): Int {
+        private fun getSecond(): String {
             val calendar = Calendar.getInstance()
-            return calendar.get(Calendar.SECOND)
+            val second = calendar.get(Calendar.SECOND)
+            return if ( second < 10 ) "0$second" else "$second"
         }
     }
 }
