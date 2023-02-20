@@ -1,5 +1,6 @@
 package com.trecobat.pointagetrecopro.data.remote
 
+import android.graphics.Point
 import com.trecobat.pointagetrecopro.data.entities.*
 import retrofit2.Response
 import retrofit2.http.Body
@@ -15,7 +16,7 @@ interface MyService {
     @GET("pointageTrecopro/chantiers/{id}")
     suspend fun getTache(@Path("id") id: Int): Response<Tache>
 
-    @GET("pointageTrecopro/chantiers/{id}/taches")
+    @GET("pointageTrecopro/chantiers/{id}/pointages")
     suspend fun getPointagesOfTache(@Path("id") id: Int): Response<List<Pointage>>
 
     @GET("pointageTrecopro/chantiers/{id}/plans")
@@ -33,6 +34,9 @@ interface MyService {
 
     @POST("pointageTrecopro/pointages")
     suspend fun postPointage(@Body data: Pointage): Response<Pointage>
+
+    @POST("pointageTrecopro/pointages/{id}")
+    suspend fun updatePointage(@Path("id") id: Int, @Body data: Pointage): Response<Pointage>
 
     /***** Equipiers *****/
     @GET("pointageTrecopro/equipiers")

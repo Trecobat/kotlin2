@@ -13,9 +13,10 @@ import com.trecobat.pointagetrecopro.databinding.PointageDetailFragmentBinding
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
-class PointageDetailFragment : Fragment() {
+class PointageDetailFragment : Fragment(), View.OnClickListener{
 
     private var binding: PointageDetailFragmentBinding by autoCleared()
     private val viewModel: PointageDetailViewModel by viewModels()
@@ -30,8 +31,14 @@ class PointageDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
         arguments?.getInt("id")?.let { viewModel.start(it) }
         setupObservers()
+    }
+
+    override fun onClick(v: View) {
+        Timber.d("click")
     }
 
     private fun setupObservers() {

@@ -16,7 +16,7 @@ class DateHelper {
         }
 
         fun getDateTime(twoDigits: Boolean = false): String {
-            return "${getDate(twoDigits)} ${getHour()}"
+            return "${getDate(twoDigits)} ${getTime()}"
         }
 
         private fun getDate(twoDigits: Boolean = false): String {

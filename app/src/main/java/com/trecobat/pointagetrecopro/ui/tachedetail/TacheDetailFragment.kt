@@ -2,16 +2,16 @@ package com.trecobat.pointagetrecopro.ui.tachedetail
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContentProviderCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -29,7 +29,6 @@ import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getHour
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getMinute
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getMonth
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getYear
-import com.trecobat.pointagetrecopro.helper.ViewHelper
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,7 +69,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         super.onViewCreated(view, savedInstanceState)
         arguments?.getInt("id")?.let { viewModel.start(it) }
         setupRecyclerView()
-        setupObservers(view)
+        setupObservers()
     }
 
     private fun setupRecyclerView() {
@@ -78,22 +77,17 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         binding.plansRv.layoutManager = LinearLayoutManager(requireContext())
         binding.plansRv.adapter = planAdapter
 
-        pointagesAdapter = PointagesAdapter(this)
+        pointagesAdapter = PointagesAdapter(this, requireContext(), viewModel, viewLifecycleOwner)
         binding.pointagesRv.layoutManager = LinearLayoutManager(requireContext())
         binding.pointagesRv.adapter = pointagesAdapter
     }
 
-    private fun setupObservers(view: View) {
+    private fun setupObservers() {
         viewModel.tache.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Resource.Status.SUCCESS -> {
-                    bindTache(it.data!!, view)
+                    bindTache(it.data!!)
                     binding.progressBar.visibility = View.GONE
-                    binding.jour.visibility = View.GONE
-                    binding.heureDeb.visibility = View.GONE
-                    binding.validerHeureDeb.visibility = View.GONE
-                    binding.heureFin.visibility = View.GONE
-                    binding.validerHeureFin.visibility = View.GONE
                     binding.tacheCl.visibility = View.VISIBLE
                 }
 
@@ -172,12 +166,12 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
     }
 
     @SuppressLint("SetTextI18n")
-    private fun bindTache(tache: Tache, view: View) {
+    private fun bindTache(tache: Tache) {
         binding.cliNom.text = tache.affaire.client.cli_nom
         binding.affId.text = " - ${tache.affaire.aff_id}"
         binding.bdctLabel.text = tache.bdc_type.bdct_label
         binding.startDate.text = formatDate(tache.start_date)
-        binding.endDate.text = formatDate(tache.end_date)
+        binding.endDate.text = tache.end_date?.let { formatDate(it) }
         binding.cliAdresse1Chantier.text = tache.affaire.client.cli_adresse1_chantier
         binding.cliAdresse2Chantier.text =
             if (tache.affaire.client.cli_adresse2_chantier != null) " - ${tache.affaire.client.cli_adresse2_chantier}" else ""
@@ -190,11 +184,32 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         binding.equipiers.visibility = View.GONE
 
         setupSpinners()
-        ViewHelper.setupDatePicker(view)
+        setupDatePicker()
         setupTimesPicker()
         setupCheckboxEquipe()
 
         binding.pointageBtn.setOnClickListener { pointer(tache) }
+    }
+
+    private fun setupDatePicker()
+    {
+        binding.buttonJour.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePickerDialog = DatePickerDialog(requireContext(), { _, yearDate, monthOfYear, dayOfMonth ->
+                var text = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
+                text += "/"
+                text += if (monthOfYear < 10) "0${monthOfYear + 1}" else "${monthOfYear + 1}"
+                text += "/${yearDate.toString().substring(2)}"
+                binding.buttonJour.text = text
+            }, year, month, day)
+
+            // Optional customizations:
+            datePickerDialog.show()
+        }
     }
 
     private fun setupCheckboxEquipe() {
@@ -238,56 +253,37 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         }
     }
 
+    private fun makeTimePickerDialog(binding: TacheDetailFragmentBinding, timing: String)
+    {
+        val calendar = Calendar.getInstance()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+
+        val timePickerDialog = TimePickerDialog(requireContext(), { _, hourOfDay, minuteOfHour ->
+            var text = if (hourOfDay < 10) "0$hourOfDay" else "$hourOfDay"
+            text += ":"
+            text += if (minuteOfHour < 10) "0$minuteOfHour" else "$minuteOfHour"
+
+            val buttonBinding = if ( timing == "deb" ) binding.buttonHeureDeb else binding.buttonHeureFin
+            buttonBinding.text = text
+        }, hour, minute, true)
+
+        // Optional customizations:
+        timePickerDialog.setCanceledOnTouchOutside(false) // Prevent dialog from being dismissed when user touches outside of it
+        timePickerDialog.show()
+    }
+
     @SuppressLint("SetTextI18n", "DiscouragedApi")
     private fun setupTimesPicker() {
         // HEURE DEBUT
         binding.buttonHeureDeb.setOnClickListener {
-            binding.heureDeb.visibility = View.VISIBLE
-            binding.validerHeureDeb.visibility = View.VISIBLE
-            binding.pointageBtn.visibility = View.GONE
+            makeTimePickerDialog(binding, "deb")
         }
-
-        binding.validerHeureDeb.setOnClickListener {
-            binding.heureDeb.visibility = View.GONE
-            binding.validerHeureDeb.visibility = View.GONE
-            binding.pointageBtn.visibility = View.VISIBLE
-        }
-
-        binding.heureDeb.hour = getHour().toInt()
-        binding.heureDeb.minute = getMinute().toInt()
-        binding.heureDeb.setIs24HourView(true)
-        binding.heureDeb.setOnTimeChangedListener { _, hourOfDay, minute ->
-            var text = if (hourOfDay < 10) "0$hourOfDay" else "$hourOfDay"
-            text += ":"
-            text += if (minute < 10) "0$minute" else "$minute"
-            binding.buttonHeureDeb.text = text
-        }
-        binding.heureDeb.bringToFront()
 
         // HEURE FIN
         binding.buttonHeureFin.setOnClickListener {
-            binding.heureFin.visibility = View.VISIBLE
-            binding.validerHeureFin.visibility = View.VISIBLE
-            binding.pointageBtn.visibility = View.GONE
+            makeTimePickerDialog(binding, "fin")
         }
-
-        binding.validerHeureFin.setOnClickListener {
-            binding.heureFin.visibility = View.GONE
-            binding.validerHeureFin.visibility = View.GONE
-            binding.pointageBtn.visibility = View.VISIBLE
-        }
-
-        binding.heureFin.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels - 350
-        binding.heureFin.hour = getHour().toInt()
-        binding.heureFin.minute = getMinute().toInt()
-        binding.heureFin.setIs24HourView(true)
-        binding.heureFin.setOnTimeChangedListener { _, hourOfDay, minute ->
-            var text = if (hourOfDay < 10) "0$hourOfDay" else "$hourOfDay"
-            text += ":"
-            text += if (minute < 10) "0$minute" else "$minute"
-            binding.buttonHeureFin.text = text
-        }
-        binding.heureFin.bringToFront()
     }
 
     private fun setupSpinners() {
@@ -340,19 +336,16 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
 
     private fun makePointage(tache: Tache): Pointage
     {
-        val dateEl = binding.jour
-        val heureDebEl = binding.heureDeb
-        val heureFinEl = binding.heureFin
         val coffretElecEl = binding.coffretElec
         val remblaisEl = binding.remblais
-        val date = "${dateEl.year}-${dateEl.month + 1}-${dateEl.dayOfMonth}"
 
         val pointage = Pointage()
         pointage.poi_tache_id = tache.id
         pointage.poi_type = binding.typePointage.selectedItem.toString()
-        pointage.poi_debut = "$date ${heureDebEl.hour}:${heureDebEl.minute}:00"
-        pointage.poi_fin = "$date ${heureFinEl.hour}:${heureFinEl.minute}:00"
         pointage.poi_commentaire = binding.commentaire.text.toString()
+
+        pointage.poi_debut = "${formatDate ( date = binding.buttonJour.text as String, inputPattern = "dd/MM/yy", outputPattern = "yyyy-MM-dd" )} ${binding.buttonHeureDeb.text}:00"
+        pointage.poi_fin = "${formatDate ( date = binding.buttonJour.text as String, inputPattern = "dd/MM/yy", outputPattern = "yyyy-MM-dd" )} ${binding.buttonHeureFin.text}:00"
 
         if (pointage.poi_type === "Marché") {
             pointage.poi_coffret = if (coffretElecEl.isChecked) 1 else 0
@@ -407,12 +400,14 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
             viewModel.postPointage(pointage).observe(viewLifecycleOwner, Observer { resource ->
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
+                        Toast.makeText( context, "Le pointage ${pointage.poi_id} a bien été ajouté.", Toast.LENGTH_SHORT ).show()
                         Timber.d("SUCCESS : $pointage")
                     }
                     Resource.Status.ERROR -> {
                         Timber.e("ERROR : $pointage")
                     }
                     Resource.Status.LOADING -> {
+                        Toast.makeText( context, "Erreur lors de l'ajout du pointage", Toast.LENGTH_SHORT ).show()
                         Timber.d("LOADING : $pointage")
                     }
                 }

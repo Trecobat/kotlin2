@@ -55,7 +55,7 @@ class TacheViewHolder(private val itemBinding: ItemTacheBinding, private val lis
         itemBinding.affId.text = " - ${item.aff_id}"
         itemBinding.bdctLabel.text = item.bdc_type.bdct_label
         itemBinding.startDate.text = formatDate(item.start_date)
-        itemBinding.endDate.text = formatDate(item.end_date)
+        itemBinding.endDate.text = item.end_date?.let { formatDate(it) }
         itemBinding.cliAdresse1Chantier.text = item.affaire.client.cli_adresse1_chantier
         itemBinding.cliAdresse2Chantier.text = if (item.affaire.client.cli_adresse2_chantier != null) " - ${item.affaire.client.cli_adresse2_chantier}" else ""
         itemBinding.cliCpChantier.text = item.affaire.client.cli_cp_chantier

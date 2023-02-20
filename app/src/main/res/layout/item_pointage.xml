@@ -9,62 +9,6 @@
     android:padding="10dp"
     android:layout_marginBottom="20dp" >
 
-    <DatePicker
-        android:id="@+id/jour"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="#FFFFFF"
-        android:padding="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
-
-    <TimePicker
-        android:id="@+id/heureDeb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="#FFFFFF"
-        android:padding="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
-
-    <Button
-        android:id="@+id/validerHeureDeb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="@string/Valider"
-        app:layout_constraintEnd_toEndOf="@+id/heureDeb"
-        app:layout_constraintTop_toBottomOf="@+id/heureDeb"
-        tools:visibility="gone" />
-
-    <TimePicker
-        android:id="@+id/heureFin"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:background="#FFFFFF"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
-
-    <Button
-        android:id="@+id/validerHeureFin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="@string/Valider"
-        app:layout_constraintEnd_toEndOf="@+id/heureFin"
-        app:layout_constraintTop_toBottomOf="@+id/heureFin"
-        tools:visibility="gone" />
-
     <TableLayout
         android:id="@+id/table"
         android:layout_width="match_parent"
@@ -105,12 +49,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Spinner
+            <TextView
                 android:id="@+id/type_pointage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.33"
-                android:contentDescription="@string/TextView"
                 android:text="@string/TextView" />
 
             <CheckBox
@@ -119,6 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.33"
                 android:contentDescription="@string/TextView"
+                android:enabled="false"
                 android:text="@string/coffret_elec" />
 
             <CheckBox
@@ -127,23 +71,24 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.33"
                 android:contentDescription="@string/TextView"
+                android:enabled="false"
                 android:text="@string/remblais" />
 
-            <Spinner
+            <TextView
                 android:id="@+id/corps_etat"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.33"
-                android:contentDescription="@string/TextView"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:text="@string/TextView" />
 
-            <Spinner
+            <TextView
                 android:id="@+id/nature_erreur"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.33"
-                android:contentDescription="@string/TextView"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:text="@string/TextView" />
         </TableRow>
 
         <TableRow
@@ -192,7 +137,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:padding="5dp"
         android:text="@string/enregistrer"
         app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/blue"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/table" />
+
+    <Button
+        android:id="@+id/supprimer_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:padding="5dp"
+        android:text="@string/supprimer"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/red"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/table" />
 </androidx.constraintlayout.widget.ConstraintLayout>

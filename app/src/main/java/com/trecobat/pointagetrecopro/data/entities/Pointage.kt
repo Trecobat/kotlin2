@@ -19,5 +19,7 @@ data class Pointage(
     var poi_lat: Double? = null,
     var poi_lng: Double? = null,
     var poi_commentaire: String? = null,
-    @Embedded var equipier: Equipier? = null
+    var poi_deleted_at: String? = null,
+    @Embedded var equipier: Equipier? = null,
+    @Embedded var bdc_type: BdcType? = null
 )

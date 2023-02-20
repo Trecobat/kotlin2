@@ -19,7 +19,7 @@ import com.trecobat.pointagetrecopro.data.entities.*
     UsersTreco::class,
     GedFiles::class,
     PendingRequest::class
-], version = 1, exportSchema = false)
+], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun myDao(): MyDao
 

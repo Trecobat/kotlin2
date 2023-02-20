@@ -51,6 +51,10 @@ class TacheDetailViewModel @ViewModelInject constructor(
         return repository.postPointage(data)
     }
 
+    suspend fun updatePointage(pointage: Pointage): LiveData<Resource<Nothing?>> {
+        return repository.updatePointage(pointage)
+    }
+
     fun getEquipiers(equipe: Int = 0): LiveData<Resource<List<Equipier>>> {
         return repository.getEquipiers(equipe)
     }

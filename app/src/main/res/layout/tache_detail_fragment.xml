@@ -25,63 +25,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <DatePicker
-                android:id="@+id/jour"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:background="#FFFFFF"
-                android:padding="10dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone" />
-
-            <TimePicker
-                android:id="@+id/heureDeb"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:background="#FFFFFF"
-                android:padding="10dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone" />
-
-            <Button
-                android:id="@+id/validerHeureDeb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="@string/Valider"
-                app:layout_constraintEnd_toEndOf="@+id/heureDeb"
-                app:layout_constraintTop_toBottomOf="@+id/heureDeb"
-                tools:visibility="gone" />
-
-            <TimePicker
-                android:id="@+id/heureFin"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="#FFFFFF"
-                android:timePickerMode="spinner"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone" />
-
-            <Button
-                android:id="@+id/validerHeureFin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="@string/Valider"
-                app:layout_constraintEnd_toEndOf="@+id/heureFin"
-                app:layout_constraintTop_toBottomOf="@+id/heureFin"
-                tools:visibility="gone" />
-
             <View
                 android:id="@+id/divider7"
                 android:layout_width="match_parent"
@@ -271,7 +214,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/plans_rv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
@@ -475,7 +418,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/divider10"
                 app:layout_constraintStart_toEndOf="@+id/divider8"
-                app:layout_constraintTop_toBottomOf="@+id/divider8" />
+                app:layout_constraintTop_toBottomOf="@+id/pointages_rv" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

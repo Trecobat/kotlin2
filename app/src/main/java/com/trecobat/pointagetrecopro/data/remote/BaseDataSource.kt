@@ -36,6 +36,7 @@ class BaseDataSource @Inject constructor(
     suspend fun postPointage(data: Pointage) = getResult { myService.postPointage(data) }
     suspend fun getEquipiers() = getResult { myService.getAllEquipiers() }
     suspend fun getEquipiersOfEquipe(equipe: Int) = getResult { myService.getEquipiersOfEquipe(equipe) }
+    suspend fun updatePointage(pointage: Pointage) = getResult { myService.updatePointage(pointage.poi_id, pointage) }
 
     /***** TACHE *****/
     suspend fun getTaches() = getResult { myService.getAllTaches() }

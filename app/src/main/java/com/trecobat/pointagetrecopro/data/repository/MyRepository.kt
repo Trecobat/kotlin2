@@ -45,10 +45,12 @@ class MyRepository(
         saveCallResult = { localDataSource.insertPointage(it) }
     )
 
-    suspend fun insertPointage(data: Pointage) = localDataSource.insertPointage(data)
+    suspend fun updatePointage(pointage: Pointage) = performPostOperation(
+        networkCall = { remoteDataSource.updatePointage(pointage) },
+        saveCallResult = { localDataSource.updatePointage(it) }
+    )
 
     fun getEquipiers(equipe: Int = 0) = performGetOperation(
-//        databaseQuery = { localDataSource.getAllEquipiers(equipe) },
         databaseQuery = { localDataSource.getAllEquipiers() },
         networkCall = { remoteDataSource.getEquipiers() },
         saveCallResult = { localDataSource.insertAllEquipiers(it) }

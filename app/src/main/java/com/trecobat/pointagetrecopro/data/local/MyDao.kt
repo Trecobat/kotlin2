@@ -18,10 +18,10 @@ interface MyDao {
     fun deletePendingRequest(request: PendingRequest)
 
     /***** POINTAGE *****/
-    @Query("SELECT * FROM pointages")
+    @Query("SELECT * FROM pointages WHERE poi_deleted_at IS NULL")
     fun getAllPointages(): LiveData<List<Pointage>>
 
-    @Query("SELECT * FROM pointages WHERE pointages.poi_tache_id = :tache")
+    @Query("SELECT * FROM pointages WHERE pointages.poi_tache_id = :tache AND pointages.poi_deleted_at IS NULL ORDER BY pointages.poi_id DESC")
     fun getPointagesOfTache(tache: Int): LiveData<List<Pointage>>
 
     @Query("SELECT * FROM bdc_type")
@@ -38,6 +38,9 @@ interface MyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPointage(pointage: Pointage)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updatePointage(pointage: Pointage)
 
 //    @Query("SELECT *, IF(equipiers.eevp_eqvp_id = :equipe, 1, 0) AS equipe FROM equipiers ORDER BY equipe")
 //    fun getAllEquipiers(equipe: Int = 0): LiveData<List<Equipier>>

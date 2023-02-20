@@ -12,6 +12,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="underline">#D8D6D6</color>
     <color name="red">#dc3545</color>
+    <color name="blue">#007bff</color>
     <color name="tache_terminee">#66DC3545</color>
     <color name="tache_en_cours">#66FFC107</color>
     <color name="tache_a_venir">#66007BFF</color>
