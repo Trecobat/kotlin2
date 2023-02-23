@@ -3,8 +3,7 @@ package com.trecobat.pointagetrecopro.data.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
-import com.trecobat.pointagetrecopro.data.entities.PendingRequest
-import com.trecobat.pointagetrecopro.data.entities.Pointage
+import com.trecobat.pointagetrecopro.data.entities.*
 import com.trecobat.pointagetrecopro.data.local.MyDao
 import com.trecobat.pointagetrecopro.data.remote.BaseDataSource
 import com.trecobat.pointagetrecopro.utils.Resource
@@ -15,6 +14,20 @@ class MyRepository(
     private val remoteDataSource: BaseDataSource,
     private val localDataSource: MyDao
 ) {
+    /***** AUTH *****/
+    fun login(user: User) = performLoginOperation(
+        networkCall = { remoteDataSource.login(user) },
+        saveCallResult = { localDataSource.insertToken(it) }
+    )
+
+    fun getToken() = performLocalOperation (
+        databaseQuery = { localDataSource.getToken() }
+    )
+
+    suspend fun deleteToken() = performDeleteAllOperation (
+        deleteAll = { localDataSource.deleteAllToken() }
+    )
+
     /***** PENDING REQUEST *****/
     fun sendRequest(url: String, body: String) {
         val request = PendingRequest(url = url, body = body)
@@ -87,6 +100,10 @@ class MyRepository(
         saveCallResult = { localDataSource.insertAllFiles(it) }
     )
 
+    suspend fun updateTache(tache: Tache) = performPostOperation(
+        networkCall = { remoteDataSource.updateTache(tache) },
+        saveCallResult = { localDataSource.updateTache(it) }
+    )
 
     private fun <T, A> performGetOperation(
         databaseQuery: () -> LiveData<T>,
@@ -121,6 +138,44 @@ class MyRepository(
                 emit(Resource.success(null))
             } else if (responseStatus.status == Resource.Status.ERROR) {
                 emit(Resource.error(responseStatus.message!!))
+            }
+        }
+
+    private fun <A> performLoginOperation(
+        networkCall: suspend () -> Resource<A>,
+        saveCallResult: suspend (A) -> Unit
+    ): LiveData<Resource<A>> =
+        liveData(Dispatchers.IO) {
+            emit(Resource.loading())
+
+            val responseStatus = networkCall.invoke()
+            if (responseStatus.status == Resource.Status.SUCCESS) {
+                saveCallResult(responseStatus.data!!)
+                emit(Resource.success(responseStatus.data))
+            } else if (responseStatus.status == Resource.Status.ERROR) {
+                emit(Resource.error(responseStatus.message!!))
+            }
+        }
+
+    private fun <T> performLocalOperation(
+        databaseQuery: () -> LiveData<T>
+    ): LiveData<Resource<T>> =
+        liveData(Dispatchers.IO) {
+            emit(Resource.loading())
+            val source = databaseQuery.invoke().map { Resource.success(it) }
+            emitSource(source)
+        }
+
+    private fun performDeleteAllOperation(
+        deleteAll: suspend () -> Unit
+    ): LiveData<Resource<Boolean>> =
+        liveData(Dispatchers.IO) {
+            emit(Resource.loading())
+            try {
+                deleteAll.invoke()
+                emit(Resource.success(true))
+            } catch (exception: Exception) {
+                emit(Resource.error(exception.message ?: "Error occurred"))
             }
         }
 }

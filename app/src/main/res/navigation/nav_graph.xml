@@ -3,24 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/tachesFragment">
+    app:startDestination="@id/tachesFragment"
+    app:defaultNavHost="false">
 
     <fragment
-        android:id="@+id/pointagesFragment"
-        android:name="com.trecobat.pointagetrecopro.ui.pointages.PointagesFragment"
-        android:label="Pointages"
-        tools:layout="@layout/pointages_fragment" >
+        android:id="@+id/authFragment"
+        android:name="com.trecobat.pointagetrecopro.ui.auth.AuthFragment"
+        android:label="Se connecter"
+        tools:layout="@layout/auth_fragment" >
         <action
-            android:id="@+id/action_pointagesFragment_to_pointageDetailFragment"
-            app:destination="@id/pointageDetailFragment" />
-
+            android:id="@+id/action_authFragment_to_tachesFragment"
+            app:destination="@id/tachesFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/pointageDetailFragment"
-        android:name="com.trecobat.pointagetrecopro.ui.pointagedetail.PointageDetailFragment"
-        android:label="Pointage Detail"
-        tools:layout="@layout/pointage_detail_fragment" />
-
 
     <fragment
         android:id="@+id/tachesFragment"
@@ -35,6 +29,7 @@
             app:destination="@id/tachesFragment" />
 
     </fragment>
+
     <fragment
         android:id="@+id/tacheDetailFragment"
         android:name="com.trecobat.pointagetrecopro.ui.tachedetail.TacheDetailFragment"

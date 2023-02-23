@@ -1,6 +1,8 @@
 package com.trecobat.pointagetrecopro.data.remote
 
 import com.trecobat.pointagetrecopro.data.entities.Pointage
+import com.trecobat.pointagetrecopro.data.entities.Tache
+import com.trecobat.pointagetrecopro.data.entities.User
 import com.trecobat.pointagetrecopro.utils.Resource
 import retrofit2.Response
 import timber.log.Timber
@@ -28,6 +30,9 @@ class BaseDataSource @Inject constructor(
         return Resource.error("Network call has failed for a following reason: $message")
     }
 
+    /***** AUTH *****/
+    suspend fun login(user: User) = getResult { myService.login(user) }
+
     /***** POINTAGE *****/
     suspend fun getPointages() = getResult { myService.getAllPointages() }
     suspend fun getPointagesOfTache(id: Int) = getResult { myService.getPointagesOfTache(id) }
@@ -42,4 +47,5 @@ class BaseDataSource @Inject constructor(
     suspend fun getTaches() = getResult { myService.getAllTaches() }
     suspend fun getTache(id: Int) = getResult { myService.getTache(id) }
     suspend fun getFilesOfTache(id: Int) = getResult { myService.getFilesOfTache(id) }
+    suspend fun updateTache(tache: Tache) = getResult { myService.updateTache(tache.id, tache) }
 }

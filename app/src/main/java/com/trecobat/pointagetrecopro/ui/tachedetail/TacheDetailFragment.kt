@@ -6,6 +6,9 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -106,7 +109,8 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                 Resource.Status.SUCCESS -> {
                     if (!it.data.isNullOrEmpty()) planAdapter.setItems(ArrayList(it.data))
                     binding.progressBar.visibility = View.GONE
-//                    binding.plansRv.visibility = View.VISIBLE
+                    binding.plansRv.visibility = View.VISIBLE
+                    binding.plansRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 }
 
                 Resource.Status.ERROR -> {
@@ -189,6 +193,25 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         setupCheckboxEquipe()
 
         binding.pointageBtn.setOnClickListener { pointer(tache) }
+
+        binding.mapBtn.setOnClickListener { goToGmap(tache) }
+    }
+
+    private fun goToGmap(tache: Tache)
+    {
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+        val locationName = "${tache.affaire.client.cli_adresse1_chantier} ${tache.affaire.client.cli_adresse2_chantier} ${tache.affaire.client.cli_cp_chantier} ${tache.affaire.client.cli_ville_chantier} France"
+        val addresses: List<Address> = geocoder.getFromLocationName(locationName, 1) as List<Address>
+        if (addresses.isNotEmpty()) {
+            val latitude = addresses[0].latitude
+            val longitude = addresses[0].longitude
+            val uri = "http://maps.google.com/maps?q=$latitude,$longitude"
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+            intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity")
+            if (intent.resolveActivity(requireContext().packageManager) != null) {
+                startActivity(intent)
+            }
+        }
     }
 
     private fun setupDatePicker()

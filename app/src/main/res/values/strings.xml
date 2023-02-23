@@ -19,4 +19,7 @@
     <string name="equipe_complete">Equipe Complete</string>
     <string name="enregistrer">enregistrer</string>
     <string name="supprimer">Supprimer</string>
+    <string name="connexion">Se connecter</string>
+    <string name="logout">Deconnexion</string>
+    <string name="map">Aller sur Google Maps</string>
 </resources>

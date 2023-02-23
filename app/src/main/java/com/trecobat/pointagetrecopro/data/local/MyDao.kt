@@ -1,11 +1,23 @@
 package com.trecobat.pointagetrecopro.data.local
 
+import android.media.session.MediaSession
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.trecobat.pointagetrecopro.data.entities.*
+import com.trecobat.pointagetrecopro.utils.Resource
 
 @Dao
 interface MyDao {
+
+    /***** AUTH *****/
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertToken(token: Token)
+
+    @Query("SELECT * FROM token ORDER BY id DESC LIMIT 1")
+    fun getToken(): LiveData<Token>
+
+    @Query("DELETE FROM token")
+    suspend fun deleteAllToken()
 
     /***** PENDING REQUEST *****/
     @Insert
@@ -78,4 +90,7 @@ interface MyDao {
 
     @Query("UPDATE ged_files SET local_storage = :localStorage WHERE gdf_fo_id = :gdfFoId")
     fun updateLocalStorage(gdfFoId: String, localStorage: String)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateTache(tache: Tache)
 }

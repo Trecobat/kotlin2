@@ -14,8 +14,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
 import javax.inject.Singleton
 
 @Module
@@ -24,10 +26,27 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(gson: Gson) : Retrofit = Retrofit.Builder()
-        .baseUrl("https://api-partenaires.trecobat.fr/")
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .build()
+    fun provideRetrofit(gson: Gson) : Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://api-partenaires.trecobat.fr/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(
+                OkHttpClient.Builder().apply {
+                    // Ajout de l'intercepteur pour le header Authorization
+                    addInterceptor { chain ->
+                        val token = System.getProperty("token")
+                        val original = chain.request()
+                        val requestBuilder = original.newBuilder()
+                        if (token != null) {
+                            requestBuilder.header("Authorization", "Bearer $token") // Ajouter le header si le token n'est pas null
+                        }
+                        val request = requestBuilder.method(original.method(), original.body()).build()
+                        chain.proceed(request)
+                    }
+                }.build()
+            )
+            .build()
+    }
 
     @Singleton
     @Provides

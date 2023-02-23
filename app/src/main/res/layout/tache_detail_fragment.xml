@@ -234,6 +234,31 @@
                 app:layout_constraintStart_toEndOf="@+id/divider8"
                 app:layout_constraintTop_toBottomOf="@+id/plans_rv" />
 
+            <Button
+                android:id="@+id/map_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/map_button_bg"
+                android:drawableEnd="@android:drawable/ic_menu_mapmode"
+                android:text="@string/map"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                app:layout_constraintEnd_toEndOf="@+id/table"
+                app:layout_constraintTop_toBottomOf="@+id/divider14" />
+
+            <View
+                android:id="@+id/divider16"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toStartOf="@+id/divider10"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/map_btn" />
+
 
             <!--        <androidx.recyclerview.widget.RecyclerView-->
             <!--            android:id="@+id/pointage_rv"-->
@@ -249,11 +274,12 @@
                 android:id="@+id/table"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toStartOf="@+id/divider10"
                 app:layout_constraintStart_toEndOf="@+id/divider8"
-                app:layout_constraintTop_toBottomOf="@+id/divider14">
+                app:layout_constraintTop_toBottomOf="@+id/divider16">
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -264,6 +290,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.33"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/button"
                         android:text="" />
 
                     <Button
@@ -271,6 +299,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.33"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/button"
                         android:text="" />
 
 
@@ -279,6 +309,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.33"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/button"
                         android:text="" />
                 </TableRow>
 
@@ -382,6 +414,8 @@
                 android:layout_marginBottom="8dp"
                 android:text="@string/pointer"
                 app:layout_constraintEnd_toEndOf="@+id/table"
+                android:background="@color/green"
+                android:textColor="@color/white"
                 app:layout_constraintTop_toBottomOf="@+id/table" />
 
             <!--        <com.google.android.gms.maps.MapView-->
