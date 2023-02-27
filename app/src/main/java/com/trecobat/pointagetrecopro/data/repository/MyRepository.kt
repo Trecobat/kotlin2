@@ -7,6 +7,7 @@ import com.trecobat.pointagetrecopro.data.entities.*
 import com.trecobat.pointagetrecopro.data.local.MyDao
 import com.trecobat.pointagetrecopro.data.remote.BaseDataSource
 import com.trecobat.pointagetrecopro.utils.Resource
+import io.jsonwebtoken.Jwts
 import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 
@@ -26,6 +27,12 @@ class MyRepository(
 
     suspend fun deleteToken() = performDeleteAllOperation (
         deleteAll = { localDataSource.deleteAllToken() }
+    )
+
+    fun getAuthEquipe(email: String) = performGetOperation (
+        databaseQuery = { localDataSource.getAuthEquipe(email) },
+        networkCall = { remoteDataSource.getAuthEquipe(email) },
+        saveCallResult = { localDataSource.insertEquipe(it) }
     )
 
     /***** PENDING REQUEST *****/
@@ -63,7 +70,7 @@ class MyRepository(
         saveCallResult = { localDataSource.updatePointage(it) }
     )
 
-    fun getEquipiers(equipe: Int = 0) = performGetOperation(
+    fun getEquipiers() = performGetOperation(
         databaseQuery = { localDataSource.getAllEquipiers() },
         networkCall = { remoteDataSource.getEquipiers() },
         saveCallResult = { localDataSource.insertAllEquipiers(it) }

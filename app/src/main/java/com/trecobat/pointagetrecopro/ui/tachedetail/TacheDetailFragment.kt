@@ -2,6 +2,7 @@ package com.trecobat.pointagetrecopro.ui.tachedetail
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -11,6 +12,7 @@ import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.speech.RecognizerIntent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.trecobat.pointagetrecopro.R
 import com.trecobat.pointagetrecopro.data.entities.GedFiles
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.entities.Tache
@@ -49,7 +52,6 @@ import java.io.IOException
 import java.net.URL
 import java.util.*
 import kotlin.collections.set
-
 
 @AndroidEntryPoint
 class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, PointagesAdapter.PointageItemListener {
@@ -195,6 +197,8 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         binding.pointageBtn.setOnClickListener { pointer(tache) }
 
         binding.mapBtn.setOnClickListener { goToGmap(tache) }
+
+        binding.buttonSpeechInput.setOnClickListener { startSpeechInput() }
     }
 
     private fun goToGmap(tache: Tache)
@@ -240,7 +244,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
             if (isChecked) {
                 binding.equipiers.visibility = View.GONE
             } else {
-                viewModel.getEquipiers(5).observe(viewLifecycleOwner, Observer {
+                viewModel.getEquipiers().observe(viewLifecycleOwner, Observer {
                     when (it.status) {
                         Resource.Status.SUCCESS -> {
                             if (!it.data.isNullOrEmpty()) {
@@ -390,7 +394,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
             postPointage(pointage)
         } else {
             var isHandled = false
-            viewModel.equipiers.observe(viewLifecycleOwner, Observer { result ->
+            viewModel.getEquipiersOfEquipe().observe(viewLifecycleOwner, Observer { result ->
                 if (!isHandled) {
                     isHandled = true
                     when (result.status) {
@@ -504,5 +508,26 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
 
     override fun onClickedPointage(pointage: Pointage) {
         TODO("Not yet implemented")
+    }
+
+    private fun startSpeechInput() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speech_prompt))
+        startActivityForResult(intent, 100)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            100 -> {
+                if (resultCode == RESULT_OK && data != null) {
+                    val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                    val commentaire = binding.commentaire
+                    commentaire.setText(result?.get(0))
+                }
+            }
+        }
     }
 }

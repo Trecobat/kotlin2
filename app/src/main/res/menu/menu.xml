@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/MenuTheme"
     android:id="@+id/menu">
     <item
+        android:id="@+id/add_marche"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/add_marche"
+        app:showAsAction="collapseActionView" />
+    <item
+        android:id="@+id/add_ts"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/add_ts"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/repas"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/repas"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/voir_pointages"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/voir_pointages"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/logout"
-        app:showAsAction="always"
+        app:showAsAction="collapseActionView"
         android:icon="@android:drawable/ic_lock_power_off"
         android:title="@string/logout" />
 </menu>

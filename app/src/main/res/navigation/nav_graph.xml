@@ -39,4 +39,11 @@
             android:id="@+id/action_tacheDetailFragment_refresh"
             app:destination="@id/tacheDetailFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/addMarcheFragment"
+        android:name="com.trecobat.pointagetrecopro.ui.addmarche.AddMarcheFragment"
+        android:label="Ajouter un marché"
+        tools:layout="@layout/add_marche_fragment" >
+    </fragment>
 </navigation>

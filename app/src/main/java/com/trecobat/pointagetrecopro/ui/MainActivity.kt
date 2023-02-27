@@ -2,20 +2,25 @@ package com.trecobat.pointagetrecopro.ui
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LiveData
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationView
 import com.trecobat.pointagetrecopro.R
-import com.trecobat.pointagetrecopro.data.entities.Token
 import com.trecobat.pointagetrecopro.data.local.AppDatabase
 import com.trecobat.pointagetrecopro.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -52,6 +57,24 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(
                         R.id.authFragment
                     )
+                    true
+                }
+                R.id.add_marche -> {
+                    navController.navigate(
+                        R.id.addMarcheFragment
+                    )
+                    true
+                }
+                R.id.add_ts -> {
+                    Toast.makeText(this, "add_ts", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.repas -> {
+                    Toast.makeText(this, "repas", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.voir_pointages -> {
+                    Toast.makeText(this, "voir_pointages", Toast.LENGTH_SHORT).show()
                     true
                 }
                 else -> false

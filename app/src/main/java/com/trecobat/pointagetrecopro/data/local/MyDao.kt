@@ -19,6 +19,12 @@ interface MyDao {
     @Query("DELETE FROM token")
     suspend fun deleteAllToken()
 
+    @Query("SELECT * FROM equipe_vp WHERE eqvp_email = :email")
+    fun getAuthEquipe(email: String): LiveData<Equipe>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertEquipe(equipe: Equipe)
+
     /***** PENDING REQUEST *****/
     @Insert
     fun insertPendingRequest(request: PendingRequest)

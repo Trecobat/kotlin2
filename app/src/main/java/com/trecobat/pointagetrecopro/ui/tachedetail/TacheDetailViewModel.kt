@@ -1,6 +1,5 @@
 package com.trecobat.pointagetrecopro.ui.tachedetail
 
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,8 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import com.trecobat.pointagetrecopro.data.entities.Equipier
 import com.trecobat.pointagetrecopro.data.entities.Pointage
-import com.trecobat.pointagetrecopro.data.entities.Tache
-import com.trecobat.pointagetrecopro.data.local.AppDatabase
 import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import com.trecobat.pointagetrecopro.utils.Resource
 
@@ -39,10 +36,6 @@ class TacheDetailViewModel @ViewModelInject constructor(
         repository.getBdcts()
     }
 
-    var equipiers = _id.switchMap {
-        repository.getEquipiersOfEquipe(5)
-    }
-
     fun start(id: Int) {
         _id.value = id
     }
@@ -55,11 +48,17 @@ class TacheDetailViewModel @ViewModelInject constructor(
         return repository.updatePointage(pointage)
     }
 
-    fun getEquipiers(equipe: Int = 0): LiveData<Resource<List<Equipier>>> {
-        return repository.getEquipiers(equipe)
+    fun getEquipiers(): LiveData<Resource<List<Equipier>>> {
+        return repository.getEquipiers()
     }
 
-    fun getEquipiersOfEquipe(equipe: Int = 0): LiveData<Resource<List<Equipier>>> {
-        return repository.getEquipiersOfEquipe(equipe)
+    fun getEquipiersOfEquipe(): LiveData<Resource<List<Equipier>>> {
+        val equipe = System.getProperty("equipe")
+        if ( equipe != null ) {
+            return repository.getEquipiersOfEquipe(Integer.parseInt(equipe))
+        }
+        // Inutile parce que cette fonction utilise l'equipe du user connecté qui en a forcément une.
+        // Cependant il faut quand même vérifier que c'est pas null par rapport au typage dans l'entité
+        return repository.getEquipiersOfEquipe(0)
     }
 }

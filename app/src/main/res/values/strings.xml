@@ -22,4 +22,11 @@
     <string name="connexion">Se connecter</string>
     <string name="logout">Deconnexion</string>
     <string name="map">Aller sur Google Maps</string>
+    <string name="add_marche">Ajouter un marché</string>
+    <string name="add_ts">Ajouter un TS</string>
+    <string name="repas">Gérer mes repas</string>
+    <string name="voir_pointages">Voir mes pointages</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="speech_prompt">Que voulez-vous écrire ?</string>
 </resources>

@@ -49,6 +49,10 @@ interface MyService {
     /***** Equipiers *****/
     @GET("api/pointageTrecopro/equipiers")
     suspend fun getAllEquipiers(): Response<List<Equipier>>
+
+    @GET("api/pointageTrecopro/equipes/{email}")
+    suspend fun getAuthEquipe(@Path("email") email: String): Response<Equipe>
+
     @GET("api/pointageTrecopro/equipiers/{equipe}")
     suspend fun getEquipiersOfEquipe(@Path("equipe") equipe: Int): Response<List<Equipier>>
 }

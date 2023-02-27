@@ -9,11 +9,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.trecobat.pointagetrecopro.R
+import com.trecobat.pointagetrecopro.data.entities.Equipe
 import com.trecobat.pointagetrecopro.data.entities.User
 import com.trecobat.pointagetrecopro.databinding.AuthFragmentBinding
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.item_pointage.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -47,14 +49,26 @@ class AuthFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     if (it.data?.token != null) {
                         System.setProperty("token", it.data.token)
-                        findNavController().navigate(
-                            R.id.action_authFragment_to_tachesFragment
-                        )
+                        viewModel.getAuthUser().observe(viewLifecycleOwner, Observer {  res ->
+                            when (res.status) {
+                                Resource.Status.SUCCESS -> {
+                                    System.setProperty("equipe",
+                                        res.data?.eqvp_id.toString()
+                                    )
+                                    findNavController().navigate(
+                                        R.id.action_authFragment_to_tachesFragment
+                                    )
+                                }
+                                Resource.Status.ERROR -> {}
+
+                                Resource.Status.LOADING -> {}
+                            }
+                        })
                     }
                 }
 
                 Resource.Status.ERROR -> {
-                    Toast.makeText(activity, "Erreur d'authentification", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Erreur d'authentification : ${it.message}", Toast.LENGTH_SHORT).show()
                     Timber.e(it.message)
                 }
 
@@ -72,6 +86,7 @@ class AuthFragment : Fragment() {
                 viewModel.login(user).observe(viewLifecycleOwner, Observer {
                     when (it.status) {
                         Resource.Status.SUCCESS -> {
+                            Timber.e(it.data.toString())
                             if (it.data?.token != null) {
                                 System.setProperty("token", it.data.token)
                                 findNavController().navigate(
