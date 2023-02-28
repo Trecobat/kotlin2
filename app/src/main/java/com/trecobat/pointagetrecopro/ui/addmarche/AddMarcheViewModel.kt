@@ -14,6 +14,7 @@ class AddMarcheViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     val bdcTypes = getCorpsEtat()
+    val test = getAffairesByAffIdOrCliNom("%150602%")
 
     private fun getCorpsEtat(): LiveData<Resource<List<BdcType>>> {
         return repository.getBdcts()

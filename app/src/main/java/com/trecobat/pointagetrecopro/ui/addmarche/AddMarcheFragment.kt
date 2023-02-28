@@ -1,6 +1,8 @@
 package com.trecobat.pointagetrecopro.ui.addmarche
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -8,25 +10,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.trecobat.pointagetrecopro.data.entities.Affaire
 import com.trecobat.pointagetrecopro.databinding.AddMarcheFragmentBinding
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.tache_detail_fragment.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.json.JSONArray
 import timber.log.Timber
 
 @AndroidEntryPoint
-class AddMarcheFragment : Fragment() {
+class AddMarcheFragment : Fragment(), AffairesAdapter.AffaireItemListener {
 
     private var binding: AddMarcheFragmentBinding by autoCleared()
     private val viewModel: AddMarcheViewModel by viewModels()
+    private var affaires = ArrayList<Affaire>()
+    private lateinit var affaireAdapter: AffairesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +41,20 @@ class AddMarcheFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.test.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Resource.Status.SUCCESS -> {
+                    if (!it.data.isNullOrEmpty()) {
+                        Timber.d(it.data.toString())
+                    }
+                }
+                Resource.Status.ERROR -> {
+                    Timber.e(it.message)
+                }
+                Resource.Status.LOADING -> {}
+            }
+        })
+        affaireAdapter = AffairesAdapter(this, affaires)
         setupSpinner()
         setupAutocomplete()
     }
@@ -70,51 +86,63 @@ class AddMarcheFragment : Fragment() {
     }
 
     private fun setupAutocomplete() {
-        val autoCompleteTextView = binding.affaire
-        val affaires = mutableListOf<String>()
-        val adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_dropdown_item_1line, affaires)
-        autoCompleteTextView.setAdapter(adapter)
+        val resultsRecyclerView = binding.affairesRv
+        resultsRecyclerView.layoutManager = LinearLayoutManager(context)
+        resultsRecyclerView.adapter = affaireAdapter
 
+        val autoCompleteTextView = binding.affaire
         autoCompleteTextView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                // Effacer la liste des suggestions actuelles
+                affaires.clear()
                 if (s.toString().isNotEmpty()) {
                     if (s.toString().length > 3) {
-                        val query = "%${s.toString()}%"
-                        Timber.d(query)
-                        // Effacer la liste des suggestions actuelles
-                        affaires.clear()
-                        // Appeler l'API pour récupérer les suggestions
-                        viewModel.getAffairesByAffIdOrCliNom(query).observe(viewLifecycleOwner, Observer {
-                            when (it.status) {
-                                Resource.Status.SUCCESS -> {
-                                    if (!it.data.isNullOrEmpty()) {
-                                        for (row in it.data) {
-                                            val suggestion = "${row.aff_id}"
-                                            affaires.add(suggestion)
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.bdctId.visibility = View.GONE
+                        binding.affairesSv.visibility = View.GONE
+                            val query = "%${s.toString()}%"
+                            viewModel.getAffairesByAffIdOrCliNom(query).observe(viewLifecycleOwner, Observer {
+                                Timber.e(it.data.toString())
+                                when (it.status) {
+                                    Resource.Status.SUCCESS -> {
+                                        if (!it.data.isNullOrEmpty()) {
+                                            affaires.addAll(it.data)
+                                            binding.progressBar.visibility = View.GONE
+                                            binding.bdctId.visibility = View.VISIBLE
+                                            if (affaires.isNotEmpty()) {
+                                                binding.affairesSv.visibility = View.VISIBLE
+                                            }
                                         }
+                                    }
+                                    Resource.Status.ERROR -> {
+                                        Timber.e(it.message)
                                         binding.progressBar.visibility = View.GONE
                                         binding.bdctId.visibility = View.VISIBLE
-                                        adapter.notifyDataSetChanged()
+                                        Toast.makeText( requireContext(), it.message, Toast.LENGTH_SHORT ).show()
+                                    }
+                                    Resource.Status.LOADING -> {
+                                        binding.progressBar.visibility = View.VISIBLE
+                                        binding.bdctId.visibility = View.GONE
+                                        binding.affairesSv.visibility = View.GONE
                                     }
                                 }
-                                Resource.Status.ERROR -> {
-                                    Timber.e(it.message)
-                                    binding.progressBar.visibility = View.GONE
-                                    binding.bdctId.visibility = View.VISIBLE
-                                    Toast.makeText( requireContext(), it.message, Toast.LENGTH_SHORT ).show()
-                                }
-                                Resource.Status.LOADING -> {
-                                    binding.progressBar.visibility = View.VISIBLE
-                                    binding.bdctId.visibility = View.GONE
-                                }
-                            }
-                        })
+                            })
+                    } else {
+                        binding.affairesSv.visibility = View.GONE
                     }
+                } else {
+                    binding.affairesSv.visibility = View.GONE
                 }
+                //On signale à l'adapteur qu'il y a eu un changement
+                affaireAdapter.notifyDataSetChanged()
             }
-
-            override fun afterTextChanged(s: Editable?) {}
         })
+    }
+
+    override fun onClickedPointage(affaire: Affaire) {
+        Toast.makeText(requireContext(), affaire.toString(), Toast.LENGTH_SHORT).show()
+        binding.affairesSv.visibility = View.GONE
     }
 }

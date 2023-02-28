@@ -31,7 +31,34 @@
             android:labelFor="@+id/aff_id"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="LabelFor" />
+
+        <ScrollView
+            android:id="@+id/affaires_sv"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:layout_constraintTop_toBottomOf="@+id/affaire"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:background="@drawable/borderautocomplete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="200dp"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/affaires_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+        </ScrollView>
 
         <Spinner
             android:id="@+id/bdct_id"
@@ -42,7 +69,7 @@
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/affaire" />
+            app:layout_constraintTop_toBottomOf="@+id/affaires_sv" />
 
         <TextView
             android:id="@+id/aff_id"

@@ -35,10 +35,6 @@ class PointagesAdapter(
         fun onClickedPointage(pointage: Pointage)
     }
 
-    interface SpeechRecognitionCallback {
-        fun onSpeechRecognitionResult(result: String)
-    }
-
     private val items = ArrayList<Pointage>()
 
     fun setItems(items: ArrayList<Pointage>) {
@@ -74,7 +70,6 @@ class PointagesAdapter(
     ) : RecyclerView.ViewHolder(itemBinding.root), View.OnClickListener {
 
         private lateinit var pointage: Pointage
-        private var callback: SpeechRecognitionCallback? = null
 
         init {
             itemBinding.root.pointage_btn.setOnClickListener(this)

@@ -52,6 +52,6 @@ interface MyService {
     suspend fun getEquipiersOfEquipe(@Path("equipe") equipe: Int): Response<List<Equipier>>
 
     /***** Affaires *****/
-    @GET("api/pointageTrecopro/affaires")
-    suspend fun getAffairesByAffIdOrCliNom(@Query("text") text: String): Response<List<Affaire>>
+    @POST("api/pointageTrecopro/affaires")
+    suspend fun getAffairesByAffIdOrCliNom(@Body text: String): Response<List<Affaire>>
 }

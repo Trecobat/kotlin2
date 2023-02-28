@@ -50,7 +50,10 @@ class TachesAdapter(
     override fun onBindViewHolder(holder: TacheViewHolder, position: Int) = holder.bind(items[position], context, viewModel, lifecycleOwner)
 }
 
-class TacheViewHolder(private val itemBinding: ItemTacheBinding, private val listener: TachesAdapter.TacheItemListener) : RecyclerView.ViewHolder(itemBinding.root),
+class TacheViewHolder(
+    private val itemBinding: ItemTacheBinding,
+    private val listener: TachesAdapter.TacheItemListener
+    ) : RecyclerView.ViewHolder(itemBinding.root),
     View.OnClickListener {
 
     private lateinit var tache: Tache

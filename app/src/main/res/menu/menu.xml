@@ -12,17 +12,20 @@
         android:id="@+id/add_ts"
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/add_ts"
-        app:showAsAction="never" />
+        app:showAsAction="collapseActionView"
+        android:visible="false" />
     <item
         android:id="@+id/repas"
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/repas"
-        app:showAsAction="never" />
+        app:showAsAction="collapseActionView"
+        android:visible="false" />
     <item
         android:id="@+id/voir_pointages"
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/voir_pointages"
-        app:showAsAction="never" />
+        app:showAsAction="collapseActionView"
+        android:visible="false" />
     <item
         android:id="@+id/logout"
         app:showAsAction="collapseActionView"

@@ -119,7 +119,6 @@ class MyRepository(
         saveCallResult = { localDataSource.insertAllAffaires(it) }
     )
 
-
     /***** PERFORM OPERATION *****/
     private fun <T, A> performGetOperation(
         databaseQuery: () -> LiveData<T>,
@@ -131,6 +130,7 @@ class MyRepository(
             val source = databaseQuery.invoke().map { Resource.success(it) }
             emitSource(source)
             val responseStatus = networkCall.invoke()
+            Timber.e(responseStatus.toString())
             if (responseStatus.status == Resource.Status.SUCCESS) {
                 saveCallResult(responseStatus.data!!)
 
