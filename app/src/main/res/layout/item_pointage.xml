@@ -1,164 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/pointage"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/border"
-    android:padding="10dp"
-    android:layout_marginBottom="20dp" >
+    android:layout_marginBottom="20dp"
+    android:orientation="vertical">
 
-    <TableLayout
-        android:id="@+id/table"
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/pointage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="10dp" >
 
-        <TableRow
+        <TableLayout
+            android:id="@+id/table"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <Button
-                android:id="@+id/buttonJour"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.30"
-                android:background="@drawable/button"
-                android:layout_margin="5dp"
-                android:text="" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/buttonHeureDeb"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.30"
-                android:background="@drawable/button"
-                android:layout_margin="5dp"
-                android:text="" />
+                <Button
+                    android:id="@+id/buttonJour"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.30"
+                    android:background="@drawable/button"
+                    android:layout_margin="5dp"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/buttonHeureDeb"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.30"
+                    android:background="@drawable/button"
+                    android:layout_margin="5dp"
+                    android:text="" />
 
 
-            <Button
-                android:id="@+id/buttonHeureFin"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.30"
-                android:background="@drawable/button"
-                android:layout_margin="5dp"
-                android:text="" />
-        </TableRow>
+                <Button
+                    android:id="@+id/buttonHeureFin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.30"
+                    android:background="@drawable/button"
+                    android:layout_margin="5dp"
+                    android:text="" />
+            </TableRow>
 
-        <TableRow
-            android:id="@+id/rowMarche"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <TableRow
+                android:id="@+id/rowMarche"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/type_pointage"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.33"
-                android:text="@string/TextView" />
+                <TextView
+                    android:id="@+id/type_pointage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:text="@string/TextView" />
 
-            <CheckBox
-                android:id="@+id/coffret_elec"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.33"
-                android:contentDescription="@string/TextView"
-                android:enabled="false"
-                android:text="@string/coffret_elec" />
+                <CheckBox
+                    android:id="@+id/coffret_elec"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:contentDescription="@string/TextView"
+                    android:enabled="false"
+                    android:text="@string/coffret_elec" />
 
-            <CheckBox
-                android:id="@+id/remblais"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.33"
-                android:contentDescription="@string/TextView"
-                android:enabled="false"
-                android:text="@string/remblais" />
+                <CheckBox
+                    android:id="@+id/remblais"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:contentDescription="@string/TextView"
+                    android:enabled="false"
+                    android:text="@string/remblais" />
 
-            <TextView
-                android:id="@+id/corps_etat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.33"
-                android:visibility="gone"
-                android:text="@string/TextView" />
+                <TextView
+                    android:id="@+id/corps_etat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:visibility="gone"
+                    android:text="@string/TextView" />
 
-            <TextView
-                android:id="@+id/nature_erreur"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.33"
-                android:visibility="gone"
-                android:text="@string/TextView" />
-        </TableRow>
+                <TextView
+                    android:id="@+id/nature_erreur"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:visibility="gone"
+                    android:text="@string/TextView" />
+            </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/equipier"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:padding="10dp"
-                android:text="@string/TextView"
-                android:textStyle="bold" />
-        </TableRow>
+                <TextView
+                    android:id="@+id/equipier"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:padding="10dp"
+                    android:text="@string/TextView"
+                    android:textStyle="bold" />
+            </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:padding="10dp"
-                android:text="@string/Commentaire" />
-        </TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:padding="10dp"
+                    android:text="@string/Commentaire" />
+            </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/commentaire"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="" />
-        </TableRow>
-    </TableLayout>
+                <EditText
+                    android:id="@+id/commentaire"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:background="@android:drawable/editbox_background"
+                    android:scrollbars="vertical"
+                    android:text="" />
 
-    <Button
-        android:id="@+id/pointage_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:padding="5dp"
-        android:text="@string/enregistrer"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/blue"
-        android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/table" />
+                <Button
+                    android:id="@+id/button_speech_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    android:visibility="gone"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:foreground="@android:drawable/ic_btn_speak_now" />
+            </TableRow>
+        </TableLayout>
 
-    <Button
-        android:id="@+id/supprimer_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:padding="5dp"
-        android:text="@string/supprimer"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/red"
-        android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/table" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/pointage_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:padding="5dp"
+            android:text="@string/enregistrer"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@color/aubergine"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/table" />
+
+        <Button
+            android:id="@+id/supprimer_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:padding="5dp"
+            android:text="@string/supprimer"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@color/red"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/table" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

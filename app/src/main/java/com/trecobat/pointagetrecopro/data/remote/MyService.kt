@@ -1,13 +1,8 @@
 package com.trecobat.pointagetrecopro.data.remote
 
-import com.google.gson.JsonElement
 import com.trecobat.pointagetrecopro.data.entities.*
-import org.json.JSONArray
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface MyService {
     /***** AUTH *****/
@@ -55,4 +50,8 @@ interface MyService {
 
     @GET("api/pointageTrecopro/equipiers/{equipe}")
     suspend fun getEquipiersOfEquipe(@Path("equipe") equipe: Int): Response<List<Equipier>>
+
+    /***** Affaires *****/
+    @GET("api/pointageTrecopro/affaires")
+    suspend fun getAffairesByAffIdOrCliNom(@Query("text") text: String): Response<List<Affaire>>
 }

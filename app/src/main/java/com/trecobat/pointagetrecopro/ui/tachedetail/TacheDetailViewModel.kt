@@ -9,6 +9,7 @@ import com.trecobat.pointagetrecopro.data.entities.Equipier
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import com.trecobat.pointagetrecopro.utils.Resource
+import timber.log.Timber
 
 class TacheDetailViewModel @ViewModelInject constructor(
     private val repository: MyRepository
@@ -22,7 +23,6 @@ class TacheDetailViewModel @ViewModelInject constructor(
     val tache = _id.switchMap { id ->
         repository.getTache(id)
     }
-//    var tache: LiveData<Resource<Tache>> = _tache
 
     val pointages = _id.switchMap { id ->
         repository.getPointagesOfTache(id)

@@ -402,6 +402,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.2"
+                        style="?android:attr/buttonBarButtonStyle"
                         android:foreground="@android:drawable/ic_btn_speak_now" />
                 </TableRow>
             </TableLayout>
@@ -411,30 +412,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:background="@color/green"
+                android:layout_marginTop="8dp"
+                android:background="@color/aubergine"
                 android:text="@string/pointer"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="@+id/table"
                 app:layout_constraintTop_toBottomOf="@+id/table" />
 
-            <!--        <com.google.android.gms.maps.MapView-->
-            <!--            android:id="@+id/mapView"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="200dp"-->
-            <!--            android:layout_marginStart="8dp"-->
-            <!--            android:layout_marginTop="8dp"-->
-            <!--            android:layout_marginEnd="8dp"-->
-            <!--            app:layout_constraintEnd_toStartOf="@+id/divider10"-->
-            <!--            app:layout_constraintStart_toEndOf="@+id/divider8"-->
-            <!--            app:layout_constraintTop_toBottomOf="@+id/divider13" />-->
-
+            <View
+                android:id="@+id/divider17"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_margin="8dp"
+                android:background="@color/black"
+                app:layout_constraintEnd_toStartOf="@+id/divider10"
+                app:layout_constraintStart_toEndOf="@+id/divider8"
+                app:layout_constraintTop_toBottomOf="@+id/pointage_btn" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/pointages_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
                 android:orientation="horizontal"
                 app:layout_constraintStart_toEndOf="@+id/divider8"

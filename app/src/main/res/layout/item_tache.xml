@@ -1,102 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tache"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
+    android:padding="10dp"
+    android:layout_margin="10dp"
+    android:background="@drawable/border" >
 
-    <View
-        android:id="@+id/divider4"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/cli_nom"
-        app:layout_constraintStart_toStartOf="parent" />
+    <TextView
+        android:id="@+id/aff_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="@string/TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/cli_nom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:padding="4dp"
         android:text="@string/TextView"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/divider4" />
-
-    <TextView
-        android:id="@+id/aff_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:text="@string/TextView"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
-        app:layout_constraintStart_toEndOf="@+id/cli_nom"
-        app:layout_constraintTop_toTopOf="@+id/divider4" />
+        app:layout_constraintStart_toEndOf="@+id/aff_id"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/bdct_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
         android:text="@string/TextView"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/divider4" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/du"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:text="@string/Du"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cli_nom" />
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <TextView
         android:id="@+id/start_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:text="@string/TextView"
         app:layout_constraintStart_toEndOf="@+id/du"
-        app:layout_constraintTop_toBottomOf="@+id/cli_nom" />
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <TextView
         android:id="@+id/au"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:text="@string/au"
         app:layout_constraintStart_toEndOf="@+id/start_date"
-        app:layout_constraintTop_toBottomOf="@+id/cli_nom" />
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <TextView
         android:id="@+id/end_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:text="@string/TextView"
         app:layout_constraintStart_toEndOf="@+id/au"
-        app:layout_constraintTop_toBottomOf="@+id/cli_nom" />
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <TextView
         android:id="@+id/cli_adresse1_chantier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
         android:text="@string/TextView"
         app:layout_constraintStart_toStartOf="parent"
@@ -116,8 +97,8 @@
         android:id="@+id/cli_cp_chantier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
         android:layout_marginTop="2dp"
+        android:layout_marginBottom="5dp"
         android:text="@string/TextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cli_adresse1_chantier" />
@@ -128,6 +109,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="2dp"
+        android:layout_marginBottom="5dp"
         android:text="@string/TextView"
         app:layout_constraintStart_toEndOf="@+id/cli_cp_chantier"
         app:layout_constraintTop_toBottomOf="@+id/cli_adresse1_chantier" />
@@ -136,68 +118,29 @@
         android:id="@+id/masquer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="75dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp"
         android:background="@color/red"
         android:text="@string/Masquer"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/divider3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bdct_label" />
+        app:layout_constraintTop_toBottomOf="@+id/cli_ville_chantier" />
 
     <View
         android:id="@+id/divider"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginStart="0dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="0dp"
         android:layout_marginBottom="4dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintBottom_toTopOf="@+id/du"
-        app:layout_constraintEnd_toEndOf="@+id/bdct_label"
-        app:layout_constraintStart_toStartOf="@+id/cli_nom"
         app:layout_constraintTop_toBottomOf="@+id/cli_nom" />
 
     <View
         android:id="@+id/divider2"
         android:layout_width="1dp"
         android:layout_height="0dp"
-        android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintEnd_toStartOf="@+id/bdct_label"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/divider3"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/masquer"
-        tools:layout_editor_absoluteX="-16dp" />
-
-    <View
-        android:id="@+id/divider5"
-        android:layout_width="3dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="4dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/divider3"
-        app:layout_constraintEnd_toStartOf="@+id/cli_nom"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
-
-    <View
-        android:id="@+id/divider6"
-        android:layout_width="3dp"
-        android:layout_height="0dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/divider3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

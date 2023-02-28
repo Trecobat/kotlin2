@@ -2,6 +2,7 @@ package com.trecobat.pointagetrecopro.ui.taches
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,16 +63,16 @@ class TacheViewHolder(private val itemBinding: ItemTacheBinding, private val lis
     fun bind(item: Tache, context: Context, viewModel: TachesViewModel, lifecycleOwner: LifecycleOwner) {
         this.tache = item
 
-        itemBinding.tache.setBackgroundColor ( getItemColor ( item.nb_termine, item.nb_pointage ) )
-        itemBinding.cliNom.text = item.affaire.client.cli_nom
+        itemBinding.tache.background = getItemDrawable ( item.nb_termine, item.nb_pointage )
+        itemBinding.cliNom.text = item.affaire.client?.cli_nom
         itemBinding.affId.text = " - ${item.affaire.aff_id}"
         itemBinding.bdctLabel.text = item.bdc_type.bdct_label
         itemBinding.startDate.text = formatDate(item.start_date)
         itemBinding.endDate.text = item.end_date?.let { formatDate(it) }
-        itemBinding.cliAdresse1Chantier.text = item.affaire.client.cli_adresse1_chantier
-        itemBinding.cliAdresse2Chantier.text = if (item.affaire.client.cli_adresse2_chantier != null) " - ${item.affaire.client.cli_adresse2_chantier}" else ""
-        itemBinding.cliCpChantier.text = item.affaire.client.cli_cp_chantier
-        itemBinding.cliVilleChantier.text = item.affaire.client.cli_ville_chantier
+        itemBinding.cliAdresse1Chantier.text = item.affaire.client?.cli_adresse1_chantier
+        itemBinding.cliAdresse2Chantier.text = if (item.affaire.client?.cli_adresse2_chantier != null) " - ${item.affaire.client.cli_adresse2_chantier}" else ""
+        itemBinding.cliCpChantier.text = item.affaire.client?.cli_cp_chantier
+        itemBinding.cliVilleChantier.text = item.affaire.client?.cli_ville_chantier
 
         itemBinding.masquer.setOnClickListener {
             item.hidden = 1
@@ -93,18 +94,15 @@ class TacheViewHolder(private val itemBinding: ItemTacheBinding, private val lis
     }
 
     // Récupère la couleur de l'item en fonction de si le tache est à venir, en cours ou terminé
-    private fun getItemColor(nb_termine: Int, nb_pointage: Int): Int
+    @SuppressLint("ResourceType")
+    private fun getItemDrawable(nb_termine: Int, nb_pointage: Int): Drawable?
     {
-        return ContextCompat.getColor(
-            itemBinding.root.context,
-            if ( nb_termine > 0 ) {
-                R.color.tache_terminee
-            } else if ( nb_pointage > 0 ) {
-                R.color.tache_en_cours
-            } else {
-                R.color.tache_a_venir
-            }
-        )
+        val context = itemBinding.root.context
+        return when {
+            nb_termine > 0 -> ContextCompat.getDrawable(context, R.drawable.tache_terminee)
+            nb_pointage > 0 -> ContextCompat.getDrawable(context, R.drawable.tache_en_cours)
+            else -> ContextCompat.getDrawable(context, R.drawable.tache_a_venir)
+        }
     }
 
     override fun onClick(v: View?) {

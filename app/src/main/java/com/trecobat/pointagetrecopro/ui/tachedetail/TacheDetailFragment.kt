@@ -173,16 +173,16 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
 
     @SuppressLint("SetTextI18n")
     private fun bindTache(tache: Tache) {
-        binding.cliNom.text = tache.affaire.client.cli_nom
+        binding.cliNom.text = tache.affaire.client?.cli_nom
         binding.affId.text = " - ${tache.affaire.aff_id}"
         binding.bdctLabel.text = tache.bdc_type.bdct_label
         binding.startDate.text = formatDate(tache.start_date)
         binding.endDate.text = tache.end_date?.let { formatDate(it) }
-        binding.cliAdresse1Chantier.text = tache.affaire.client.cli_adresse1_chantier
+        binding.cliAdresse1Chantier.text = tache.affaire.client?.cli_adresse1_chantier
         binding.cliAdresse2Chantier.text =
-            if (tache.affaire.client.cli_adresse2_chantier != null) " - ${tache.affaire.client.cli_adresse2_chantier}" else ""
-        binding.cliCpChantier.text = tache.affaire.client.cli_cp_chantier
-        binding.cliVilleChantier.text = tache.affaire.client.cli_ville_chantier
+            if (tache.affaire.client?.cli_adresse2_chantier != null) " - ${tache.affaire.client.cli_adresse2_chantier}" else ""
+        binding.cliCpChantier.text = tache.affaire.client?.cli_cp_chantier
+        binding.cliVilleChantier.text = tache.affaire.client?.cli_ville_chantier
         binding.buttonJour.text = "${getDay()}/${getMonth()}/${getYear(true)}"
         val heure = "${getHour()}:${getMinute()}"
         binding.buttonHeureDeb.text = heure
@@ -204,7 +204,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
     private fun goToGmap(tache: Tache)
     {
         val geocoder = Geocoder(requireContext(), Locale.getDefault())
-        val locationName = "${tache.affaire.client.cli_adresse1_chantier} ${tache.affaire.client.cli_adresse2_chantier} ${tache.affaire.client.cli_cp_chantier} ${tache.affaire.client.cli_ville_chantier} France"
+        val locationName = "${tache.affaire.client?.cli_adresse1_chantier} ${tache.affaire.client?.cli_adresse2_chantier} ${tache.affaire.client?.cli_cp_chantier} ${tache.affaire.client?.cli_ville_chantier} France"
         val addresses: List<Address> = geocoder.getFromLocationName(locationName, 1) as List<Address>
         if (addresses.isNotEmpty()) {
             val latitude = addresses[0].latitude
@@ -387,7 +387,6 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
 
     private fun pointer(tache: Tache) {
         val equipe = binding.equipe
-
         if (!equipe.isChecked) {
             val pointage = makePointage(tache)
             pointage.poi_eq_id = equipiersKeys[binding.equipiers.selectedItemPosition]
@@ -395,7 +394,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         } else {
             var isHandled = false
             viewModel.getEquipiersOfEquipe().observe(viewLifecycleOwner, Observer { result ->
-                if (!isHandled) {
+                if (!isHandled && result.status.toString() == "SUCCESS") {
                     isHandled = true
                     when (result.status) {
                         Resource.Status.SUCCESS -> {
@@ -407,13 +406,20 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                                     pointage.poi_eq_id = row.eevp_id
                                     postPointage(pointage)
                                 }
+                                binding.tacheCl.visibility = View.VISIBLE
+                                binding.progressBar.visibility = View.GONE
                             }
                         }
                         Resource.Status.ERROR -> {
                             val error = result.message ?: "Une erreur s'est produite"
+                            binding.tacheCl.visibility = View.VISIBLE
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
                             Timber.e(error)
                         }
                         Resource.Status.LOADING -> {
+                            binding.tacheCl.visibility = View.GONE
+                            binding.progressBar.visibility = View.VISIBLE
                             // Afficher une indication de chargement à l'utilisateur
                         }
                     }
@@ -427,14 +433,20 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
             viewModel.postPointage(pointage).observe(viewLifecycleOwner, Observer { resource ->
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
+                        binding.progressBar.visibility = View.GONE
+                        binding.tacheCl.visibility = View.VISIBLE
                         Toast.makeText( context, "Le pointage ${pointage.poi_id} a bien été ajouté.", Toast.LENGTH_SHORT ).show()
                         Timber.d("SUCCESS : $pointage")
                     }
                     Resource.Status.ERROR -> {
+                        binding.progressBar.visibility = View.GONE
+                        binding.tacheCl.visibility = View.VISIBLE
+                        Toast.makeText( context, "Erreur lors de l'ajout du pointage", Toast.LENGTH_SHORT ).show()
                         Timber.e("ERROR : $pointage")
                     }
                     Resource.Status.LOADING -> {
-                        Toast.makeText( context, "Erreur lors de l'ajout du pointage", Toast.LENGTH_SHORT ).show()
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.tacheCl.visibility = View.GONE
                         Timber.d("LOADING : $pointage")
                     }
                 }

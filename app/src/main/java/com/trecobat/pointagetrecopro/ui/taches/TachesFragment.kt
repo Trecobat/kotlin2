@@ -14,11 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.trecobat.pointagetrecopro.R
 import com.trecobat.pointagetrecopro.databinding.TachesFragmentBinding
-import com.trecobat.pointagetrecopro.ui.MainActivity
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.tache_detail_fragment.*
 import timber.log.Timber
 
 @AndroidEntryPoint

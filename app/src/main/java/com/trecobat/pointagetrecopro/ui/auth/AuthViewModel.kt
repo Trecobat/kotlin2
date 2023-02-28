@@ -9,12 +9,6 @@ import com.trecobat.pointagetrecopro.data.entities.*
 import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import com.trecobat.pointagetrecopro.utils.JWTUtils
 import com.trecobat.pointagetrecopro.utils.Resource
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
-import io.jsonwebtoken.security.Keys
-import timber.log.Timber
-import java.security.Key
 
 class AuthViewModel @ViewModelInject constructor(
     private val repository: MyRepository

@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.item_pointage.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import androidx.lifecycle.Observer
 import java.util.*
 
@@ -31,8 +30,13 @@ class PointagesAdapter(
     private val viewModel: TacheDetailViewModel,
     private val lifecycleOwner: LifecycleOwner
 ) : RecyclerView.Adapter<PointagesAdapter.PointageViewHolder>() {
+
     interface PointageItemListener {
         fun onClickedPointage(pointage: Pointage)
+    }
+
+    interface SpeechRecognitionCallback {
+        fun onSpeechRecognitionResult(result: String)
     }
 
     private val items = ArrayList<Pointage>()
@@ -70,6 +74,7 @@ class PointagesAdapter(
     ) : RecyclerView.ViewHolder(itemBinding.root), View.OnClickListener {
 
         private lateinit var pointage: Pointage
+        private var callback: SpeechRecognitionCallback? = null
 
         init {
             itemBinding.root.pointage_btn.setOnClickListener(this)
@@ -128,12 +133,19 @@ class PointagesAdapter(
                     viewModel.updatePointage(item).observe(lifecycleOwner, Observer { resource ->
                         when (resource.status) {
                             Resource.Status.SUCCESS -> {
+                                itemBinding.progressBar.visibility = View.GONE
+                                itemBinding.pointage.visibility = View.VISIBLE
                                 Toast.makeText( context, "Le pointage ${item.poi_id} a bien été modifié.", Toast.LENGTH_SHORT ).show()
                             }
                             Resource.Status.ERROR -> {
+                                itemBinding.progressBar.visibility = View.GONE
+                                itemBinding.pointage.visibility = View.VISIBLE
                                 Toast.makeText( context, "Erreur lors de la modification du pointage", Toast.LENGTH_SHORT ).show()
                             }
-                            Resource.Status.LOADING -> {}
+                            Resource.Status.LOADING -> {
+                                itemBinding.progressBar.visibility = View.VISIBLE
+                                itemBinding.pointage.visibility = View.GONE
+                            }
                         }
                     })
                 }
@@ -143,18 +155,18 @@ class PointagesAdapter(
         private fun setupDatePicker()
         {
             itemBinding.buttonJour.setOnClickListener {
-                val calendar = Calendar.getInstance()
-                val year = calendar.get(Calendar.YEAR)
-                val month = calendar.get(Calendar.MONTH)
-                val day = calendar.get(Calendar.DAY_OF_MONTH)
+                val year = "20${itemBinding.buttonJour.text.toString().split("/")[2]}"
+                val month = itemBinding.buttonJour.text.toString().split("/")[1]
+                val day = itemBinding.buttonJour.text.toString().split("/")[0]
 
+                // Optional customizations:
                 val datePickerDialog = DatePickerDialog(context, { _, yearDate, monthOfYear, dayOfMonth ->
                     var text = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
                     text += "/"
                     text += if (monthOfYear < 10) "0${monthOfYear + 1}" else "${monthOfYear + 1}"
                     text += "/${yearDate.toString().substring(2)}"
                     itemBinding.buttonJour.text = text
-                }, year, month, day)
+                }, Integer.parseInt( year ), Integer.parseInt( month ) - 1, Integer.parseInt( day ))
 
                 // Optional customizations:
                 datePickerDialog.show()
@@ -163,9 +175,9 @@ class PointagesAdapter(
 
         private fun makeTimePickerDialog(binding: ItemPointageBinding, timing: String)
         {
-            val calendar = Calendar.getInstance()
-            val hour = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
+            val heure = if ( timing == "deb" ) binding.buttonHeureDeb.text.toString() else binding.buttonHeureFin.text.toString()
+            val hour = heure.split(":")[0]
+            val minute = heure.split(":")[1]
 
             val timePickerDialog = TimePickerDialog(context, { _, hourOfDay, minuteOfHour ->
                 var text = if (hourOfDay < 10) "0$hourOfDay" else "$hourOfDay"
@@ -174,7 +186,7 @@ class PointagesAdapter(
 
                 val buttonBinding = if ( timing == "deb" ) binding.buttonHeureDeb else binding.buttonHeureFin
                 buttonBinding.text = text
-            }, hour, minute, true)
+            }, Integer.parseInt( hour ), Integer.parseInt( minute ), true)
 
             // Optional customizations:
             timePickerDialog.setCanceledOnTouchOutside(false) // Prevent dialog from being dismissed when user touches outside of it

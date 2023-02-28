@@ -42,7 +42,7 @@ interface MyDao {
     @Query("SELECT * FROM pointages WHERE pointages.poi_tache_id = :tache AND pointages.poi_deleted_at IS NULL ORDER BY pointages.poi_id DESC")
     fun getPointagesOfTache(tache: Int): LiveData<List<Pointage>>
 
-    @Query("SELECT * FROM bdc_type")
+    @Query("SELECT * FROM bdc_type WHERE bdct_id NOT IN ('absence') ORDER BY bdct_label")
     fun getAllBdcts(): LiveData<List<BdcType>>
 
     @Query("SELECT * FROM pointages WHERE poi_id = :id")
@@ -99,4 +99,11 @@ interface MyDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateTache(tache: Tache)
+
+    /***** AFFAIRE *****/
+    @Query("SELECT * FROM affaires WHERE (aff_id LIKE :text OR cli_nom LIKE :text OR cli_prenom LIKE :text)")
+    fun getAffairesByAffIdOrCliNom(text: String): LiveData<List<Affaire>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllAffaires(affaires: List<Affaire>)
 }
