@@ -8,17 +8,12 @@ import java.io.UnsupportedEncodingException
 class JWTUtils {
     companion object {
         @Throws(Exception::class)
-        fun decoded(JWTEncoded: String): String? {
-            return try {
-                val split = JWTEncoded.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }
-                    .toTypedArray()
-                Timber.e("JWT_DECODED : Header => ${getJson(split[0])}")
-                Timber.e("JWT_DECODED : Body => ${getJson(split[1])}")
-                getJson(split[1])
-            } catch (e: UnsupportedEncodingException) {
-                Timber.e("Error decoding token : ${e.message}")
-                null
-            }
+        fun decoded(JWTEncoded: String): String {
+            val split = JWTEncoded.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }
+                .toTypedArray()
+            Timber.e("JWT_DECODED : Header => ${getJson(split[0])}")
+            Timber.e("JWT_DECODED : Body => ${getJson(split[1])}")
+            return getJson(split[1])
         }
 
         @Throws(UnsupportedEncodingException::class)

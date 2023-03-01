@@ -14,8 +14,6 @@ class AuthViewModel @ViewModelInject constructor(
     private val repository: MyRepository
 ) : ViewModel() {
 
-    private val _token = MutableLiveData<Token>()
-
     fun getToken(): LiveData<Resource<Token>> {
         return repository.getToken()
     }
@@ -24,9 +22,9 @@ class AuthViewModel @ViewModelInject constructor(
         return repository.login(user)
     }
 
-    fun getAuthUser(): LiveData<Resource<Equipe>>
+    fun getAuthUser(token: String): LiveData<Resource<Equipe>>
     {
-        val decodedToken = System.getProperty("token")?.let { JWTUtils.decoded(it) }
+        val decodedToken = JWTUtils.decoded(token)
         val gson = Gson()
         val tokenData = gson.fromJson(decodedToken, TokenData::class.java)
         val email = tokenData.email
