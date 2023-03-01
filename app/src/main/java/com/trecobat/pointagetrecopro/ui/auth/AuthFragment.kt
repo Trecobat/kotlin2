@@ -49,9 +49,10 @@ class AuthFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     if (it.data?.token != null) {
                         System.setProperty("token", it.data.token)
-                        viewModel.getAuthUser().observe(viewLifecycleOwner, Observer {  res ->
+                        viewModel.getAuthUser(it.data.token).observe(viewLifecycleOwner, Observer {  res ->
                             when (res.status) {
                                 Resource.Status.SUCCESS -> {
+                                    Timber.e(res.data.toString())
                                     System.setProperty("equipe",
                                         res.data?.eqvp_id.toString()
                                     )
@@ -89,9 +90,22 @@ class AuthFragment : Fragment() {
                             Timber.e(it.data.toString())
                             if (it.data?.token != null) {
                                 System.setProperty("token", it.data.token)
-                                findNavController().navigate(
-                                    R.id.action_authFragment_to_tachesFragment
-                                )
+                                viewModel.getAuthUser(it.data.token).observe(viewLifecycleOwner, Observer {  res ->
+                                    when (res.status) {
+                                        Resource.Status.SUCCESS -> {
+                                            Timber.e(res.data.toString())
+                                            System.setProperty("equipe",
+                                                res.data?.eqvp_id.toString()
+                                            )
+                                            findNavController().navigate(
+                                                R.id.action_authFragment_to_tachesFragment
+                                            )
+                                        }
+                                        Resource.Status.ERROR -> {}
+
+                                        Resource.Status.LOADING -> {}
+                                    }
+                                })
                             } else {
                                 binding.authCl.visibility = View.VISIBLE
                                 binding.progressBar.visibility = View.GONE
