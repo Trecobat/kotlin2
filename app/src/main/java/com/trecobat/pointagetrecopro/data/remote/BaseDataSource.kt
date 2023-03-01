@@ -2,6 +2,7 @@ package com.trecobat.pointagetrecopro.data.remote
 
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.entities.Tache
+import com.trecobat.pointagetrecopro.data.entities.String
 import com.trecobat.pointagetrecopro.data.entities.User
 import com.trecobat.pointagetrecopro.utils.Resource
 import retrofit2.Response
@@ -25,7 +26,7 @@ class BaseDataSource @Inject constructor(
         }
     }
 
-    private fun <T> error(message: String): Resource<T> {
+    private fun <T> error(message: kotlin.String): Resource<T> {
         Timber.d(message)
         return Resource.error("Network call has failed for a following reason: $message")
     }
@@ -40,7 +41,7 @@ class BaseDataSource @Inject constructor(
     suspend fun getPointage(id: Int) = getResult { myService.getPointage(id) }
     suspend fun postPointage(data: Pointage) = getResult { myService.postPointage(data) }
     suspend fun getEquipiers() = getResult { myService.getAllEquipiers() }
-    suspend fun getAuthEquipe(email: String) = getResult { myService.getAuthEquipe(email) }
+    suspend fun getAuthEquipe(email: kotlin.String) = getResult { myService.getAuthEquipe(email) }
     suspend fun getEquipiersOfEquipe(equipe: Int) = getResult { myService.getEquipiersOfEquipe(equipe) }
     suspend fun updatePointage(pointage: Pointage) = getResult { myService.updatePointage(pointage.poi_id, pointage) }
 

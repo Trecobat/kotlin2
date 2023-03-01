@@ -7,7 +7,6 @@ import com.trecobat.pointagetrecopro.data.entities.*
 import com.trecobat.pointagetrecopro.data.local.MyDao
 import com.trecobat.pointagetrecopro.data.remote.BaseDataSource
 import com.trecobat.pointagetrecopro.utils.Resource
-import io.jsonwebtoken.Jwts
 import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 
@@ -113,7 +112,7 @@ class MyRepository(
     )
 
     /***** AFFAIRE *****/
-    fun getAffairesByAffIdOrCliNom(text: String) = performGetOperation(
+    fun getAffairesByAffIdOrCliNom(text: com.trecobat.pointagetrecopro.data.entities.String) = performGetOperation(
         databaseQuery = { localDataSource.getAffairesByAffIdOrCliNom(text) },
         networkCall = { remoteDataSource.getAffairesByAffIdOrCliNom(text) },
         saveCallResult = { localDataSource.insertAllAffaires(it) }

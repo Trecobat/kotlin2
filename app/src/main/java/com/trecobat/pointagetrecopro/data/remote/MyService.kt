@@ -53,5 +53,6 @@ interface MyService {
 
     /***** Affaires *****/
     @POST("api/pointageTrecopro/affaires")
-    suspend fun getAffairesByAffIdOrCliNom(@Body text: String): Response<List<Affaire>>
+    suspend fun getAffairesByAffIdOrCliNom(@Body text: com.trecobat.pointagetrecopro.data.entities.String): Response<com.trecobat.pointagetrecopro.data.entities.String>
+//    suspend fun getAffairesByAffIdOrCliNom(@Body text: String): Response<List<Affaire>>
 }

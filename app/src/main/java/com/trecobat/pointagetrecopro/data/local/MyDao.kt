@@ -1,10 +1,8 @@
 package com.trecobat.pointagetrecopro.data.local
 
-import android.media.session.MediaSession
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.trecobat.pointagetrecopro.data.entities.*
-import com.trecobat.pointagetrecopro.utils.Resource
 
 @Dao
 interface MyDao {
@@ -102,8 +100,9 @@ interface MyDao {
 
     /***** AFFAIRE *****/
     @Query("SELECT * FROM affaires WHERE (aff_id LIKE :text OR cli_nom LIKE :text OR cli_prenom LIKE :text)")
-    fun getAffairesByAffIdOrCliNom(text: String): LiveData<List<Affaire>>
+    fun getAffairesByAffIdOrCliNom(text: com.trecobat.pointagetrecopro.data.entities.String): LiveData<List<Affaire>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllAffaires(affaires: List<Affaire>)
+    suspend fun insertAllAffaires(affaires: com.trecobat.pointagetrecopro.data.entities.String)
+//    suspend fun insertAllAffaires(affaires: List<Affaire>)
 }

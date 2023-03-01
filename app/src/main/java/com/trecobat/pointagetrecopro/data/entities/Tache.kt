@@ -1,6 +1,7 @@
 package com.trecobat.pointagetrecopro.data.entities
 
 import androidx.room.*
+import kotlin.String
 
 @Entity( tableName = "taches" )
 data class Tache(

@@ -3,6 +3,7 @@ package com.trecobat.pointagetrecopro.data.entities
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlin.String
 
 @Entity( tableName = "equipe_vp" )
 data class Equipe(
@@ -23,6 +24,6 @@ data class Equipe(
     val eqvp_login: String? = "",
     val eqvp_admin: Int? = 0,
     val eqvp_admin_dep: Int? = 0,
-    val eqvp_email: String ? = "",
+    val eqvp_email: String? = "",
     @Embedded val departement: Departement
 )

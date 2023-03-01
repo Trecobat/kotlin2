@@ -2,6 +2,7 @@ package com.trecobat.pointagetrecopro.data.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlin.String
 
 @Entity( tableName = "ged_files" )
 data class GedFiles(
