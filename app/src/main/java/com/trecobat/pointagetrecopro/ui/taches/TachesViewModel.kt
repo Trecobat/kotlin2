@@ -18,7 +18,7 @@ class TachesViewModel @ViewModelInject constructor(
         return repository.getTaches()
     }
 
-    suspend fun updateTache(tache: Tache): LiveData<Resource<Nothing?>> {
+    suspend fun updateTache(tache: Tache): LiveData<Resource<Tache>> {
         return repository.updateTache(tache)
     }
 }

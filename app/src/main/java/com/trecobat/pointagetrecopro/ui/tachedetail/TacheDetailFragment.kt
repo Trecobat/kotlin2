@@ -180,7 +180,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         binding.endDate.text = tache.end_date?.let { formatDate(it) }
         binding.cliAdresse1Chantier.text = tache.affaire.client?.cli_adresse1_chantier
         binding.cliAdresse2Chantier.text =
-            if (tache.affaire.client?.cli_adresse2_chantier != null) " - ${tache.affaire.client.cli_adresse2_chantier}" else ""
+            if (tache.affaire.client?.cli_adresse2_chantier != null) " - ${tache.affaire.client!!.cli_adresse2_chantier}" else ""
         binding.cliCpChantier.text = tache.affaire.client?.cli_cp_chantier
         binding.cliVilleChantier.text = tache.affaire.client?.cli_ville_chantier
         binding.buttonJour.text = "${getDay()}/${getMonth()}/${getYear(true)}"
@@ -435,19 +435,19 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                     Resource.Status.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
                         binding.tacheCl.visibility = View.VISIBLE
-                        Toast.makeText( context, "Le pointage ${pointage.poi_id} a bien été ajouté.", Toast.LENGTH_SHORT ).show()
-                        Timber.d("SUCCESS : $pointage")
+                        Toast.makeText( context, "Le pointage ${resource.data?.poi_id} a bien été ajouté.", Toast.LENGTH_SHORT ).show()
+                        Timber.d("SUCCESS : ${resource.data}")
                     }
                     Resource.Status.ERROR -> {
                         binding.progressBar.visibility = View.GONE
                         binding.tacheCl.visibility = View.VISIBLE
                         Toast.makeText( context, "Erreur lors de l'ajout du pointage", Toast.LENGTH_SHORT ).show()
-                        Timber.e("ERROR : $pointage")
+                        Timber.e("ERROR : ${resource.data}")
                     }
                     Resource.Status.LOADING -> {
                         binding.progressBar.visibility = View.VISIBLE
                         binding.tacheCl.visibility = View.GONE
-                        Timber.d("LOADING : $pointage")
+                        Timber.d("LOADING : ${resource.data}")
                     }
                 }
             })

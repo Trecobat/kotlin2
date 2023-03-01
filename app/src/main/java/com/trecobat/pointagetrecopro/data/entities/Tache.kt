@@ -5,15 +5,15 @@ import kotlin.String
 
 @Entity( tableName = "taches" )
 data class Tache(
-    @PrimaryKey val id: Int,
-    val text: String,
-    val start_date: String,
-    val end_date: String?,
-    val duration: Int,
-    var hidden: Int?,
+    @PrimaryKey val id: Int = 0,
+    var text: String? = "",
+    var start_date: String? = "",
+    val end_date: String? = "",
+    val duration: Int? = 1,
+    var hidden: Int? = 0,
     val nb_pointage: Int = 0,
     val nb_termine: Int = 0,
-    @Embedded val equipe: Equipe,
-    @Embedded val affaire: Affaire,
-    @Embedded val bdc_type: BdcType
+    @Embedded var equipe: Equipe? = null,
+    @Embedded var affaire: Affaire,
+    @Embedded var bdc_type: BdcType
 )

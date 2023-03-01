@@ -2,11 +2,13 @@ package com.trecobat.pointagetrecopro.ui
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -61,12 +63,16 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.add_marche -> {
                     navController.navigate(
-                        R.id.addMarcheFragment
+                        R.id.addMarcheFragment,
+                        bundleOf("type" to "Marché")
                     )
                     true
                 }
                 R.id.add_ts -> {
-                    Toast.makeText(this, "add_ts", Toast.LENGTH_SHORT).show()
+                    navController.navigate(
+                        R.id.addTsFragment,
+                        bundleOf("type" to "TS")
+                    )
                     true
                 }
                 R.id.repas -> {

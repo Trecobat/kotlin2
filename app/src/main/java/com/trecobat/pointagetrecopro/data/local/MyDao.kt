@@ -100,9 +100,8 @@ interface MyDao {
 
     /***** AFFAIRE *****/
     @Query("SELECT * FROM affaires WHERE (aff_id LIKE :text OR cli_nom LIKE :text OR cli_prenom LIKE :text)")
-    fun getAffairesByAffIdOrCliNom(text: com.trecobat.pointagetrecopro.data.entities.String): LiveData<List<Affaire>>
+    fun getAffairesByAffIdOrCliNom(text: String): LiveData<List<Affaire>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllAffaires(affaires: com.trecobat.pointagetrecopro.data.entities.String)
-//    suspend fun insertAllAffaires(affaires: List<Affaire>)
+    suspend fun insertAllAffaires(affaires: List<Affaire>)
 }

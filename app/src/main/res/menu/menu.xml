@@ -12,8 +12,7 @@
         android:id="@+id/add_ts"
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/add_ts"
-        app:showAsAction="collapseActionView"
-        android:visible="false" />
+        app:showAsAction="collapseActionView" />
     <item
         android:id="@+id/repas"
         android:icon="@android:drawable/ic_menu_add"

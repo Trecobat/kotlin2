@@ -20,6 +20,10 @@ class TacheDetailViewModel @ViewModelInject constructor(
 
     private val _id = MutableLiveData<Int>()
 
+    fun start(id: Int) {
+        _id.value = id
+    }
+
     val tache = _id.switchMap { id ->
         repository.getTache(id)
     }
@@ -36,15 +40,11 @@ class TacheDetailViewModel @ViewModelInject constructor(
         repository.getBdcts()
     }
 
-    fun start(id: Int) {
-        _id.value = id
-    }
-
-    suspend fun postPointage(data: Pointage) : LiveData<Resource<Nothing?>> {
+    suspend fun postPointage(data: Pointage) : LiveData<Resource<Pointage>> {
         return repository.postPointage(data)
     }
 
-    suspend fun updatePointage(pointage: Pointage): LiveData<Resource<Nothing?>> {
+    suspend fun updatePointage(pointage: Pointage): LiveData<Resource<Pointage>> {
         return repository.updatePointage(pointage)
     }
 

@@ -21,8 +21,8 @@ import com.trecobat.pointagetrecopro.data.entities.*
     PendingRequest::class,
     User::class,
     Token::class,
-    String::class
-], version = 8, exportSchema = false)
+    com.trecobat.pointagetrecopro.data.entities.String::class
+], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun myDao(): MyDao
 

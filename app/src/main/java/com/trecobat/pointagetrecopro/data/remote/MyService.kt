@@ -16,14 +16,17 @@ interface MyService {
     @GET("api/pointageTrecopro/chantiers/{id}")
     suspend fun getTache(@Path("id") id: Int): Response<Tache>
 
+    @POST("api/pointageTrecopro/chantiers")
+    suspend fun addTache(@Body data: PostTache): Response<Tache>
+
+    @POST("api/pointageTrecopro/chantiers/{id}")
+    suspend fun updateTache(@Path("id") id: Int, @Body data: Tache): Response<Tache>
+
     @GET("api/pointageTrecopro/chantiers/{id}/pointages")
     suspend fun getPointagesOfTache(@Path("id") id: Int): Response<List<Pointage>>
 
     @GET("api/pointageTrecopro/chantiers/{id}/plans")
     suspend fun getFilesOfTache(@Path("id") id: Int): Response<List<GedFiles>>
-
-    @POST("api/pointageTrecopro/pointages/{id}")
-    suspend fun updateTache(@Path("id") id: Int, @Body data: Tache): Response<Tache>
 
     /***** POINTAGE *****/
     @GET("api/pointageTrecopro/pointages")
@@ -36,7 +39,7 @@ interface MyService {
     suspend fun getPointage(@Path("id") id: Int): Response<Pointage>
 
     @POST("api/pointageTrecopro/pointages")
-    suspend fun postPointage(@Body data: Pointage): Response<Pointage>
+    suspend fun addPointage(@Body data: Pointage): Response<Pointage>
 
     @POST("api/pointageTrecopro/pointages/{id}")
     suspend fun updatePointage(@Path("id") id: Int, @Body data: Pointage): Response<Pointage>
@@ -53,6 +56,5 @@ interface MyService {
 
     /***** Affaires *****/
     @POST("api/pointageTrecopro/affaires")
-    suspend fun getAffairesByAffIdOrCliNom(@Body text: com.trecobat.pointagetrecopro.data.entities.String): Response<com.trecobat.pointagetrecopro.data.entities.String>
-//    suspend fun getAffairesByAffIdOrCliNom(@Body text: String): Response<List<Affaire>>
+    suspend fun getAffairesByAffIdOrCliNom(@Body text: com.trecobat.pointagetrecopro.data.entities.String): Response<List<Affaire>>
 }

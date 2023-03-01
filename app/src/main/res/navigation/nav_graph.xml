@@ -42,8 +42,20 @@
 
     <fragment
         android:id="@+id/addMarcheFragment"
-        android:name="com.trecobat.pointagetrecopro.ui.addmarche.AddMarcheFragment"
+        android:name="com.trecobat.pointagetrecopro.ui.addmarchets.AddMarcheTsFragment"
         android:label="Ajouter un marché"
-        tools:layout="@layout/add_marche_fragment" >
+        tools:layout="@layout/add_marche_ts_fragment" >
+        <action
+            android:id="@+id/action_addMarcheFragment_to_tacheDetailFragment"
+            app:destination="@id/tacheDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addTsFragment"
+        android:name="com.trecobat.pointagetrecopro.ui.addmarchets.AddMarcheTsFragment"
+        android:label="Ajouter un TS"
+        tools:layout="@layout/add_marche_ts_fragment" >
+        <action
+            android:id="@+id/action_addTsFragment_to_tacheDetailFragment"
+            app:destination="@id/tacheDetailFragment" />
     </fragment>
 </navigation>

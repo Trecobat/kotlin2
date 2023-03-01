@@ -6,5 +6,5 @@ import kotlin.String
 
 @Entity(tableName = "strings")
 data class String(
-    @PrimaryKey val string: String
+    @PrimaryKey var string: String
 )

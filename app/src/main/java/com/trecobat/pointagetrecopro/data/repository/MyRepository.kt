@@ -41,18 +41,6 @@ class MyRepository(
     }
 
     /***** POINTAGE *****/
-    fun getPointage(id: Int) = performGetOperation(
-        databaseQuery = { localDataSource.getPointage(id) },
-        networkCall = { remoteDataSource.getPointage(id) },
-        saveCallResult = { localDataSource.insertPointage(it) }
-    )
-
-    fun getPointages() = performGetOperation(
-        databaseQuery = { localDataSource.getAllPointages() },
-        networkCall = { remoteDataSource.getPointages() },
-        saveCallResult = { localDataSource.insertAllPointages(it) }
-    )
-
     fun getPointagesOfTache(id: Int) = performGetOperation(
         databaseQuery = { localDataSource.getPointagesOfTache(id) },
         networkCall = { remoteDataSource.getPointagesOfTache(id) },
@@ -60,7 +48,7 @@ class MyRepository(
     )
 
     suspend fun postPointage(data: Pointage) = performPostOperation(
-        networkCall = { remoteDataSource.postPointage(data) },
+        networkCall = { remoteDataSource.addPointage(data) },
         saveCallResult = { localDataSource.insertPointage(it) }
     )
 
@@ -94,6 +82,11 @@ class MyRepository(
         saveCallResult = { localDataSource.insertAllTaches(it) }
     )
 
+    fun addTache(tache: PostTache) = performPostOperation(
+        networkCall = { remoteDataSource.addTache(tache) },
+        saveCallResult = { localDataSource.insertTache(it) }
+    )
+
     fun getBdcts() = performGetOperation(
         databaseQuery = { localDataSource.getAllBdcts() },
         networkCall = { remoteDataSource.getBdcts() },
@@ -113,7 +106,7 @@ class MyRepository(
 
     /***** AFFAIRE *****/
     fun getAffairesByAffIdOrCliNom(text: com.trecobat.pointagetrecopro.data.entities.String) = performGetOperation(
-        databaseQuery = { localDataSource.getAffairesByAffIdOrCliNom(text) },
+        databaseQuery = { localDataSource.getAffairesByAffIdOrCliNom(text.string) },
         networkCall = { remoteDataSource.getAffairesByAffIdOrCliNom(text) },
         saveCallResult = { localDataSource.insertAllAffaires(it) }
     )
@@ -139,17 +132,17 @@ class MyRepository(
             }
         }
 
-    private fun <A> performPostOperation(
-        networkCall: suspend () -> Resource<A>,
-        saveCallResult: suspend (A) -> Unit
-    ): LiveData<Resource<Nothing?>> =
+    private fun <T> performPostOperation(
+        networkCall: suspend () -> Resource<T>,
+        saveCallResult: suspend (T) -> Unit
+    ): LiveData<Resource<T>> =
         liveData(Dispatchers.IO) {
             emit(Resource.loading())
 
             val responseStatus = networkCall.invoke()
             if (responseStatus.status == Resource.Status.SUCCESS) {
                 saveCallResult(responseStatus.data!!)
-                emit(Resource.success(null))
+                emit(Resource.success(responseStatus.data))
             } else if (responseStatus.status == Resource.Status.ERROR) {
                 emit(Resource.error(responseStatus.message!!))
             }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:clickable="false"
     android:focusable="false"
-    tools:context=".ui.addmarche.AddMarcheFragment">
+    tools:context=".ui.addmarchets.AddMarcheTsFragment">
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -14,7 +14,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:indeterminate="true"
-        tools:visibility="gone" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -32,6 +36,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:hint="@string/autocompleteAffaire"
             tools:ignore="LabelFor" />
 
         <ScrollView
@@ -79,6 +84,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:visibility="gone" />
+
+        <Button
+            android:id="@+id/add_marche"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_marche"
+            android:background="@drawable/button"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:padding="5dp"
+            app:layout_constraintTop_toBottomOf="@+id/bdct_id"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

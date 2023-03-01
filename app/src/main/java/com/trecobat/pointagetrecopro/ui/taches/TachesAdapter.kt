@@ -73,7 +73,7 @@ class TacheViewHolder(
         itemBinding.startDate.text = formatDate(item.start_date)
         itemBinding.endDate.text = item.end_date?.let { formatDate(it) }
         itemBinding.cliAdresse1Chantier.text = item.affaire.client?.cli_adresse1_chantier
-        itemBinding.cliAdresse2Chantier.text = if (item.affaire.client?.cli_adresse2_chantier != null) " - ${item.affaire.client.cli_adresse2_chantier}" else ""
+        itemBinding.cliAdresse2Chantier.text = if (item.affaire.client?.cli_adresse2_chantier != null) " - ${item.affaire.client?.cli_adresse2_chantier}" else ""
         itemBinding.cliCpChantier.text = item.affaire.client?.cli_cp_chantier
         itemBinding.cliVilleChantier.text = item.affaire.client?.cli_ville_chantier
 
