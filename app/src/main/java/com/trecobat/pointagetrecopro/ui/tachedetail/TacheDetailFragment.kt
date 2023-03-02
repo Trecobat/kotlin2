@@ -7,27 +7,35 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Rect
+import android.graphics.pdf.PdfRenderer
 import android.location.Address
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.ParcelFileDescriptor
 import android.speech.RecognizerIntent
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.itextpdf.text.Document
+import com.itextpdf.text.pdf.*
 import com.trecobat.pointagetrecopro.R
 import com.trecobat.pointagetrecopro.data.entities.GedFiles
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.entities.Tache
-import com.trecobat.pointagetrecopro.data.local.AppDatabase
 import com.trecobat.pointagetrecopro.databinding.TacheDetailFragmentBinding
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.formatDate
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getDay
@@ -48,8 +56,7 @@ import kotlinx.coroutines.launch
 import okhttp3.*
 import timber.log.Timber
 import java.io.File
-import java.io.IOException
-import java.net.URL
+import java.io.FileOutputStream
 import java.util.*
 import kotlin.collections.set
 
@@ -400,7 +407,6 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                         Resource.Status.SUCCESS -> {
                             val equipiers = result.data
                             if (!equipiers.isNullOrEmpty()) {
-                                Timber.e(equipiers.toString())
                                 for (row in equipiers) {
                                     val pointage = makePointage(tache)
                                     pointage.poi_eq_id = row.eevp_id
@@ -436,18 +442,15 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                         binding.progressBar.visibility = View.GONE
                         binding.tacheCl.visibility = View.VISIBLE
                         Toast.makeText( context, "Le pointage ${pointage.poi_id} a bien été ajouté.", Toast.LENGTH_SHORT ).show()
-                        Timber.d("SUCCESS : $pointage")
                     }
                     Resource.Status.ERROR -> {
                         binding.progressBar.visibility = View.GONE
                         binding.tacheCl.visibility = View.VISIBLE
                         Toast.makeText( context, "Erreur lors de l'ajout du pointage", Toast.LENGTH_SHORT ).show()
-                        Timber.e("ERROR : $pointage")
                     }
                     Resource.Status.LOADING -> {
                         binding.progressBar.visibility = View.VISIBLE
                         binding.tacheCl.visibility = View.GONE
-                        Timber.d("LOADING : $pointage")
                     }
                 }
             })
@@ -455,67 +458,112 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
     }
 
     override fun onClickedPlan(ged_file: GedFiles) {
-//        val url = "http://intranet.trecoland.fr/files/$gdf_fo_id"
-        val url = "https://www.orimi.com/pdf-test.pdf"
-        val client = OkHttpClient()
-        val request = Request.Builder().url(url).build()
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
-        }
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Toast.makeText(
-                    activity,
-                    "Erreur lors du téléchargement du plan",
-                    Toast.LENGTH_SHORT
-                ).show()
+        val directory = File(
+            requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+            ged_file.gdf_obj_id.toString()
+        )
+        val file = File(directory, "${ged_file.gdf_cat_label}.pdf")
+        if (file.exists()) {
+            val pdfUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", file)
+            val pdfIntent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(pdfUri, "application/pdf")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
+            startActivity(pdfIntent)
 
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!response.isSuccessful) {
-                        throw IOException("Unexpected code $response")
+
+
+
+
+//            val fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+//            val renderer = PdfRenderer(fileDescriptor)
+//
+//            // Afficher la première page du PDF dans une ImageView
+//            val page = renderer.openPage(0)
+//            val bitmap = Bitmap.createBitmap(page.width, page.height, Bitmap.Config.ARGB_8888)
+//            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+//            binding.imageView.setImageBitmap(bitmap)
+//            binding.imageView.visibility = View.VISIBLE
+//            binding.tacheCl.visibility = View.GONE
+//
+//            // Fermer le renderer et la page
+//            page.close()
+//            renderer.close()
+
+
+
+
+//            findNavController().navigate(
+//                R.id.action_tacheDetailFragment_to_pdfFragment,
+//                bundleOf("affId" to ged_file.gdf_obj_id, "catLabel" to ged_file.gdf_cat_label)
+//            )
+        } else {
+            viewModel.getFile(ged_file.gdf_fo_id).observe(viewLifecycleOwner, Observer {
+                when (it.status) {
+                    Resource.Status.SUCCESS -> {
+                        if (ContextCompat.checkSelfPermission(
+                                requireContext(),
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+                        }
+                        if (it.data?.file_content != null) {
+                            val pdfData = Base64.decode(it.data.file_content, Base64.DEFAULT)
+
+                            val newDirectory = File(
+                                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+                                ged_file.gdf_obj_id.toString()
+                            )
+
+                            if (!directory.exists()) {
+                                directory.mkdirs()
+                            }
+
+                            val newFile = File(newDirectory, "${ged_file.gdf_cat_label}.pdf")
+                            val outputStream = FileOutputStream(file.absolutePath)
+
+                            val reader = PdfReader(pdfData)
+                            val n = reader.numberOfPages
+                            val document = Document(reader.getPageSizeWithRotation(1))
+                            val writer = PdfCopy(document, outputStream)
+                            document.open()
+                            var i = 0
+                            while (i < n) {
+                                i++
+                                document.newPage()
+                                val page = writer.getImportedPage(reader, i)
+                                writer.addPage(page)
+                            }
+
+                            // Fermer le document
+                            document.close()
+
+                            if (newFile.exists()) {
+                                val pdfUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", newFile)
+                                val pdfIntent = Intent(Intent.ACTION_VIEW).apply {
+                                    setDataAndType(pdfUri, "application/pdf")
+                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                    putExtra("LOAD_NEW_FILE", true)
+                                }
+                                startActivityForResult(pdfIntent, 0)
+                            }
+                        }
                     }
-                    val directory = File(
-                        requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-                        ged_file.gdf_obj_id.toString()
-                    )
-
-                    if (!directory.exists()) {
-                        directory.mkdirs()
+                    Resource.Status.ERROR -> {
+                        Timber.e("ERROR get_file")
+                        Timber.e(it.message)
                     }
-
-                    val file = File(directory, "${ged_file.gdf_cat_label}.pdf")
-                    val inputStream = URL(url).openStream()
-                    file.outputStream().use { outputStream ->
-                        inputStream.copyTo(outputStream)
-                    }
-
-                    if (ged_file.local_storage == null) {
-                        AppDatabase.getDatabase(requireContext()).myDao()
-                            .updateLocalStorage(ged_file.gdf_fo_id, file.absolutePath)
-                    }
-
-                    if (file.exists()) {
-                        val uri = FileProvider.getUriForFile(
-                            requireContext(),
-                            "${requireContext().packageName}.fileprovider",
-                            file
-                        )
-                        val intent = Intent(Intent.ACTION_VIEW)
-                        intent.setDataAndType(uri, "application/pdf")
-                        intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
-                        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        requireContext().startActivity(intent)
+                    Resource.Status.LOADING -> {
+                        Timber.d("LOADING get_file")
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     override fun onClickedPointage(pointage: Pointage) {

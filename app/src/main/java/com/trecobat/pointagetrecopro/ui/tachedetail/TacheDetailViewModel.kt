@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import com.trecobat.pointagetrecopro.data.entities.Equipier
+import com.trecobat.pointagetrecopro.data.entities.File
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import com.trecobat.pointagetrecopro.utils.Resource
@@ -60,5 +61,9 @@ class TacheDetailViewModel @ViewModelInject constructor(
         // Inutile parce que cette fonction utilise l'equipe du user connecté qui en a forcément une.
         // Cependant il faut quand même vérifier que c'est pas null par rapport au typage dans l'entité
         return repository.getEquipiersOfEquipe(0)
+    }
+
+    fun getFile(fo_id: String): LiveData<Resource<File>> {
+        return repository.getFile(fo_id)
     }
 }

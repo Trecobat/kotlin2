@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.trecobat.pointagetrecopro.data.entities.*
 import com.trecobat.pointagetrecopro.utils.Resource
+import retrofit2.Response
+import retrofit2.http.Path
 
 @Dao
 interface MyDao {
@@ -82,17 +84,20 @@ interface MyDao {
     @Query("SELECT * FROM taches WHERE id = :id")
     fun getTache(id: Int): LiveData<Tache>
 
-    @Query("SELECT * FROM ged_files WHERE gdf_fo_id = :gdf_fo_id")
-    fun getFile(gdf_fo_id: String): LiveData<GedFiles>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTache(tache: Tache)
 
     @Query("SELECT * FROM ged_files WHERE gdf_tache_id = :id")
     fun getFilesOfTache(id: Int): LiveData<List<GedFiles>>
 
+    @Query("SELECT * FROM files WHERE fo_id = :fo_id")
+    fun getFile(fo_id: String): LiveData<File>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllFiles(ged_files: List<GedFiles>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFile(file: File)
 
     @Query("UPDATE ged_files SET local_storage = :localStorage WHERE gdf_fo_id = :gdfFoId")
     fun updateLocalStorage(gdfFoId: String, localStorage: String)

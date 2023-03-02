@@ -1,5 +1,6 @@
 package com.trecobat.pointagetrecopro.data.remote
 
+import androidx.room.Insert
 import com.trecobat.pointagetrecopro.data.entities.*
 import retrofit2.Response
 import retrofit2.http.*
@@ -21,6 +22,9 @@ interface MyService {
 
     @GET("api/pointageTrecopro/chantiers/{id}/plans")
     suspend fun getFilesOfTache(@Path("id") id: Int): Response<List<GedFiles>>
+
+    @POST("api/pointageTrecopro/file/{fo_id}")
+    suspend fun getFile(@Path("fo_id") fo_id: String): Response<File>
 
     @POST("api/pointageTrecopro/pointages/{id}")
     suspend fun updateTache(@Path("id") id: Int, @Body data: Tache): Response<Tache>
