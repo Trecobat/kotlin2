@@ -1,12 +1,8 @@
 package com.trecobat.pointagetrecopro.data.local
 
-import android.media.session.MediaSession
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.trecobat.pointagetrecopro.data.entities.*
-import com.trecobat.pointagetrecopro.utils.Resource
-import retrofit2.Response
-import retrofit2.http.Path
 
 @Dao
 interface MyDao {
@@ -91,13 +87,13 @@ interface MyDao {
     fun getFilesOfTache(id: Int): LiveData<List<GedFiles>>
 
     @Query("SELECT * FROM files WHERE fo_id = :fo_id")
-    fun getFile(fo_id: String): LiveData<File>
+    fun getFile(fo_id: String): LiveData<MyFile>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllFiles(ged_files: List<GedFiles>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFile(file: File)
+    suspend fun insertFile(file: MyFile)
 
     @Query("UPDATE ged_files SET local_storage = :localStorage WHERE gdf_fo_id = :gdfFoId")
     fun updateLocalStorage(gdfFoId: String, localStorage: String)

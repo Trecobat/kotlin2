@@ -109,7 +109,7 @@ class PointagesAdapter(
                     viewModel.updatePointage(item).observe(lifecycleOwner, Observer { resource ->
                         when (resource.status) {
                             Resource.Status.SUCCESS -> {
-                                Toast.makeText( context, "Le pointage ${item.poi_id} a bien été supprimé.", Toast.LENGTH_SHORT ).show()
+                                Toast.makeText( context, "Le pointage ${resource.data?.poi_id} a bien été supprimé.", Toast.LENGTH_SHORT ).show()
                             }
                             Resource.Status.ERROR -> {
                                 Toast.makeText( context, "Erreur lors de la suppression du pointage", Toast.LENGTH_SHORT ).show()
@@ -131,7 +131,7 @@ class PointagesAdapter(
                             Resource.Status.SUCCESS -> {
                                 itemBinding.progressBar.visibility = View.GONE
                                 itemBinding.pointage.visibility = View.VISIBLE
-                                Toast.makeText( context, "Le pointage ${item.poi_id} a bien été modifié.", Toast.LENGTH_SHORT ).show()
+                                Toast.makeText( context, "Le pointage ${resource.data?.poi_id} a bien été modifié.", Toast.LENGTH_SHORT ).show()
                             }
                             Resource.Status.ERROR -> {
                                 itemBinding.progressBar.visibility = View.GONE

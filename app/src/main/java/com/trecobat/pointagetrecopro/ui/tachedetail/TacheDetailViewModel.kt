@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import com.trecobat.pointagetrecopro.data.entities.Equipier
-import com.trecobat.pointagetrecopro.data.entities.File
+import com.trecobat.pointagetrecopro.data.entities.MyFile
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import com.trecobat.pointagetrecopro.utils.Resource
@@ -21,6 +21,10 @@ class TacheDetailViewModel @Inject constructor(
     // c'est quand il obtient une valeur que le contenu de la fonction est exécuté
 
     private val _id = MutableLiveData<Int>()
+
+    fun start(id: Int) {
+        _id.value = id
+    }
 
     val tache = _id.switchMap { id ->
         repository.getTache(id)
@@ -38,15 +42,11 @@ class TacheDetailViewModel @Inject constructor(
         repository.getBdcts()
     }
 
-    fun start(id: Int) {
-        _id.value = id
-    }
-
-    suspend fun postPointage(data: Pointage) : LiveData<Resource<Nothing?>> {
+    suspend fun postPointage(data: Pointage) : LiveData<Resource<Pointage>> {
         return repository.postPointage(data)
     }
 
-    suspend fun updatePointage(pointage: Pointage): LiveData<Resource<Nothing?>> {
+    suspend fun updatePointage(pointage: Pointage): LiveData<Resource<Pointage>> {
         return repository.updatePointage(pointage)
     }
 
@@ -64,7 +64,7 @@ class TacheDetailViewModel @Inject constructor(
         return repository.getEquipiersOfEquipe(0)
     }
 
-    fun getFile(fo_id: String): LiveData<Resource<File>> {
+    fun getFile(fo_id: String): LiveData<Resource<MyFile>> {
         return repository.getFile(fo_id)
     }
 }

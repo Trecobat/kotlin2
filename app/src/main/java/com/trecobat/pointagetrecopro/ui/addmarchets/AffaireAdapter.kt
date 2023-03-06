@@ -1,4 +1,4 @@
-package com.trecobat.pointagetrecopro.ui.addmarche
+package com.trecobat.pointagetrecopro.ui.addmarchets
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

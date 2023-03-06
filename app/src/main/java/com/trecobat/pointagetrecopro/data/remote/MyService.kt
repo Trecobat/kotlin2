@@ -1,6 +1,5 @@
 package com.trecobat.pointagetrecopro.data.remote
 
-import androidx.room.Insert
 import com.trecobat.pointagetrecopro.data.entities.*
 import retrofit2.Response
 import retrofit2.http.*
@@ -17,6 +16,12 @@ interface MyService {
     @GET("api/pointageTrecopro/chantiers/{id}")
     suspend fun getTache(@Path("id") id: Int): Response<Tache>
 
+    @POST("api/pointageTrecopro/chantiers")
+    suspend fun addTache(@Body data: PostTache): Response<Tache>
+
+    @POST("api/pointageTrecopro/chantiers/{id}")
+    suspend fun updateTache(@Path("id") id: Int, @Body data: Tache): Response<Tache>
+
     @GET("api/pointageTrecopro/chantiers/{id}/pointages")
     suspend fun getPointagesOfTache(@Path("id") id: Int): Response<List<Pointage>>
 
@@ -24,10 +29,7 @@ interface MyService {
     suspend fun getFilesOfTache(@Path("id") id: Int): Response<List<GedFiles>>
 
     @POST("api/pointageTrecopro/file/{fo_id}")
-    suspend fun getFile(@Path("fo_id") fo_id: String): Response<File>
-
-    @POST("api/pointageTrecopro/pointages/{id}")
-    suspend fun updateTache(@Path("id") id: Int, @Body data: Tache): Response<Tache>
+    suspend fun getFile(@Path("fo_id") fo_id: String): Response<MyFile>
 
     /***** POINTAGE *****/
     @GET("api/pointageTrecopro/pointages")
@@ -40,7 +42,7 @@ interface MyService {
     suspend fun getPointage(@Path("id") id: Int): Response<Pointage>
 
     @POST("api/pointageTrecopro/pointages")
-    suspend fun postPointage(@Body data: Pointage): Response<Pointage>
+    suspend fun addPointage(@Body data: Pointage): Response<Pointage>
 
     @POST("api/pointageTrecopro/pointages/{id}")
     suspend fun updatePointage(@Path("id") id: Int, @Body data: Pointage): Response<Pointage>
@@ -57,5 +59,5 @@ interface MyService {
 
     /***** Affaires *****/
     @POST("api/pointageTrecopro/affaires")
-    suspend fun getAffairesByAffIdOrCliNom(@Body text: String): Response<List<Affaire>>
+    suspend fun getAffairesByAffIdOrCliNom(@Body text: com.trecobat.pointagetrecopro.data.entities.MyString): Response<List<Affaire>>
 }

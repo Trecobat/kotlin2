@@ -3,6 +3,7 @@ package com.trecobat.pointagetrecopro.data.entities
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlin.String
 
 @Entity(tableName = "pointages")
 data class Pointage(
