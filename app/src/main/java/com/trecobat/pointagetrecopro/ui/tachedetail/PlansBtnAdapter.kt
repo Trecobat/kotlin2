@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.trecobat.pointagetrecopro.data.entities.GedFiles
-import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.databinding.ItemPlanBtnBinding
-import kotlinx.android.synthetic.main.item_plan_btn.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -42,7 +40,7 @@ class PlanViewHolder(private val itemBinding: ItemPlanBtnBinding, private val li
     private lateinit var plan: GedFiles
 
     init {
-        itemBinding.root.plan_btn.setOnClickListener(this)
+        itemBinding.planBtn.setOnClickListener(this)
     }
 
     @SuppressLint("SetTextI18n")

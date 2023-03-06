@@ -17,7 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.trecobat.pointagetrecopro.R
 import com.trecobat.pointagetrecopro.data.entities.*
-import com.trecobat.pointagetrecopro.data.entities.String
+import com.trecobat.pointagetrecopro.data.entities.MyString
 import com.trecobat.pointagetrecopro.databinding.AddMarcheTsFragmentBinding
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getDay
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getMonth
@@ -25,6 +25,7 @@ import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getYear
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -58,12 +59,12 @@ class AddMarcheTsFragment : Fragment(), AffairesAdapter.AffaireItemListener {
     }
 
     private fun setupSpinner() {
-        viewModel.bdcTypes.observe(viewLifecycleOwner, Observer { it ->
-            when (it.status) {
+        val bdcTypesObserver = Observer<Resource<List<BdcType>>> { resource ->
+            when (resource.status) {
                 Resource.Status.SUCCESS -> {
-                    if (!it.data.isNullOrEmpty()) {
+                    if (!resource.data.isNullOrEmpty()) {
                         binding.progressBar.visibility = View.GONE
-                        val bdct = it.data.map { it.bdct_label }
+                        val bdct = resource.data.map { it.bdct_label }
                         val adapterBdct = ArrayAdapter(
                             requireContext(),
                             android.R.layout.simple_spinner_item,
@@ -75,14 +76,15 @@ class AddMarcheTsFragment : Fragment(), AffairesAdapter.AffaireItemListener {
                 }
                 Resource.Status.ERROR -> {
                     binding.progressBar.visibility = View.GONE
-                    Timber.e(it.message)
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    Timber.e(resource.message)
+                    Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
                 }
                 Resource.Status.LOADING -> {
                     binding.progressBar.visibility = View.VISIBLE
                 }
             }
-        })
+        }
+        viewModel.bdcTypes.observe(viewLifecycleOwner, bdcTypesObserver)
     }
 
     private fun setupAutocomplete() {
@@ -98,15 +100,14 @@ class AddMarcheTsFragment : Fragment(), AffairesAdapter.AffaireItemListener {
                 affaires.clear()
                 if (s.toString().isNotEmpty()) {
                     if (s.toString().length > 3) {
-                        val query = String(string = "%${s.toString()}%")
-                        viewModel.getAffairesByAffIdOrCliNom(query).observe(viewLifecycleOwner, Observer {
-                            Timber.e(it.data.toString())
-                            when (it.status) {
+                        val query = MyString(string = "%${s.toString()}%")
+                        val affairesObserver = Observer<Resource<List<Affaire>>> { resource ->
+                            when (resource.status) {
                                 Resource.Status.SUCCESS -> {
                                     binding.progressBar.visibility = View.GONE
-                                    if (!it.data.isNullOrEmpty()) {
+                                    if (!resource.data.isNullOrEmpty()) {
                                         affaires.clear()
-                                        affaires.addAll(it.data)
+                                        affaires.addAll(resource.data)
                                         if (affaires.isNotEmpty()) {
                                             binding.affairesSv.visibility = View.VISIBLE
                                         }
@@ -115,16 +116,17 @@ class AddMarcheTsFragment : Fragment(), AffairesAdapter.AffaireItemListener {
                                     }
                                 }
                                 Resource.Status.ERROR -> {
-                                    Timber.e(it.message)
+                                    Timber.e(resource.message)
                                     binding.progressBar.visibility = View.GONE
-                                    Toast.makeText( requireContext(), it.message, Toast.LENGTH_SHORT ).show()
+                                    Toast.makeText( requireContext(), resource.message, Toast.LENGTH_SHORT ).show()
                                 }
                                 Resource.Status.LOADING -> {
                                     binding.progressBar.visibility = View.VISIBLE
                                     binding.affairesSv.visibility = View.GONE
                                 }
                             }
-                        })
+                        }
+                        viewModel.getAffairesByAffIdOrCliNom(query).observe(viewLifecycleOwner, affairesObserver)
                     } else {
                         binding.affairesSv.visibility = View.GONE
                     }
@@ -136,6 +138,7 @@ class AddMarcheTsFragment : Fragment(), AffairesAdapter.AffaireItemListener {
         })
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun addMarche() {
         val tache = PostTache(
             aff_id = Integer.parseInt( binding.affId.text.toString() ),
@@ -147,7 +150,7 @@ class AddMarcheTsFragment : Fragment(), AffairesAdapter.AffaireItemListener {
         Timber.e(tache.toString())
 
         GlobalScope.launch(Dispatchers.Main) {
-            viewModel.addTache(tache).observe(viewLifecycleOwner, Observer { resource ->
+            val addTacheObserver = Observer<Resource<Tache>> { resource ->
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         findNavController().navigate(
@@ -165,7 +168,8 @@ class AddMarcheTsFragment : Fragment(), AffairesAdapter.AffaireItemListener {
                         Timber.d("LOADING : $resource.data")
                     }
                 }
-            })
+            }
+            viewModel.addTache(tache).observe(viewLifecycleOwner, addTacheObserver)
         }
     }
 

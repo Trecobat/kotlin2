@@ -28,6 +28,9 @@ interface MyService {
     @GET("api/pointageTrecopro/chantiers/{id}/plans")
     suspend fun getFilesOfTache(@Path("id") id: Int): Response<List<GedFiles>>
 
+    @POST("api/pointageTrecopro/file/{fo_id}")
+    suspend fun getFile(@Path("fo_id") fo_id: String): Response<MyFile>
+
     /***** POINTAGE *****/
     @GET("api/pointageTrecopro/pointages")
     suspend fun getAllPointages() : Response<List<Pointage>>
@@ -56,5 +59,5 @@ interface MyService {
 
     /***** Affaires *****/
     @POST("api/pointageTrecopro/affaires")
-    suspend fun getAffairesByAffIdOrCliNom(@Body text: com.trecobat.pointagetrecopro.data.entities.String): Response<List<Affaire>>
+    suspend fun getAffairesByAffIdOrCliNom(@Body text: com.trecobat.pointagetrecopro.data.entities.MyString): Response<List<Affaire>>
 }

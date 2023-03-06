@@ -5,6 +5,6 @@ import androidx.room.PrimaryKey
 import kotlin.String
 
 @Entity(tableName = "strings")
-data class String(
+data class MyString(
     @PrimaryKey var string: String
 )

@@ -13,21 +13,22 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.speech.RecognizerIntent
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.itextpdf.text.Document
+import com.itextpdf.text.pdf.*
 import com.trecobat.pointagetrecopro.R
-import com.trecobat.pointagetrecopro.data.entities.GedFiles
-import com.trecobat.pointagetrecopro.data.entities.Pointage
-import com.trecobat.pointagetrecopro.data.entities.Tache
-import com.trecobat.pointagetrecopro.data.local.AppDatabase
+import com.trecobat.pointagetrecopro.data.entities.*
 import com.trecobat.pointagetrecopro.databinding.TacheDetailFragmentBinding
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.formatDate
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getDay
@@ -35,21 +36,18 @@ import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getHour
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getMinute
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getMonth
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getYear
+import com.trecobat.pointagetrecopro.helper.StringHelper.Companion.nettoyerChaine
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.item_pointage.*
-import kotlinx.android.synthetic.main.item_tache.*
-import kotlinx.android.synthetic.main.tache_detail_fragment.*
-import kotlinx.android.synthetic.main.tache_detail_fragment.view.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.*
 import timber.log.Timber
 import java.io.File
-import java.io.IOException
-import java.net.URL
+import java.io.FileOutputStream
 import java.util.*
 import kotlin.collections.set
 
@@ -88,35 +86,36 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
     }
 
     private fun setupObservers() {
-        viewModel.tache.observe(viewLifecycleOwner, Observer {
-            when (it.status) {
+        val tacheObserver = Observer<Resource<Tache>> { resource ->
+            when (resource.status) {
                 Resource.Status.SUCCESS -> {
-                    bindTache(it.data!!)
+                    bindTache(resource.data!!)
                     binding.progressBar.visibility = View.GONE
                     binding.tacheCl.visibility = View.VISIBLE
                 }
 
                 Resource.Status.ERROR ->
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, resource.message, Toast.LENGTH_SHORT).show()
 
                 Resource.Status.LOADING -> {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.tacheCl.visibility = View.GONE
                 }
             }
-        })
+        }
+        viewModel.tache.observe(viewLifecycleOwner, tacheObserver)
 
-        viewModel.gedFiles.observe(viewLifecycleOwner, Observer {
-            when (it.status) {
+        val gedFilesObserver = Observer<Resource<List<GedFiles>>> { resource ->
+            when (resource.status) {
                 Resource.Status.SUCCESS -> {
-                    if (!it.data.isNullOrEmpty()) planAdapter.setItems(ArrayList(it.data))
+                    if (!resource.data.isNullOrEmpty()) planAdapter.setItems(ArrayList(resource.data))
                     binding.progressBar.visibility = View.GONE
                     binding.plansRv.visibility = View.VISIBLE
                     binding.plansRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 }
 
                 Resource.Status.ERROR -> {
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, resource.message, Toast.LENGTH_SHORT).show()
                 }
 
                 Resource.Status.LOADING -> {
@@ -124,18 +123,19 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                     binding.plansRv.visibility = View.GONE
                 }
             }
-        })
+        }
+        viewModel.gedFiles.observe(viewLifecycleOwner, gedFilesObserver)
 
-        viewModel.pointages.observe(viewLifecycleOwner, Observer {
-            when (it.status) {
+        val pointagesObserver = Observer<Resource<List<Pointage>>> { resource ->
+            when (resource.status) {
                 Resource.Status.SUCCESS -> {
-                    if (!it.data.isNullOrEmpty()) pointagesAdapter.setItems(ArrayList(it.data))
+                    if (!resource.data.isNullOrEmpty()) pointagesAdapter.setItems(ArrayList(resource.data))
                     binding.progressBar.visibility = View.GONE
                     binding.pointagesRv.visibility = View.VISIBLE
                 }
 
                 Resource.Status.ERROR -> {
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, resource.message, Toast.LENGTH_SHORT).show()
                 }
 
                 Resource.Status.LOADING -> {
@@ -143,13 +143,14 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                     binding.plansRv.visibility = View.GONE
                 }
             }
-        })
+        }
+        viewModel.pointages.observe(viewLifecycleOwner, pointagesObserver)
 
-        viewModel.corpsEtat.observe(viewLifecycleOwner, Observer { it ->
-            when (it.status) {
+        val corpsEtatObserver = Observer<Resource<List<BdcType>>> { resource ->
+            when (resource.status) {
                 Resource.Status.SUCCESS -> {
-                    if (!it.data.isNullOrEmpty()) {
-                        val bdct = it.data.map { it.bdct_label }
+                    if (!resource.data.isNullOrEmpty()) {
+                        val bdct = resource.data.map { it.bdct_label }
                         val adapterBdct = ArrayAdapter(
                             requireContext(),
                             android.R.layout.simple_spinner_item,
@@ -161,14 +162,15 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                 }
 
                 Resource.Status.ERROR -> {
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, resource.message, Toast.LENGTH_SHORT).show()
                 }
 
                 Resource.Status.LOADING -> {
 
                 }
             }
-        })
+        }
+        viewModel.corpsEtat.observe(viewLifecycleOwner, corpsEtatObserver)
     }
 
     @SuppressLint("SetTextI18n")
@@ -244,12 +246,12 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
             if (isChecked) {
                 binding.equipiers.visibility = View.GONE
             } else {
-                viewModel.getEquipiers().observe(viewLifecycleOwner, Observer {
-                    when (it.status) {
+                val equipiersObserver = Observer<Resource<List<Equipier>>> { resource ->
+                    when (resource.status) {
                         Resource.Status.SUCCESS -> {
-                            if (!it.data.isNullOrEmpty()) {
+                            if (!resource.data.isNullOrEmpty()) {
                                 val equipiers = mutableMapOf<Int, String>()
-                                for (row in it.data) {
+                                for (row in resource.data) {
                                     val key = row.eevp_id
                                     val value = "${row.eevp_prenom} ${row.eevp_nom}"
                                     equipiers[key] = value
@@ -267,14 +269,15 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                         }
 
                         Resource.Status.ERROR -> {
-                            Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, resource.message, Toast.LENGTH_SHORT).show()
                         }
 
                         Resource.Status.LOADING -> {
 
                         }
                     }
-                })
+                }
+                viewModel.getEquipiers().observe(viewLifecycleOwner, equipiersObserver)
                 binding.equipiers.visibility = View.VISIBLE
             }
         }
@@ -393,14 +396,13 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
             postPointage(pointage)
         } else {
             var isHandled = false
-            viewModel.getEquipiersOfEquipe().observe(viewLifecycleOwner, Observer { result ->
-                if (!isHandled && result.status.toString() == "SUCCESS") {
+            val equipiersOfEquipeObserver = Observer<Resource<List<Equipier>>> { resource ->
+                if (!isHandled && resource.status.toString() == "SUCCESS") {
                     isHandled = true
-                    when (result.status) {
+                    when (resource.status) {
                         Resource.Status.SUCCESS -> {
-                            val equipiers = result.data
+                            val equipiers = resource.data
                             if (!equipiers.isNullOrEmpty()) {
-                                Timber.e(equipiers.toString())
                                 for (row in equipiers) {
                                     val pointage = makePointage(tache)
                                     pointage.poi_eq_id = row.eevp_id
@@ -411,7 +413,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                             }
                         }
                         Resource.Status.ERROR -> {
-                            val error = result.message ?: "Une erreur s'est produite"
+                            val error = resource.message ?: "Une erreur s'est produite"
                             binding.tacheCl.visibility = View.VISIBLE
                             binding.progressBar.visibility = View.GONE
                             Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
@@ -424,13 +426,15 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                         }
                     }
                 }
-            })
+            }
+            viewModel.getEquipiersOfEquipe().observe(viewLifecycleOwner, equipiersOfEquipeObserver)
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun postPointage(pointage: Pointage) {
         GlobalScope.launch(Dispatchers.Main) {
-            viewModel.postPointage(pointage).observe(viewLifecycleOwner, Observer { resource ->
+            val postPointageObserver = Observer<Resource<Pointage>> { resource ->
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
@@ -450,72 +454,92 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                         Timber.d("LOADING : ${resource.data}")
                     }
                 }
-            })
+            }
+            viewModel.postPointage(pointage).observe(viewLifecycleOwner, postPointageObserver)
         }
     }
 
+    @SuppressLint("SetWorldReadable", "SetWorldWritable")
     override fun onClickedPlan(ged_file: GedFiles) {
-//        val url = "http://intranet.trecoland.fr/files/$gdf_fo_id"
-        val url = "https://www.orimi.com/pdf-test.pdf"
-        val client = OkHttpClient()
-        val request = Request.Builder().url(url).build()
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
-        }
+        binding.tacheCl.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Toast.makeText(
-                    activity,
-                    "Erreur lors du téléchargement du plan",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+        val directory = File(
+            requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+            ged_file.gdf_obj_id.toString()
+        )
+        val file = File(directory, "${nettoyerChaine(ged_file.gdf_cat_label)}.pdf")
+        if (file.exists()) {
+            findNavController().navigate(
+                R.id.action_tacheDetailFragment_to_pdfFragment,
+                bundleOf("affId" to ged_file.gdf_obj_id, "catLabel" to ged_file.gdf_cat_label)
+            )
+        } else {
+            val fileObserver = Observer<Resource<MyFile>> { resource ->
+                when (resource.status) {
+                    Resource.Status.SUCCESS -> {
+                        if (ContextCompat.checkSelfPermission(
+                                requireContext(),
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+                        }
+                        if (resource.data?.file_content != null) {
+                            val pdfData = Base64.decode(resource.data.file_content.toString(), Base64.DEFAULT)
 
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!response.isSuccessful) {
-                        throw IOException("Unexpected code $response")
+                            val newDirectory = File(
+                                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+                                ged_file.gdf_obj_id.toString()
+                            )
+
+                            if (!directory.exists()) {
+                                directory.mkdirs()
+                            }
+
+                            val newFile = File(newDirectory, "${nettoyerChaine( ged_file.gdf_cat_label )}.pdf")
+                            newFile.createNewFile()
+                            newFile.setReadable(true, false) // autoriser la lecture
+                            newFile.setWritable(true, false) // autoriser l'écriture
+                            val outputStream = FileOutputStream(file.absolutePath)
+
+                            val reader = PdfReader(pdfData)
+                            val n = reader.numberOfPages
+                            val document = Document(reader.getPageSizeWithRotation(1))
+                            val writer = PdfCopy(document, outputStream)
+                            document.open()
+                            var i = 0
+                            while (i < n) {
+                                i++
+                                document.newPage()
+                                val page = writer.getImportedPage(reader, i)
+                                writer.addPage(page)
+                            }
+
+                            // Fermer le document
+                            document.close()
+
+                            if (newFile.exists()) {
+                                findNavController().navigate(
+                                    R.id.action_tacheDetailFragment_to_pdfFragment,
+                                    bundleOf("affId" to ged_file.gdf_obj_id, "catLabel" to ged_file.gdf_cat_label)
+                                )
+                            }
+                        }
                     }
-                    val directory = File(
-                        requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-                        ged_file.gdf_obj_id.toString()
-                    )
-
-                    if (!directory.exists()) {
-                        directory.mkdirs()
+                    Resource.Status.ERROR -> {
+                        binding.tacheCl.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.GONE
+                        Timber.e("ERROR get_file")
+                        Timber.e(resource.message)
                     }
-
-                    val file = File(directory, "${ged_file.gdf_cat_label}.pdf")
-                    val inputStream = URL(url).openStream()
-                    file.outputStream().use { outputStream ->
-                        inputStream.copyTo(outputStream)
-                    }
-
-                    if (ged_file.local_storage == null) {
-                        AppDatabase.getDatabase(requireContext()).myDao()
-                            .updateLocalStorage(ged_file.gdf_fo_id, file.absolutePath)
-                    }
-
-                    if (file.exists()) {
-                        val uri = FileProvider.getUriForFile(
-                            requireContext(),
-                            "${requireContext().packageName}.fileprovider",
-                            file
-                        )
-                        val intent = Intent(Intent.ACTION_VIEW)
-                        intent.setDataAndType(uri, "application/pdf")
-                        intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
-                        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        requireContext().startActivity(intent)
+                    Resource.Status.LOADING -> {
+                        Timber.d("LOADING get_file")
                     }
                 }
             }
-        })
+            viewModel.getFile(ged_file.gdf_fo_id).observe(viewLifecycleOwner, fileObserver)
+        }
     }
 
     override fun onClickedPointage(pointage: Pointage) {
@@ -529,6 +553,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         startActivityForResult(intent, 100)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 

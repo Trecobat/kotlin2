@@ -38,6 +38,9 @@
         <action
             android:id="@+id/action_tacheDetailFragment_refresh"
             app:destination="@id/tacheDetailFragment" />
+        <action
+            android:id="@+id/action_tacheDetailFragment_to_pdfFragment"
+            app:destination="@id/pdfFragment" />
     </fragment>
 
     <fragment
@@ -57,5 +60,12 @@
         <action
             android:id="@+id/action_addTsFragment_to_tacheDetailFragment"
             app:destination="@id/tacheDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pdfFragment"
+        android:name="com.trecobat.pointagetrecopro.ui.pdf.PdfFragment"
+        android:label="Voir un PDF"
+        tools:layout="@layout/pdf" >
     </fragment>
 </navigation>

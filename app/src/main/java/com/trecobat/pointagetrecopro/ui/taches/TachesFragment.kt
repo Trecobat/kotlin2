@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.trecobat.pointagetrecopro.R
+import com.trecobat.pointagetrecopro.data.entities.Tache
 import com.trecobat.pointagetrecopro.databinding.TachesFragmentBinding
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
@@ -54,20 +55,20 @@ class TachesFragment : Fragment(), TachesAdapter.TacheItemListener {
     }
 
     private fun setupObservers() {
-        viewModel.taches.observe(viewLifecycleOwner, Observer {
-            when (it.status) {
+        val observer = Observer<Resource<List<Tache>>> { resource ->
+            when (resource.status) {
                 Resource.Status.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
-                    if (!it.data.isNullOrEmpty()) adapter.setItems(ArrayList(it.data))
+                    if (!resource.data.isNullOrEmpty()) adapter.setItems(ArrayList(resource.data))
                 }
                 Resource.Status.ERROR -> {
-                    Timber.e(it.message)
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    Timber.e(resource.message)
+                    Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
                 }
-                Resource.Status.LOADING ->
-                    binding.progressBar.visibility = View.VISIBLE
+                Resource.Status.LOADING -> binding.progressBar.visibility = View.VISIBLE
             }
-        })
+        }
+        viewModel.taches.observe(viewLifecycleOwner, observer)
     }
 
     override fun onClickedTache(tacheId: Int) {

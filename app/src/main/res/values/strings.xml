@@ -30,4 +30,5 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="speech_prompt">Que voulez-vous écrire ?</string>
     <string name="autocompleteAffaire">Veuillez saisir une affaire</string>
+    <string name="retour">Retour</string>
 </resources>

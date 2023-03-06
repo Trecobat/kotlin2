@@ -17,11 +17,11 @@ import com.trecobat.pointagetrecopro.databinding.ItemPointageBinding
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.formatDate
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getDateTime
 import com.trecobat.pointagetrecopro.utils.Resource
-import kotlinx.android.synthetic.main.item_pointage.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import androidx.lifecycle.Observer
+import kotlinx.coroutines.DelicateCoroutinesApi
 import java.util.*
 
 class PointagesAdapter(
@@ -72,9 +72,10 @@ class PointagesAdapter(
         private lateinit var pointage: Pointage
 
         init {
-            itemBinding.root.pointage_btn.setOnClickListener(this)
+            itemBinding.pointageBtn.setOnClickListener(this)
         }
 
+        @OptIn(DelicateCoroutinesApi::class)
         @SuppressLint("SetTextI18n")
         fun bind(item: Pointage, lifecycleOwner: LifecycleOwner) {
             this.pointage = item
