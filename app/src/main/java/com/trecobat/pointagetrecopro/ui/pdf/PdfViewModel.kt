@@ -1,10 +1,12 @@
 package com.trecobat.pointagetrecopro.ui.pdf
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class PdfViewModel @ViewModelInject constructor() : ViewModel() {
+@HiltViewModel
+class PdfViewModel @Inject constructor() : ViewModel() {
     private val _affId = MutableLiveData<Int>()
     private val _catLabel = MutableLiveData<String>()
 

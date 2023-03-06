@@ -11,17 +11,15 @@ import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
-import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import timber.log.Timber
 import javax.inject.Singleton
+import dagger.hilt.components.SingletonComponent
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
     @Singleton
@@ -40,7 +38,7 @@ object AppModule {
                         if (token != null) {
                             requestBuilder.header("Authorization", "Bearer $token") // Ajouter le header si le token n'est pas null
                         }
-                        val request = requestBuilder.method(original.method(), original.body()).build()
+                        val request = requestBuilder.method(original.method, original.body).build()
                         chain.proceed(request)
                     }
                 }.build()

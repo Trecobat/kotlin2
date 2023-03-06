@@ -7,15 +7,11 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Rect
-import android.graphics.pdf.PdfRenderer
 import android.location.Address
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.os.ParcelFileDescriptor
 import android.speech.RecognizerIntent
 import android.util.Base64
 import android.view.LayoutInflater
@@ -43,13 +39,10 @@ import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getHour
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getMinute
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getMonth
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.getYear
+import com.trecobat.pointagetrecopro.helper.StringHelper.Companion.nettoyerChaine
 import com.trecobat.pointagetrecopro.utils.Resource
 import com.trecobat.pointagetrecopro.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.item_pointage.*
-import kotlinx.android.synthetic.main.item_tache.*
-import kotlinx.android.synthetic.main.tache_detail_fragment.*
-import kotlinx.android.synthetic.main.tache_detail_fragment.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -457,47 +450,35 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         }
     }
 
+    @SuppressLint("SetWorldReadable", "SetWorldWritable")
     override fun onClickedPlan(ged_file: GedFiles) {
+        binding.tacheCl.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+
         val directory = File(
             requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
             ged_file.gdf_obj_id.toString()
         )
-        val file = File(directory, "${ged_file.gdf_cat_label}.pdf")
+        val file = File(directory, "${nettoyerChaine(ged_file.gdf_cat_label)}.pdf")
         if (file.exists()) {
-            val pdfUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", file)
-            val pdfIntent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(pdfUri, "application/pdf")
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            startActivity(pdfIntent)
+//            val pdfUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", file)
+//            val pdfIntent = Intent(Intent.ACTION_VIEW).apply {
+//                setDataAndType(pdfUri, "application/pdf")
+//                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                putExtra("LOAD_NEW_FILE", true)
+//            }
+//            val packageManager = requireActivity().packageManager
+//            if (pdfIntent.resolveActivity(packageManager) != null) {
+//                startActivity(pdfIntent)
+//            }
 
-
-
-
-
-//            val fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-//            val renderer = PdfRenderer(fileDescriptor)
-//
-//            // Afficher la première page du PDF dans une ImageView
-//            val page = renderer.openPage(0)
-//            val bitmap = Bitmap.createBitmap(page.width, page.height, Bitmap.Config.ARGB_8888)
-//            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-//            binding.imageView.setImageBitmap(bitmap)
-//            binding.imageView.visibility = View.VISIBLE
-//            binding.tacheCl.visibility = View.GONE
-//
-//            // Fermer le renderer et la page
-//            page.close()
-//            renderer.close()
-
-
-
-
-//            findNavController().navigate(
-//                R.id.action_tacheDetailFragment_to_pdfFragment,
-//                bundleOf("affId" to ged_file.gdf_obj_id, "catLabel" to ged_file.gdf_cat_label)
-//            )
+            findNavController().navigate(
+                R.id.action_tacheDetailFragment_to_pdfFragment,
+                bundleOf("affId" to ged_file.gdf_obj_id, "catLabel" to ged_file.gdf_cat_label)
+            )
         } else {
             viewModel.getFile(ged_file.gdf_fo_id).observe(viewLifecycleOwner, Observer {
                 when (it.status) {
@@ -521,7 +502,10 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                                 directory.mkdirs()
                             }
 
-                            val newFile = File(newDirectory, "${ged_file.gdf_cat_label}.pdf")
+                            val newFile = File(newDirectory, "${nettoyerChaine( ged_file.gdf_cat_label )}.pdf")
+                            newFile.createNewFile()
+                            newFile.setReadable(true, false) // autoriser la lecture
+                            newFile.setWritable(true, false) // autoriser l'écriture
                             val outputStream = FileOutputStream(file.absolutePath)
 
                             val reader = PdfReader(pdfData)
@@ -541,20 +525,31 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                             document.close()
 
                             if (newFile.exists()) {
-                                val pdfUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", newFile)
-                                val pdfIntent = Intent(Intent.ACTION_VIEW).apply {
-                                    setDataAndType(pdfUri, "application/pdf")
-                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                    putExtra("LOAD_NEW_FILE", true)
-                                }
-                                startActivityForResult(pdfIntent, 0)
+                                findNavController().navigate(
+                                    R.id.action_tacheDetailFragment_to_pdfFragment,
+                                    bundleOf("affId" to ged_file.gdf_obj_id, "catLabel" to ged_file.gdf_cat_label)
+                                )
+
+//                                val pdfUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", newFile)
+//                                val pdfIntent = Intent(Intent.ACTION_VIEW).apply {
+//                                    setDataAndType(pdfUri, "application/pdf")
+//                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//                                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                                    putExtra("LOAD_NEW_FILE", true)
+//                                }
+//                                startActivityForResult(pdfIntent, 200)
+//                                val packageManager = requireActivity().packageManager
+//                                if (pdfIntent.resolveActivity(packageManager) != null) {
+//                                    startActivity(pdfIntent)
+//                                }
                             }
                         }
                     }
                     Resource.Status.ERROR -> {
+                        binding.tacheCl.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.GONE
                         Timber.e("ERROR get_file")
                         Timber.e(it.message)
                     }
@@ -577,6 +572,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         startActivityForResult(intent, 100)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 

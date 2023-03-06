@@ -1,12 +1,12 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'dagger.hilt.android.plugin'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
 
 android {
     compileSdkVersion 33
-    buildToolsVersion "29.0.3"
 
     viewBinding {
         enabled = true
@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "com.trecobat.pointagetrecopro"
-        minSdkVersion 26
+        minSdkVersion 21
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
@@ -23,12 +23,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 
     buildTypes {
@@ -37,16 +37,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
+    namespace 'com.trecobat.pointagetrecopro'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.3.0'
-    implementation 'androidx.fragment:fragment-ktx:1.2.5'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation ('androidx.appcompat:appcompat:1.6.1')
+    implementation ('androidx.core:core-ktx:1.9.0') {
+        exclude group: 'com.android.support', module: 'support-core-utils'
+    }
+    implementation 'androidx.fragment:fragment-ktx:1.5.5'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -54,59 +57,58 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     //Lifecycle
-    def lifecycle_version = "2.2.0"
+    def lifecycle_version = '2.5.1'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     //Kotlin Coroutines
-    def coroutines_android_version = '1.3.7'
+    def coroutines_android_version = '1.6.4'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_android_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_android_version"
 
     //Hilt
-    implementation 'com.google.dagger:hilt-android:2.28.1-alpha'
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha01"
-    kapt 'com.google.dagger:hilt-android-compiler:2.28.1-alpha'
-    kapt "androidx.hilt:hilt-compiler:1.0.0-alpha01"
+    implementation 'com.google.dagger:hilt-android:2.45'
+    kapt 'com.google.dagger:hilt-android-compiler:2.45'
 
     //Room
-    def room_version = "2.2.5"
+    def room_version = '2.5.0'
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
     //Navigation
-    def nav_version = "2.3.0"
+    def nav_version = '2.5.3'
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    kapt 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'com.github.bumptech.glide:glide:4.15.0'
+    kapt 'com.github.bumptech.glide:compiler:4.15.0'
 
     //Timber
-    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.jakewharton.timber:timber:5.0.1'
 
     //Maps
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     // okHttp3 pour télécharger des documents
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
 
     // Google play service pour coords
     implementation 'com.google.android.gms:play-services-location:21.0.1'
 
     // JWT
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.3'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.11.3'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.3'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     // PDF
     implementation 'com.itextpdf:itextpdf:5.5.13.2'
+    implementation ('com.github.barteksc:android-pdf-viewer:3.2.0-beta.1')
 
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

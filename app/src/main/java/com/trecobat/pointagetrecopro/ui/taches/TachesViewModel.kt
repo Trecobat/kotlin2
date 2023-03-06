@@ -1,15 +1,15 @@
 package com.trecobat.pointagetrecopro.ui.taches
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.trecobat.pointagetrecopro.R
-import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.entities.Tache
 import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import com.trecobat.pointagetrecopro.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class TachesViewModel @ViewModelInject constructor(
+@HiltViewModel
+class TachesViewModel @Inject constructor(
     private val repository: MyRepository
 ) : ViewModel() {
     val taches = refreshData()
