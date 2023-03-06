@@ -1,17 +1,19 @@
 package com.trecobat.pointagetrecopro.ui.tachedetail
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import com.trecobat.pointagetrecopro.data.entities.Equipier
+import com.trecobat.pointagetrecopro.data.entities.File
 import com.trecobat.pointagetrecopro.data.entities.Pointage
 import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import com.trecobat.pointagetrecopro.utils.Resource
-import timber.log.Timber
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class TacheDetailViewModel @ViewModelInject constructor(
+@HiltViewModel
+class TacheDetailViewModel @Inject constructor(
     private val repository: MyRepository
 ) : ViewModel() {
 
@@ -60,5 +62,9 @@ class TacheDetailViewModel @ViewModelInject constructor(
         // Inutile parce que cette fonction utilise l'equipe du user connecté qui en a forcément une.
         // Cependant il faut quand même vérifier que c'est pas null par rapport au typage dans l'entité
         return repository.getEquipiersOfEquipe(0)
+    }
+
+    fun getFile(fo_id: String): LiveData<Resource<File>> {
+        return repository.getFile(fo_id)
     }
 }

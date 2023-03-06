@@ -1,16 +1,20 @@
 package com.trecobat.pointagetrecopro.ui.auth
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
-import com.trecobat.pointagetrecopro.data.entities.*
+import com.trecobat.pointagetrecopro.data.entities.Equipe
+import com.trecobat.pointagetrecopro.data.entities.Token
+import com.trecobat.pointagetrecopro.data.entities.TokenData
+import com.trecobat.pointagetrecopro.data.entities.User
 import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import com.trecobat.pointagetrecopro.utils.JWTUtils
 import com.trecobat.pointagetrecopro.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class AuthViewModel @ViewModelInject constructor(
+@HiltViewModel
+class AuthViewModel @Inject constructor(
     private val repository: MyRepository
 ) : ViewModel() {
 

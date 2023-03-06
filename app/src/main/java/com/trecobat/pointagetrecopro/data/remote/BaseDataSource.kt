@@ -48,6 +48,7 @@ class BaseDataSource @Inject constructor(
     suspend fun getTaches() = getResult { myService.getAllTaches() }
     suspend fun getTache(id: Int) = getResult { myService.getTache(id) }
     suspend fun getFilesOfTache(id: Int) = getResult { myService.getFilesOfTache(id) }
+    suspend fun getFile(fo_id: String) = getResult { myService.getFile(fo_id) }
     suspend fun updateTache(tache: Tache) = getResult { myService.updateTache(tache.id, tache) }
 
     /***** AFFAIRE *****/
