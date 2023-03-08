@@ -7,6 +7,7 @@ import androidx.lifecycle.switchMap
 import com.trecobat.pointagetrecopro.data.entities.Equipier
 import com.trecobat.pointagetrecopro.data.entities.MyFile
 import com.trecobat.pointagetrecopro.data.entities.Pointage
+import com.trecobat.pointagetrecopro.data.entities.Tache
 import com.trecobat.pointagetrecopro.data.repository.MyRepository
 import com.trecobat.pointagetrecopro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,7 +43,7 @@ class TacheDetailViewModel @Inject constructor(
         repository.getBdcts()
     }
 
-    suspend fun postPointage(data: Pointage) : LiveData<Resource<Pointage>> {
+    suspend fun postPointage(data: Pointage) : LiveData<Resource<List<Pointage>>> {
         return repository.postPointage(data)
     }
 
@@ -66,5 +67,9 @@ class TacheDetailViewModel @Inject constructor(
 
     fun getFile(fo_id: String): LiveData<Resource<MyFile>> {
         return repository.getFile(fo_id)
+    }
+
+    suspend fun updateTache(tache: Tache): LiveData<Resource<Tache>> {
+        return repository.updateTache(tache)
     }
 }

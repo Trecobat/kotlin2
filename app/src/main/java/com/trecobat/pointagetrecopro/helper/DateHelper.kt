@@ -19,7 +19,7 @@ class DateHelper {
             return "${getDate(twoDigits)} ${getTime()}"
         }
 
-        private fun getDate(twoDigits: Boolean = false): String {
+        fun getDate(twoDigits: Boolean = false): String {
             return "${getYear(twoDigits)}-${getMonth()}-${getDay()}"
         }
 

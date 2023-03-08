@@ -6,7 +6,6 @@ import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.net.Uri
@@ -15,10 +14,11 @@ import android.os.Environment
 import android.speech.RecognizerIntent
 import android.util.Base64
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -58,6 +58,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
     private lateinit var planAdapter: PlansAdapter
     private lateinit var pointagesAdapter: PointagesAdapter
     private lateinit var equipiersKeys: List<Int>
+    private lateinit var tempsPausesKeys: List<String>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -173,18 +174,18 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         viewModel.corpsEtat.observe(viewLifecycleOwner, corpsEtatObserver)
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
     private fun bindTache(tache: Tache) {
-        binding.cliNom.text = tache.affaire.client?.cli_nom
-        binding.affId.text = " - ${tache.affaire.aff_id}"
+        binding.cliNom.text = tache.affaire?.client?.cli_nom
+        binding.affId.text = " - ${tache.affaire?.aff_id}"
         binding.bdctLabel.text = tache.bdc_type.bdct_label
         binding.startDate.text = formatDate(tache.start_date)
         binding.endDate.text = tache.end_date?.let { formatDate(it) }
-        binding.cliAdresse1Chantier.text = tache.affaire.client?.cli_adresse1_chantier
+        binding.cliAdresse1Chantier.text = tache.affaire?.client?.cli_adresse1_chantier
         binding.cliAdresse2Chantier.text =
-            if (tache.affaire.client?.cli_adresse2_chantier != null) " - ${tache.affaire.client!!.cli_adresse2_chantier}" else ""
-        binding.cliCpChantier.text = tache.affaire.client?.cli_cp_chantier
-        binding.cliVilleChantier.text = tache.affaire.client?.cli_ville_chantier
+            if (tache.affaire?.client?.cli_adresse2_chantier != null) " - ${tache.affaire?.client!!.cli_adresse2_chantier}" else ""
+        binding.cliCpChantier.text = tache.affaire?.client?.cli_cp_chantier
+        binding.cliVilleChantier.text = tache.affaire?.client?.cli_ville_chantier
         binding.buttonJour.text = "${getDay()}/${getMonth()}/${getYear(true)}"
         val heure = "${getHour()}:${getMinute()}"
         binding.buttonHeureDeb.text = heure
@@ -196,17 +197,59 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
         setupTimesPicker()
         setupCheckboxEquipe()
 
+        binding.terminerBtn.setOnClickListener { terminer(tache) }
+
         binding.pointageBtn.setOnClickListener { pointer(tache) }
 
         binding.mapBtn.setOnClickListener { goToGmap(tache) }
 
-        binding.buttonSpeechInput.setOnClickListener { startSpeechInput() }
+        binding.commentaire.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                val drawableEnd = binding.commentaire.compoundDrawables[2]
+                if (drawableEnd != null && event.rawX >= (binding.commentaire.right - drawableEnd.bounds.width())) {
+                    // Action à effectuer lors du toucher sur le drawable end
+                    startSpeechInput()
+                    return@setOnTouchListener true
+                }
+            }
+            return@setOnTouchListener false
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun terminer(tache: Tache) {
+        val terminerTacheObserver = Observer<Resource<Tache>> { resource ->
+            when (resource.status) {
+                Resource.Status.SUCCESS -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.tacheCl.visibility = View.VISIBLE
+                    findNavController().navigate(
+                        R.id.action_pointageDiversFragment_to_tachesFragment
+                    )
+                }
+                Resource.Status.ERROR -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.tacheCl.visibility = View.VISIBLE
+                    Toast.makeText( context, "La tache n'a pas été terminée", Toast.LENGTH_SHORT ).show()
+                    Timber.e(resource.message)
+                }
+                Resource.Status.LOADING -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.tacheCl.visibility = View.GONE
+                }
+            }
+        }
+        tache.termine = 1
+        Timber.e(tache.toString())
+        GlobalScope.launch(Dispatchers.Main) {
+            viewModel.updateTache(tache).observe(viewLifecycleOwner, terminerTacheObserver)
+        }
     }
 
     private fun goToGmap(tache: Tache)
     {
         val geocoder = Geocoder(requireContext(), Locale.getDefault())
-        val locationName = "${tache.affaire.client?.cli_adresse1_chantier} ${tache.affaire.client?.cli_adresse2_chantier} ${tache.affaire.client?.cli_cp_chantier} ${tache.affaire.client?.cli_ville_chantier} France"
+        val locationName = "${tache.affaire?.client?.cli_adresse1_chantier} ${tache.affaire?.client?.cli_adresse2_chantier} ${tache.affaire?.client?.cli_cp_chantier} ${tache.affaire?.client?.cli_ville_chantier} France"
         val addresses: List<Address> = geocoder.getFromLocationName(locationName, 1) as List<Address>
         if (addresses.isNotEmpty()) {
             val latitude = addresses[0].latitude
@@ -319,11 +362,9 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
     private fun setupSpinners() {
         // Type de pointage
         val valuesTypePointage = listOf("Marché", "TS", "SAV")
-        val adapterTypePointage =
-            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, valuesTypePointage)
+        val adapterTypePointage = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, valuesTypePointage)
         adapterTypePointage.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.typePointage.adapter = adapterTypePointage
-
         binding.typePointage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
@@ -345,11 +386,41 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
         }
 
+        // Temps de pause
+        val valuesTempsPause = mutableMapOf<String, String>()
+        valuesTempsPause["00:30"] = "30 minutes"
+        valuesTempsPause["01:00"] = "1 heure"
+        valuesTempsPause["02:00"] = "2 heures"
+        valuesTempsPause["Autre"] = "Autre"
+
+        tempsPausesKeys = valuesTempsPause.keys.toList()
+        val adapterTempsPause = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, valuesTempsPause.values.toList())
+        adapterTempsPause.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.tempsPause.adapter = adapterTempsPause
+        binding.tempsPause.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedValue = tempsPausesKeys[position]
+                if (selectedValue == "Autre") {
+                    binding.tempsPauseAutre.visibility = View.VISIBLE
+                } else {
+                    binding.tempsPauseAutre.visibility = View.GONE
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
         // Nature de l'erreur
         val valuesNatureErreur = listOf(
             "Erreur artisan",
@@ -358,8 +429,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
             "Erreur Conducteur",
             "Erreur Fournisseur"
         )
-        val adapterNatureErreur =
-            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, valuesNatureErreur)
+        val adapterNatureErreur = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, valuesNatureErreur)
         adapterNatureErreur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.natureErreur.adapter = adapterNatureErreur
     }
@@ -376,6 +446,7 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
 
         pointage.poi_debut = "${formatDate ( date = binding.buttonJour.text as String, inputPattern = "dd/MM/yy", outputPattern = "yyyy-MM-dd" )} ${binding.buttonHeureDeb.text}:00"
         pointage.poi_fin = "${formatDate ( date = binding.buttonJour.text as String, inputPattern = "dd/MM/yy", outputPattern = "yyyy-MM-dd" )} ${binding.buttonHeureFin.text}:00"
+        pointage.poi_pause = if ( binding.tempsPause.selectedItem == "Autre" ) "0${binding.tempsPauseAutre.text}:00" else tempsPausesKeys[binding.tempsPause.selectedItemPosition]
 
         if (pointage.poi_type === "Marché") {
             pointage.poi_coffret = if (coffretElecEl.isChecked) 1 else 0
@@ -390,56 +461,23 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
 
     private fun pointer(tache: Tache) {
         val equipe = binding.equipe
+        val pointage = makePointage(tache)
+
         if (!equipe.isChecked) {
-            val pointage = makePointage(tache)
             pointage.poi_eq_id = equipiersKeys[binding.equipiers.selectedItemPosition]
-            postPointage(pointage)
-        } else {
-            var isHandled = false
-            val equipiersOfEquipeObserver = Observer<Resource<List<Equipier>>> { resource ->
-                if (!isHandled && resource.status.toString() == "SUCCESS") {
-                    isHandled = true
-                    when (resource.status) {
-                        Resource.Status.SUCCESS -> {
-                            val equipiers = resource.data
-                            if (!equipiers.isNullOrEmpty()) {
-                                for (row in equipiers) {
-                                    val pointage = makePointage(tache)
-                                    pointage.poi_eq_id = row.eevp_id
-                                    postPointage(pointage)
-                                }
-                                binding.tacheCl.visibility = View.VISIBLE
-                                binding.progressBar.visibility = View.GONE
-                            }
-                        }
-                        Resource.Status.ERROR -> {
-                            val error = resource.message ?: "Une erreur s'est produite"
-                            binding.tacheCl.visibility = View.VISIBLE
-                            binding.progressBar.visibility = View.GONE
-                            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
-                            Timber.e(error)
-                        }
-                        Resource.Status.LOADING -> {
-                            binding.tacheCl.visibility = View.GONE
-                            binding.progressBar.visibility = View.VISIBLE
-                            // Afficher une indication de chargement à l'utilisateur
-                        }
-                    }
-                }
-            }
-            viewModel.getEquipiersOfEquipe().observe(viewLifecycleOwner, equipiersOfEquipeObserver)
         }
+        postPointage(pointage)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun postPointage(pointage: Pointage) {
         GlobalScope.launch(Dispatchers.Main) {
-            val postPointageObserver = Observer<Resource<Pointage>> { resource ->
+            val postPointageObserver = Observer<Resource<List<Pointage>>> { resource ->
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
                         binding.tacheCl.visibility = View.VISIBLE
-                        Toast.makeText( context, "Le pointage ${resource.data?.poi_id} a bien été ajouté.", Toast.LENGTH_SHORT ).show()
+//                        Toast.makeText( context, "Le pointage ${resource.data?.poi_id} a bien été ajouté.", Toast.LENGTH_SHORT ).show()
                         Timber.d("SUCCESS : ${resource.data}")
                     }
                     Resource.Status.ERROR -> {
@@ -478,54 +516,57 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
             val fileObserver = Observer<Resource<MyFile>> { resource ->
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
-                        if (ContextCompat.checkSelfPermission(
-                                requireContext(),
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            ) != PackageManager.PERMISSION_GRANTED
-                        ) {
-                            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
-                        }
-                        if (resource.data?.file_content != null) {
-                            val pdfData = Base64.decode(resource.data.file_content.toString(), Base64.DEFAULT)
+                        val requestPermissionLauncher =
+                            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+                                if (isGranted) {
+                                    if (resource.data?.file_content != null) {
+                                        val pdfData = Base64.decode(resource.data.file_content, Base64.DEFAULT)
 
-                            val newDirectory = File(
-                                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-                                ged_file.gdf_obj_id.toString()
-                            )
+                                        val newDirectory = File(
+                                            requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+                                            ged_file.gdf_obj_id.toString()
+                                        )
 
-                            if (!directory.exists()) {
-                                directory.mkdirs()
+                                        if (!directory.exists()) {
+                                            directory.mkdirs()
+                                        }
+
+                                        val newFile = File(newDirectory, "${nettoyerChaine( ged_file.gdf_cat_label )}.pdf")
+                                        newFile.createNewFile()
+                                        newFile.setReadable(true, false) // autoriser la lecture
+                                        newFile.setWritable(true, false) // autoriser l'écriture
+                                        val outputStream = FileOutputStream(file.absolutePath)
+
+                                        val reader = PdfReader(pdfData)
+                                        val n = reader.numberOfPages
+                                        val document = Document(reader.getPageSizeWithRotation(1))
+                                        val writer = PdfCopy(document, outputStream)
+                                        document.open()
+                                        var i = 0
+                                        while (i < n) {
+                                            i++
+                                            document.newPage()
+                                            val page = writer.getImportedPage(reader, i)
+                                            writer.addPage(page)
+                                        }
+
+                                        // Fermer le document
+                                        document.close()
+
+                                        if (newFile.exists()) {
+                                            findNavController().navigate(
+                                                R.id.action_tacheDetailFragment_to_pdfFragment,
+                                                bundleOf("affId" to ged_file.gdf_obj_id, "catLabel" to ged_file.gdf_cat_label)
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    // La permission a été refusée, informer l'utilisateur
+                                    Toast.makeText(requireContext(), "La permission a été refusée", Toast.LENGTH_SHORT).show()
+                                }
                             }
 
-                            val newFile = File(newDirectory, "${nettoyerChaine( ged_file.gdf_cat_label )}.pdf")
-                            newFile.createNewFile()
-                            newFile.setReadable(true, false) // autoriser la lecture
-                            newFile.setWritable(true, false) // autoriser l'écriture
-                            val outputStream = FileOutputStream(file.absolutePath)
-
-                            val reader = PdfReader(pdfData)
-                            val n = reader.numberOfPages
-                            val document = Document(reader.getPageSizeWithRotation(1))
-                            val writer = PdfCopy(document, outputStream)
-                            document.open()
-                            var i = 0
-                            while (i < n) {
-                                i++
-                                document.newPage()
-                                val page = writer.getImportedPage(reader, i)
-                                writer.addPage(page)
-                            }
-
-                            // Fermer le document
-                            document.close()
-
-                            if (newFile.exists()) {
-                                findNavController().navigate(
-                                    R.id.action_tacheDetailFragment_to_pdfFragment,
-                                    bundleOf("affId" to ged_file.gdf_obj_id, "catLabel" to ged_file.gdf_cat_label)
-                                )
-                            }
-                        }
+                        requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     }
                     Resource.Status.ERROR -> {
                         binding.tacheCl.visibility = View.VISIBLE

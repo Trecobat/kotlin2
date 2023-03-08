@@ -84,6 +84,7 @@ class PointagesAdapter(
             itemBinding.buttonHeureDeb.text = formatDate(date = item.poi_debut, outputPattern = "HH:mm")
             itemBinding.buttonHeureFin.text = item.poi_fin?.let { formatDate(date = it, outputPattern = "HH:mm") }
             itemBinding.typePointage.text = item.poi_type
+            itemBinding.tempsPause.text = if ( item.poi_pause != null ) item.poi_pause else ""
 
             if ( item.poi_type == "Marché" ) {
                 itemBinding.coffretElec.isChecked = item.poi_coffret == 1
@@ -105,18 +106,26 @@ class PointagesAdapter(
 
             itemBinding.supprimerBtn.setOnClickListener {
                 item.poi_deleted_at = getDateTime()
-                GlobalScope.launch(Dispatchers.Main) {
-                    viewModel.updatePointage(item).observe(lifecycleOwner, Observer { resource ->
-                        when (resource.status) {
-                            Resource.Status.SUCCESS -> {
-                                Toast.makeText( context, "Le pointage ${resource.data?.poi_id} a bien été supprimé.", Toast.LENGTH_SHORT ).show()
-                            }
-                            Resource.Status.ERROR -> {
-                                Toast.makeText( context, "Erreur lors de la suppression du pointage", Toast.LENGTH_SHORT ).show()
-                            }
-                            Resource.Status.LOADING -> {}
+                val deletePointageObserver = Observer<Resource<Pointage>> { resource ->
+                    when (resource.status) {
+                        Resource.Status.SUCCESS -> {
+                            itemBinding.progressBar.visibility = View.GONE
+                            itemBinding.pointage.visibility = View.VISIBLE
+                            Toast.makeText( context, "Le pointage ${resource.data?.poi_id} a bien été supprimé.", Toast.LENGTH_SHORT ).show()
                         }
-                    })
+                        Resource.Status.ERROR -> {
+                            itemBinding.progressBar.visibility = View.GONE
+                            itemBinding.pointage.visibility = View.VISIBLE
+                            Toast.makeText( context, "Erreur lors de la suppression du pointage", Toast.LENGTH_SHORT ).show()
+                        }
+                        Resource.Status.LOADING -> {
+                            itemBinding.pointage.visibility = View.GONE
+                            itemBinding.progressBar.visibility = View.VISIBLE
+                        }
+                    }
+                }
+                GlobalScope.launch(Dispatchers.Main) {
+                    viewModel.updatePointage(item).observe(lifecycleOwner, deletePointageObserver)
                 }
             }
 
@@ -125,25 +134,26 @@ class PointagesAdapter(
                 item.poi_fin = "${formatDate ( date = itemBinding.buttonJour.text as String, inputPattern = "dd/MM/yy", outputPattern = "yyyy-MM-dd" )} ${itemBinding.buttonHeureFin.text}:00"
                 item.poi_commentaire = itemBinding.commentaire.text.toString()
 
-                GlobalScope.launch(Dispatchers.Main) {
-                    viewModel.updatePointage(item).observe(lifecycleOwner, Observer { resource ->
-                        when (resource.status) {
-                            Resource.Status.SUCCESS -> {
-                                itemBinding.progressBar.visibility = View.GONE
-                                itemBinding.pointage.visibility = View.VISIBLE
-                                Toast.makeText( context, "Le pointage ${resource.data?.poi_id} a bien été modifié.", Toast.LENGTH_SHORT ).show()
-                            }
-                            Resource.Status.ERROR -> {
-                                itemBinding.progressBar.visibility = View.GONE
-                                itemBinding.pointage.visibility = View.VISIBLE
-                                Toast.makeText( context, "Erreur lors de la modification du pointage", Toast.LENGTH_SHORT ).show()
-                            }
-                            Resource.Status.LOADING -> {
-                                itemBinding.progressBar.visibility = View.VISIBLE
-                                itemBinding.pointage.visibility = View.GONE
-                            }
+                val updatePointageObserver = Observer<Resource<Pointage>> { resource ->
+                    when (resource.status) {
+                        Resource.Status.SUCCESS -> {
+                            itemBinding.progressBar.visibility = View.GONE
+                            itemBinding.pointage.visibility = View.VISIBLE
+                            Toast.makeText( context, "Le pointage ${resource.data?.poi_id} a bien été modifié.", Toast.LENGTH_SHORT ).show()
                         }
-                    })
+                        Resource.Status.ERROR -> {
+                            itemBinding.progressBar.visibility = View.GONE
+                            itemBinding.pointage.visibility = View.VISIBLE
+                            Toast.makeText( context, "Erreur lors de la modification du pointage", Toast.LENGTH_SHORT ).show()
+                        }
+                        Resource.Status.LOADING -> {
+                            itemBinding.progressBar.visibility = View.VISIBLE
+                            itemBinding.pointage.visibility = View.GONE
+                        }
+                    }
+                }
+                GlobalScope.launch(Dispatchers.Main) {
+                    viewModel.updatePointage(item).observe(lifecycleOwner, updatePointageObserver)
                 }
             }
         }

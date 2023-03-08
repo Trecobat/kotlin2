@@ -37,8 +37,11 @@ interface MyDao {
     @Query("SELECT * FROM pointages WHERE poi_deleted_at IS NULL")
     fun getAllPointages(): LiveData<List<Pointage>>
 
-    @Query("SELECT * FROM pointages WHERE pointages.poi_tache_id = :tache AND pointages.poi_deleted_at IS NULL ORDER BY pointages.poi_id DESC")
+    @Query("SELECT * FROM pointages WHERE pointages.poi_tache_id = :tache AND pointages.poi_deleted_at IS NULL AND poi_type IN ('Marché', 'SAV', 'TS') ORDER BY pointages.poi_debut DESC")
     fun getPointagesOfTache(tache: Int): LiveData<List<Pointage>>
+
+    @Query("SELECT * FROM pointages WHERE pointages.poi_deleted_at IS NULL AND poi_type NOT IN ('Marché', 'SAV', 'TS') ORDER BY pointages.poi_debut DESC")
+    fun getPointagesDivers(): LiveData<List<Pointage>>
 
     @Query("SELECT * FROM bdc_type WHERE bdct_id NOT IN ('absence') ORDER BY bdct_label")
     fun getAllBdcts(): LiveData<List<BdcType>>
@@ -71,7 +74,7 @@ interface MyDao {
     suspend fun insertAllEquipiers(equipiers: List<Equipier>)
 
     /***** TACHE *****/
-    @Query("SELECT * FROM taches")
+    @Query("SELECT * FROM taches where termine = 0")
     fun getAllTaches() : LiveData<List<Tache>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

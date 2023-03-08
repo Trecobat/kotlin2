@@ -7,10 +7,12 @@ import kotlin.String
 
 @Entity(tableName = "pointages")
 data class Pointage(
-    @PrimaryKey(autoGenerate = true) val poi_id: Int = 0,
+    @PrimaryKey(autoGenerate = true) var poi_id: Int = 0,
     var poi_tache_id: Int = 0,
     var poi_debut: String = "",
     var poi_fin: String? = null,
+    var poi_pause: String? = null,
+    var poi_duree: String? = null,
     var poi_eq_id: Int = 0,
     var poi_type: String = "",
     var poi_coffret: Int? = null,

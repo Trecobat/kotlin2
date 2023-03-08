@@ -25,9 +25,19 @@
             android:id="@+id/action_tachesFragment_to_tacheDetailFragment"
             app:destination="@id/tacheDetailFragment" />
         <action
+            android:id="@+id/action_tachesFragment_to_pointageDiversFragment"
+            app:destination="@id/pointageDiversFragment" />
+        <action
             android:id="@+id/action_tachesFragment_refresh"
             app:destination="@id/tachesFragment" />
 
+    </fragment>
+
+    <fragment
+        android:id="@+id/pointageDiversFragment"
+        android:name="com.trecobat.pointagetrecopro.ui.pointagedivers.PointageDiversFragment"
+        android:label="Pointage divers"
+        tools:layout="@layout/pointage_divers_fragment" >
     </fragment>
 
     <fragment
@@ -41,6 +51,9 @@
         <action
             android:id="@+id/action_tacheDetailFragment_to_pdfFragment"
             app:destination="@id/pdfFragment" />
+        <action
+            android:id="@+id/action_pointageDiversFragment_to_tachesFragment"
+            app:destination="@id/tachesFragment" />
     </fragment>
 
     <fragment

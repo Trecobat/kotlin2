@@ -16,6 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_gravity="center"
         android:indeterminate="true"
         android:visibility="gone"/>
 
@@ -28,6 +29,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <Button
+                android:id="@+id/terminer_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/red"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/termine" />
 
             <Button
                 android:id="@+id/map_btn"
@@ -285,7 +297,8 @@
                         android:layout_margin="5dp"
                         android:layout_weight="0.33"
                         android:background="@drawable/button"
-                        android:text="" />
+                        android:text=""
+                        style="?android:attr/buttonBarButtonStyle" />
 
                     <Button
                         android:id="@+id/buttonHeureDeb"
@@ -294,7 +307,8 @@
                         android:layout_margin="5dp"
                         android:layout_weight="0.33"
                         android:background="@drawable/button"
-                        android:text="" />
+                        android:text=""
+                        style="?android:attr/buttonBarButtonStyle" />
 
 
                     <Button
@@ -304,7 +318,39 @@
                         android:layout_margin="5dp"
                         android:layout_weight="0.33"
                         android:background="@drawable/button"
-                        android:text="" />
+                        android:text=""
+                        style="?android:attr/buttonBarButtonStyle" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="0.2"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pause" />
+
+                    <Spinner
+                        android:id="@+id/temps_pause"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.6"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_height="wrap_content" />
+
+                    <EditText
+                        android:id="@+id/temps_pause_autre"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.4"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:visibility="gone"
+                        android:autofillHints="" />
+
                 </TableRow>
 
                 <TableRow
@@ -393,20 +439,15 @@
                         android:id="@+id/commentaire"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.8"
+                        android:layout_weight="1"
+                        android:autofillHints=""
+                        android:background="@android:drawable/editbox_background"
+                        android:drawableEnd="@android:drawable/ic_btn_speak_now"
                         android:ems="10"
                         android:inputType="textMultiLine"
-                        android:background="@android:drawable/editbox_background"
                         android:scrollbars="vertical"
-                        android:text="" />
-
-                    <Button
-                        android:id="@+id/button_speech_input"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.2"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:foreground="@android:drawable/ic_btn_speak_now" />
+                        android:text=""
+                        tools:ignore="LabelFor" />
                 </TableRow>
             </TableLayout>
 

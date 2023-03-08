@@ -25,6 +25,9 @@ interface MyService {
     @GET("api/pointageTrecopro/chantiers/{id}/pointages")
     suspend fun getPointagesOfTache(@Path("id") id: Int): Response<List<Pointage>>
 
+    @GET("api/pointageTrecopro/pointages/divers")
+    suspend fun getPointagesDivers(): Response<List<Pointage>>
+
     @GET("api/pointageTrecopro/chantiers/{id}/plans")
     suspend fun getFilesOfTache(@Path("id") id: Int): Response<List<GedFiles>>
 
@@ -42,7 +45,7 @@ interface MyService {
     suspend fun getPointage(@Path("id") id: Int): Response<Pointage>
 
     @POST("api/pointageTrecopro/pointages")
-    suspend fun addPointage(@Body data: Pointage): Response<Pointage>
+    suspend fun addPointage(@Body data: Pointage): Response<List<Pointage>>
 
     @POST("api/pointageTrecopro/pointages/{id}")
     suspend fun updatePointage(@Path("id") id: Int, @Body data: Pointage): Response<Pointage>

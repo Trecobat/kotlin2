@@ -16,6 +16,7 @@ import com.trecobat.pointagetrecopro.data.entities.Tache
 import com.trecobat.pointagetrecopro.databinding.ItemTacheBinding
 import com.trecobat.pointagetrecopro.helper.DateHelper.Companion.formatDate
 import com.trecobat.pointagetrecopro.utils.Resource
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -62,47 +63,49 @@ class TacheViewHolder(
         itemBinding.root.setOnClickListener(this)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("SetTextI18n", "ResourceAsColor")
     fun bind(item: Tache, context: Context, viewModel: TachesViewModel, lifecycleOwner: LifecycleOwner) {
         this.tache = item
 
-        itemBinding.tache.background = getItemDrawable ( item.nb_termine, item.nb_pointage )
-        itemBinding.cliNom.text = item.affaire.client?.cli_nom
-        itemBinding.affId.text = " - ${item.affaire.aff_id}"
+        itemBinding.tache.background = getItemDrawable ( item.termine, item.nb_pointage )
+        itemBinding.cliNom.text = item.affaire?.client?.cli_nom
+        itemBinding.affId.text = " - ${item.affaire?.aff_id}"
         itemBinding.bdctLabel.text = item.bdc_type.bdct_label
         itemBinding.startDate.text = formatDate(item.start_date)
         itemBinding.endDate.text = item.end_date?.let { formatDate(it) }
-        itemBinding.cliAdresse1Chantier.text = item.affaire.client?.cli_adresse1_chantier
-        itemBinding.cliAdresse2Chantier.text = if (item.affaire.client?.cli_adresse2_chantier != null) " - ${item.affaire.client?.cli_adresse2_chantier}" else ""
-        itemBinding.cliCpChantier.text = item.affaire.client?.cli_cp_chantier
-        itemBinding.cliVilleChantier.text = item.affaire.client?.cli_ville_chantier
+        itemBinding.cliAdresse1Chantier.text = item.affaire?.client?.cli_adresse1_chantier
+        itemBinding.cliAdresse2Chantier.text = if (item.affaire?.client?.cli_adresse2_chantier != null) " - ${item.affaire?.client?.cli_adresse2_chantier}" else ""
+        itemBinding.cliCpChantier.text = item.affaire?.client?.cli_cp_chantier
+        itemBinding.cliVilleChantier.text = item.affaire?.client?.cli_ville_chantier
 
         itemBinding.masquer.setOnClickListener {
             item.hidden = 1
-            GlobalScope.launch(Dispatchers.Main) {
-                viewModel.updateTache(item).observe(lifecycleOwner, Observer { resource ->
-                    when (resource.status) {
-                        Resource.Status.SUCCESS -> {
-                            Toast.makeText( context, "La tâche ${item.id} a bien été masquée.", Toast.LENGTH_SHORT ).show()
-                        }
-                        Resource.Status.ERROR -> {
-                            Toast.makeText( context, "La tâche n'a pas été masquée : ${resource?.message}", Toast.LENGTH_SHORT ).show()
-                            Timber.e( "La tâche n'a pas été masquée : ${resource?.message}")
-                        }
-                        Resource.Status.LOADING -> {}
+            val updateTacheObserver = Observer<Resource<Tache>> { resource ->
+                when (resource.status) {
+                    Resource.Status.SUCCESS -> {
+                        Toast.makeText( context, "La tâche ${item.id} a bien été masquée.", Toast.LENGTH_SHORT ).show()
                     }
-                })
+                    Resource.Status.ERROR -> {
+                        Toast.makeText( context, "La tâche n'a pas été masquée : ${resource?.message}", Toast.LENGTH_SHORT ).show()
+                        Timber.e( "La tâche n'a pas été masquée : ${resource?.message}")
+                    }
+                    Resource.Status.LOADING -> {}
+                }
+            }
+            GlobalScope.launch(Dispatchers.Main) {
+                viewModel.updateTache(item).observe(lifecycleOwner, updateTacheObserver)
             }
         }
     }
 
     // Récupère la couleur de l'item en fonction de si le tache est à venir, en cours ou terminé
     @SuppressLint("ResourceType")
-    private fun getItemDrawable(nb_termine: Int, nb_pointage: Int): Drawable?
+    private fun getItemDrawable(termine: Int, nb_pointage: Int): Drawable?
     {
         val context = itemBinding.root.context
         return when {
-            nb_termine > 0 -> ContextCompat.getDrawable(context, R.drawable.tache_terminee)
+            termine > 0 -> ContextCompat.getDrawable(context, R.drawable.tache_terminee)
             nb_pointage > 0 -> ContextCompat.getDrawable(context, R.drawable.tache_en_cours)
             else -> ContextCompat.getDrawable(context, R.drawable.tache_a_venir)
         }

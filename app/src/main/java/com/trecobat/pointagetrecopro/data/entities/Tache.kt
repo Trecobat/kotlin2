@@ -12,8 +12,8 @@ data class Tache(
     val duration: Int? = 1,
     var hidden: Int? = 0,
     val nb_pointage: Int = 0,
-    val nb_termine: Int = 0,
+    var termine: Int = 0,
     @Embedded var equipe: Equipe? = null,
-    @Embedded var affaire: Affaire,
+    @Embedded var affaire: Affaire? = null,
     @Embedded var bdc_type: BdcType
 )

@@ -22,7 +22,7 @@ import com.trecobat.pointagetrecopro.data.entities.*
     User::class,
     MyFile::class,
     Token::class
-], version = 2, exportSchema = false)
+], version = 8, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun myDao(): MyDao
 

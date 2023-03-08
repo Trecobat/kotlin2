@@ -31,4 +31,8 @@
     <string name="speech_prompt">Que voulez-vous écrire ?</string>
     <string name="autocompleteAffaire">Veuillez saisir une affaire</string>
     <string name="retour">Retour</string>
+    <string name="pointageDivers">Pointages Divers</string>
+    <string name="pause">Pause</string>
+    <string name="ajouterPointageDivers">Ajouter un pointage divers</string>
+    <string name="termine">Terminer</string>
 </resources>

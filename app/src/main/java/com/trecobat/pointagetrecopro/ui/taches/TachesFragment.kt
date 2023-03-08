@@ -40,6 +40,11 @@ class TachesFragment : Fragment(), TachesAdapter.TacheItemListener {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupObservers()
+        binding.diversClBtn.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_tachesFragment_to_pointageDiversFragment
+            )
+        }
         val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
             findNavController().navigate(
