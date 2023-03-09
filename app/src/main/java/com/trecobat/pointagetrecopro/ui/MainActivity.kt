@@ -106,8 +106,10 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "repas", Toast.LENGTH_SHORT).show()
                     true
                 }
-                R.id.voir_pointages -> {
-                    Toast.makeText(this, "voir_pointages", Toast.LENGTH_SHORT).show()
+                R.id.mes_pointages -> {
+                    navController.navigate(
+                        R.id.mes_pointages,
+                    )
                     true
                 }
                 else -> false

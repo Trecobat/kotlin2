@@ -81,4 +81,11 @@
         android:label="Voir un PDF"
         tools:layout="@layout/pdf" >
     </fragment>
+
+    <fragment
+        android:id="@+id/mes_pointages"
+        android:name="com.trecobat.pointagetrecopro.ui.mespointages.MesPointagesFragment"
+        android:label="Mes pointages"
+        tools:layout="@layout/pdf" >
+    </fragment>
 </navigation>

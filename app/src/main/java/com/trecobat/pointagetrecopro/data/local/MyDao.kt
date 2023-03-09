@@ -34,7 +34,7 @@ interface MyDao {
     fun deletePendingRequest(request: PendingRequest)
 
     /***** POINTAGE *****/
-    @Query("SELECT * FROM pointages WHERE poi_deleted_at IS NULL")
+    @Query("SELECT * FROM pointages WHERE poi_deleted_at IS NULL ORDER BY pointages.poi_debut")
     fun getAllPointages(): LiveData<List<Pointage>>
 
     @Query("SELECT * FROM pointages WHERE pointages.poi_tache_id = :tache AND pointages.poi_deleted_at IS NULL AND poi_type IN ('Marché', 'SAV', 'TS') ORDER BY pointages.poi_debut DESC")

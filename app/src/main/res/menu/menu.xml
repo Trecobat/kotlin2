@@ -20,11 +20,10 @@
         app:showAsAction="collapseActionView"
         android:visible="false" />
     <item
-        android:id="@+id/voir_pointages"
+        android:id="@+id/mes_pointages"
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/voir_pointages"
-        app:showAsAction="collapseActionView"
-        android:visible="false" />
+        app:showAsAction="collapseActionView" />
     <item
         android:id="@+id/logout"
         app:showAsAction="collapseActionView"

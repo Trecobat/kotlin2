@@ -16,9 +16,9 @@ class AddMarcheTsViewModel @Inject constructor(
     private val repository: MyRepository
 ) : ViewModel() {
 
-    val type = MutableLiveData<kotlin.String>()
+    val type = MutableLiveData<String>()
 
-    fun start(_type: kotlin.String) {
+    fun start(_type: String) {
         type.value = _type
     }
 
