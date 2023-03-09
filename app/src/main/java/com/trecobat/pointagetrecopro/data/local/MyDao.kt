@@ -40,6 +40,9 @@ interface MyDao {
     @Query("SELECT * FROM pointages WHERE pointages.poi_tache_id = :tache AND pointages.poi_deleted_at IS NULL AND poi_type IN ('Marché', 'SAV', 'TS') ORDER BY pointages.poi_debut DESC")
     fun getPointagesOfTache(tache: Int): LiveData<List<Pointage>>
 
+    @Query("SELECT * FROM pointages WHERE DATE(poi_debut) = DATE('now')")
+    fun hasPointageToday(): LiveData<List<Pointage>>
+
     @Query("SELECT * FROM pointages WHERE pointages.poi_deleted_at IS NULL AND poi_type NOT IN ('Marché', 'SAV', 'TS') ORDER BY pointages.poi_debut DESC")
     fun getPointagesDivers(): LiveData<List<Pointage>>
 

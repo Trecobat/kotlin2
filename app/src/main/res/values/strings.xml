@@ -35,4 +35,7 @@
     <string name="pause">Pause</string>
     <string name="ajouterPointageDivers">Ajouter un pointage divers</string>
     <string name="termine">Terminer</string>
+    <string name="zoneCommentaire">Appuyer pour parler ou écrire</string>
+    <string name="spinnerBdct">Sélectionner un corps d\'état</string>
+    <string name="spinnerEquipier">Sélectionner un equipier</string>
 </resources>

@@ -58,6 +58,7 @@
                         android:id="@+id/type"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:minHeight="50dp"
                         android:layout_weight="0.5"
                         android:contentDescription="@string/TextView"
                         android:text="@string/TextView" />
@@ -75,6 +76,7 @@
                         android:id="@+id/duree_heure"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:minHeight="50dp"
                         android:layout_weight="0.5"
                         android:contentDescription="@string/TextView"
                         android:text="@string/TextView" />
@@ -84,6 +86,7 @@
                         android:id="@+id/duree_minute"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:minHeight="50dp"
                         android:layout_weight="0.5"
                         android:contentDescription="@string/TextView"
                         android:text="@string/TextView" />
@@ -101,6 +104,7 @@
                         android:id="@+id/equipe"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:minHeight="50dp"
                         android:layout_weight="0.5"
                         android:checked="true"
                         android:text="@string/equipe_complete" />
@@ -109,7 +113,9 @@
                         android:id="@+id/equipiers"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:minHeight="50dp"
                         android:layout_weight="0.5"
+                        android:prompt="@string/spinnerEquipier"
                         tools:visibility="gone" />
 
                 </TableRow>
@@ -125,6 +131,7 @@
                         android:id="@+id/commentaire"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:minHeight="50dp"
                         android:layout_weight="1"
                         android:autofillHints=""
                         android:background="@android:drawable/editbox_background"
@@ -133,6 +140,8 @@
                         android:inputType="textMultiLine"
                         android:scrollbars="vertical"
                         android:text=""
+                        android:hint="@string/zoneCommentaire"
+                        android:textColorHint="@color/black"
                         tools:ignore="LabelFor" />
 
                 </TableRow>
@@ -143,6 +152,7 @@
                 android:id="@+id/ajouterPointageDivers"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="50dp"
                 android:background="@color/aubergine"
                 android:textColor="@color/white"
                 android:text="@string/ajouterPointageDivers"

@@ -3,6 +3,11 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
+    // Firebase
+    id 'com.google.firebase.crashlytics' // Crashlitics
+    id 'com.google.firebase.firebase-perf' // Performance
+    id 'com.google.firebase.appdistribution' // Distribution
 }
 
 android {
@@ -108,6 +113,19 @@ dependencies {
     // PDF
     implementation 'com.itextpdf:itextpdf:5.5.13.2'
     implementation ('com.github.barteksc:android-pdf-viewer:3.2.0-beta.1')
+
+    // Dépendances Firebase
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:31.2.3')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx' // Crashlytics
+    implementation 'com.google.firebase:firebase-config-ktx' // Remote config
+    implementation 'com.google.firebase:firebase-analytics-ktx' // Analytics
+    implementation 'com.google.firebase:firebase-perf-ktx' // Performance
+    implementation 'com.google.firebase:firebase-messaging' // Notification push
+    implementation 'com.google.firebase:firebase-analytics' // Notification push
+
+    // Worker pour les notifications push
+    implementation "androidx.work:work-runtime:2.8.0"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
