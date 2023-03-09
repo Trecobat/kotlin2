@@ -40,6 +40,12 @@ class MyRepository(
     }
 
     /***** POINTAGE *****/
+    fun getPointages() = performGetOperation(
+        databaseQuery = { localDataSource.getAllPointages() },
+        networkCall = { remoteDataSource.getPointages() },
+        saveCallResult = { localDataSource.insertAllPointages(it) }
+    )
+
     fun getPointagesOfTache(id: Int) = performGetOperation(
         databaseQuery = { localDataSource.getPointagesOfTache(id) },
         networkCall = { remoteDataSource.getPointagesOfTache(id) },
