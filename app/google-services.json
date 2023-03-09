@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "986280557891",
+    "project_id": "pointage-trecopro",
+    "storage_bucket": "pointage-trecopro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986280557891:android:343da41bf8846b27cac3f6",
+        "android_client_info": {
+          "package_name": "com.trecobat.pointagetrecopro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "986280557891-0kc01o7mpnr5vp37s44jlka39fj20sdi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7DTk6Bm_Yghx3w7A4L7Niwo9GoKF0AFs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "986280557891-0kc01o7mpnr5vp37s44jlka39fj20sdi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,10 +2,12 @@ package com.trecobat.pointagetrecopro.ui.tachedetail
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.net.Uri
@@ -18,7 +20,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.ActivityResultLauncher
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -516,57 +520,60 @@ class TacheDetailFragment : Fragment(), PlansAdapter.PlanItemListener, Pointages
             val fileObserver = Observer<Resource<MyFile>> { resource ->
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
-                        val requestPermissionLauncher =
-                            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-                                if (isGranted) {
-                                    if (resource.data?.file_content != null) {
-                                        val pdfData = Base64.decode(resource.data.file_content, Base64.DEFAULT)
+                        if (ContextCompat.checkSelfPermission(
+                                requireContext(),
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            if (resource.data?.file_content != null) {
+                                val pdfData = Base64.decode(resource.data.file_content, Base64.DEFAULT)
 
-                                        val newDirectory = File(
-                                            requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-                                            ged_file.gdf_obj_id.toString()
-                                        )
+                                val newDirectory = File(
+                                    requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+                                    ged_file.gdf_obj_id.toString()
+                                )
 
-                                        if (!directory.exists()) {
-                                            directory.mkdirs()
-                                        }
+                                if (!directory.exists()) {
+                                    directory.mkdirs()
+                                }
 
-                                        val newFile = File(newDirectory, "${nettoyerChaine( ged_file.gdf_cat_label )}.pdf")
-                                        newFile.createNewFile()
-                                        newFile.setReadable(true, false) // autoriser la lecture
-                                        newFile.setWritable(true, false) // autoriser l'écriture
-                                        val outputStream = FileOutputStream(file.absolutePath)
+                                val newFile = File(newDirectory, "${nettoyerChaine( ged_file.gdf_cat_label )}.pdf")
+                                newFile.createNewFile()
+                                newFile.setReadable(true, false) // autoriser la lecture
+                                newFile.setWritable(true, false) // autoriser l'écriture
+                                val outputStream = FileOutputStream(file.absolutePath)
 
-                                        val reader = PdfReader(pdfData)
-                                        val n = reader.numberOfPages
-                                        val document = Document(reader.getPageSizeWithRotation(1))
-                                        val writer = PdfCopy(document, outputStream)
-                                        document.open()
-                                        var i = 0
-                                        while (i < n) {
-                                            i++
-                                            document.newPage()
-                                            val page = writer.getImportedPage(reader, i)
-                                            writer.addPage(page)
-                                        }
+                                val reader = PdfReader(pdfData)
+                                val n = reader.numberOfPages
+                                val document = Document(reader.getPageSizeWithRotation(1))
+                                val writer = PdfCopy(document, outputStream)
+                                document.open()
+                                var i = 0
+                                while (i < n) {
+                                    i++
+                                    document.newPage()
+                                    val page = writer.getImportedPage(reader, i)
+                                    writer.addPage(page)
+                                }
 
-                                        // Fermer le document
-                                        document.close()
+                                // Fermer le document
+                                document.close()
 
-                                        if (newFile.exists()) {
-                                            findNavController().navigate(
-                                                R.id.action_tacheDetailFragment_to_pdfFragment,
-                                                bundleOf("affId" to ged_file.gdf_obj_id, "catLabel" to ged_file.gdf_cat_label)
-                                            )
-                                        }
-                                    }
-                                } else {
-                                    // La permission a été refusée, informer l'utilisateur
-                                    Toast.makeText(requireContext(), "La permission a été refusée", Toast.LENGTH_SHORT).show()
+                                if (newFile.exists()) {
+                                    Timber.e("Le fichier existe, je vais rediriger le user vers les PdfFragment")
+                                    findNavController().navigate(
+                                        R.id.action_tacheDetailFragment_to_pdfFragment,
+                                        bundleOf("affId" to ged_file.gdf_obj_id, "catLabel" to ged_file.gdf_cat_label)
+                                    )
                                 }
                             }
-
-                        requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        } else {
+                            ActivityCompat.requestPermissions(
+                                (activity as Activity),
+                                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                                200
+                            )
+                        }
                     }
                     Resource.Status.ERROR -> {
                         binding.tacheCl.visibility = View.VISIBLE

@@ -46,42 +46,42 @@ class AuthFragment : Fragment() {
         var executed = false
         // Si un token existe déjà, l'utilisateur est déjà connecté, on peut l'envoyer directement sur la liste des chantiers
         val authUserObserver = Observer<Resource<Equipe>> { resource ->
-            when (resource.status) {
-                Resource.Status.SUCCESS -> {
-                    Timber.e(resource.data.toString())
-                    System.setProperty("equipe",
-                        resource.data?.eqvp_id.toString()
-                    )
-                    executed = true
-                    findNavController().navigate(
-                        R.id.action_authFragment_to_tachesFragment
-                    )
-                }
-                Resource.Status.ERROR -> {}
+            if (!executed) {
+                when (resource.status) {
+                    Resource.Status.SUCCESS -> {
+                        Timber.e(resource.data.toString())
+                        System.setProperty("equipe",
+                            resource.data?.eqvp_id.toString()
+                        )
+                        executed = true
+                        findNavController().navigate(
+                            R.id.action_authFragment_to_tachesFragment
+                        )
+                    }
+                    Resource.Status.ERROR -> {}
 
-                Resource.Status.LOADING -> {}
+                    Resource.Status.LOADING -> {}
+                }
             }
         }
 
         val getTokenObserver = Observer<Resource<Token>> { resource ->
-            if (!executed) {
-                when (resource.status) {
-                    Resource.Status.SUCCESS -> {
-                        binding.progressBar.visibility = View.GONE
-                        if (resource.data?.token != null) {
-                            System.setProperty("token", resource.data.token)
-                            viewModel.getAuthUser(resource.data.token).observe(viewLifecycleOwner, authUserObserver)
-                        }
+            when (resource.status) {
+                Resource.Status.SUCCESS -> {
+                    binding.progressBar.visibility = View.GONE
+                    if (resource.data?.token != null) {
+                        System.setProperty("token", resource.data.token)
+                        viewModel.getAuthUser(resource.data.token).observe(viewLifecycleOwner, authUserObserver)
                     }
+                }
 
-                    Resource.Status.ERROR -> {
-                        Toast.makeText(activity, "Erreur d'authentification : ${resource.message}", Toast.LENGTH_SHORT).show()
-                        Timber.e(resource.message)
-                    }
+                Resource.Status.ERROR -> {
+                    Toast.makeText(activity, "Erreur d'authentification : ${resource.message}", Toast.LENGTH_SHORT).show()
+                    Timber.e(resource.message)
+                }
 
-                    Resource.Status.LOADING -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
+                Resource.Status.LOADING -> {
+                    binding.progressBar.visibility = View.VISIBLE
                 }
             }
         }
