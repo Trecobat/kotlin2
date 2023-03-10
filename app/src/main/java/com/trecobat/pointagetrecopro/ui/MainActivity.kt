@@ -127,7 +127,6 @@ class MainActivity : AppCompatActivity() {
 
             // Log and toast
             Timber.d("Token $token")
-            Toast.makeText(baseContext, "Token $token", Toast.LENGTH_SHORT).show()
         })
     }
 

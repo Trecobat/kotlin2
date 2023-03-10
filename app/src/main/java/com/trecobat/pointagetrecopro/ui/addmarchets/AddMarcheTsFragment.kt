@@ -140,36 +140,41 @@ class AddMarcheTsFragment : Fragment(), AffairesAdapter.AffaireItemListener {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun addMarche() {
-        val tache = PostTache(
-            aff_id = Integer.parseInt( binding.affId.text.toString() ),
-            bdct_label = binding.bdctId.selectedItem.toString(),
-            text = "${viewModel.type.value} ${binding.bdctId.selectedItem}",
-            start_date = "${getYear()}-${getMonth()}-${getDay()}"
-        )
 
-        Timber.e(tache.toString())
+        if (binding.affId.text.isNotBlank()) {
+            val tache = PostTache(
+                aff_id = Integer.parseInt( binding.affId.text.toString() ),
+                bdct_label = binding.bdctId.selectedItem.toString(),
+                text = "${viewModel.type.value} ${binding.bdctId.selectedItem}",
+                start_date = "${getYear()}-${getMonth()}-${getDay()}"
+            )
 
-        GlobalScope.launch(Dispatchers.Main) {
-            val addTacheObserver = Observer<Resource<Tache>> { resource ->
-                when (resource.status) {
-                    Resource.Status.SUCCESS -> {
-                        findNavController().navigate(
-                            if ( viewModel.type.value == "Marché" ) R.id.action_addMarcheFragment_to_tacheDetailFragment else R.id.action_addTsFragment_to_tacheDetailFragment,
-                            bundleOf("id" to resource.data?.id)
-                        )
-                    }
-                    Resource.Status.ERROR -> {
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText( context, "Erreur lors de l'ajout du marché", Toast.LENGTH_SHORT ).show()
-                        Timber.e("ERROR : $resource.data")
-                    }
-                    Resource.Status.LOADING -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                        Timber.d("LOADING : $resource.data")
+            Timber.e(tache.toString())
+
+            GlobalScope.launch(Dispatchers.Main) {
+                val addTacheObserver = Observer<Resource<Tache>> { resource ->
+                    when (resource.status) {
+                        Resource.Status.SUCCESS -> {
+                            findNavController().navigate(
+                                if ( viewModel.type.value == "Marché" ) R.id.action_addMarcheFragment_to_tacheDetailFragment else R.id.action_addTsFragment_to_tacheDetailFragment,
+                                bundleOf("id" to resource.data?.id)
+                            )
+                        }
+                        Resource.Status.ERROR -> {
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText( context, "Erreur lors de l'ajout du marché", Toast.LENGTH_SHORT ).show()
+                            Timber.e("ERROR : $resource.data")
+                        }
+                        Resource.Status.LOADING -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                            Timber.d("LOADING : $resource.data")
+                        }
                     }
                 }
+                viewModel.addTache(tache).observe(viewLifecycleOwner, addTacheObserver)
             }
-            viewModel.addTache(tache).observe(viewLifecycleOwner, addTacheObserver)
+        } else {
+            Toast.makeText(requireContext(), "Veuillez sélectionner une affaire", Toast.LENGTH_SHORT).show()
         }
     }
 
